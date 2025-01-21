@@ -1,3 +1,9 @@
+<?php
+  require_once("bootstrap.php");
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="it">
   <head>
