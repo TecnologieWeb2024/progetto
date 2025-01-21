@@ -1,15 +1,8 @@
 <?php
-  require_once("bootstrap.php");
+require_once("bootstrap.php");
 
+$templateParams["titolo"] = "CoffeeShop - Home";
+
+require("template/base.php");
 
 ?>
-
-<!DOCTYPE html>
-<html lang="it">
-  <head>
-    <title>Test</title>
-  </head>
-  <body>
-    <h1>Ciao</h1>
-  </body>
-</html>
