@@ -4,3 +4,4 @@ function isUserLoggedIn()
     // TODO: Implement
     return true;
 }
+?>
