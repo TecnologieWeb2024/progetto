@@ -43,12 +43,27 @@
         </div>
     </nav>
 
-    <main>
-
+    <main class="flex-fill mt-4">
+        <?php
+            if (!empty($templateParams["main-content"])) :
+                require($templateParams["main-content"]);
+            endif 
+        ?>
     </main>
-
-    <footer>
-
+    <aside>
+        <?php
+            if(!empty($templateParams["aside-content"])) :
+                require($templateParams["aside-content"]);
+            endif
+        ?>
+    </aside>
+    <footer class="py-4 bg-dark text-center">
+        <div class="container-fluid justify-content-center text-secondary">
+            <div class="mb-3">
+                <a href="#" class="text-light text-decoration-none">About Us</a>
+            </div>
+            <p>Copyright © <?php echo date("Y"); ?> CoffeeBo All rights reserved.</p>
+        </div>
     </footer>
 </body>
 
