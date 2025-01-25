@@ -34,7 +34,8 @@
                     <div class="card-body border border-0">
                         <h5 class="card-title"><?php echo $product['name'] ?></h5>
                         <p class="card-text"><?php echo $product['price'] ?>€</p>
-                        <a href="#" class="btn float-end">Add to Cart</a>
+                        <!-- TODO: Aggiungere un selettore di quantità -->
+                        <a href="#" class="btn btn-primary float-end">Aggiungi al carrello</a>
                     </div>
                 </div>
             </div>
