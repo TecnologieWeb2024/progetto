@@ -12,12 +12,17 @@
             ["name" => "Product 6", "price" => "1.00", "image" => "./assets/img/image1.jpg"],
             ["name" => "Product 7", "price" => "2.00", "image" => "./assets/img/image1.jpg"],
             ["name" => "Product 8", "price" => "3.00", "image" => "./assets/img/image1.jpg"],
-            ["name" => "Product 9", "price" => "4.00", "image" => "./assets/img/image1.jpg"]
+            ["name" => "Product 9", "price" => "4.00", "image" => "./assets/img/image1.jpg"],
+            ["name" => "Product 10", "price" => "1.00", "image" => "./assets/img/image1.jpg"],
+            ["name" => "Product 11", "price" => "2.00", "image" => "./assets/img/image1.jpg"],
+            ["name" => "Product 12", "price" => "3.00", "image" => "./assets/img/image1.jpg"],
+            ["name" => "Product 13", "price" => "4.00", "image" => "./assets/img/image1.jpg"],
+            ["name" => "Product 14", "price" => "5.00", "image" => "./assets/img/image1.jpg"]
         ];
 
         // Pagination logic
         $totalProducts = count($products);
-        $productsPerPage = 8;
+        $productsPerPage = 9;
         $totalPages = ceil($totalProducts / $productsPerPage);
 
         // Get current page from URL, if not present default to 1
@@ -28,14 +33,14 @@
         $currentProducts = array_slice($products, $startIndex, $productsPerPage);
 
         foreach ($currentProducts as $product): ?>
-            <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="col-sm-6 col-md-4">
                 <div class="card mb-4">
                     <img src="<?php echo $product['image'] ?>" class="card-img-top" alt="<?php echo $product['name'] ?>">
                     <div class="card-body border border-0">
                         <h5 class="card-title"><?php echo $product['name'] ?></h5>
                         <p class="card-text"><?php echo $product['price'] ?>€</p>
                         <!-- TODO: Aggiungere un selettore di quantità -->
-                        <a href="#" class="btn btn-primary float-end">Aggiungi al carrello</a>
+                        <a href="#" class="btn btn-primary float-end"><i class="fa fa-cart-plus"></i></a>
                     </div>
                 </div>
             </div>
