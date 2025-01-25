@@ -1,26 +1,27 @@
 <?php
 require_once("bootstrap.php");
 
-$templateParams["titolo"] = "CoffeeShop - Home";
+// Mapping di pagine valide
+$pageMap = [
+    'home' => [
+        'file' => 'template/landing-page.php',
+        'title' => 'CoffeeBo - Home',
+    ],
+    'products' => [
+        'file' => 'template/products.php',
+        'title' => 'CoffeeBo - Prodotti',
+    ],
+    'contacts' => [
+        'file' => 'template/contacts.php',
+        'title' => 'CoffeeBo - Contatti',
+    ],
+];
 
-// Whitelist di pagine per controlli di sicurezza
-$allowedPages = ['products', 'contacts', 'home'];
-$page = isset($_GET['page']) && in_array($_GET['page'], $allowedPages) ? $_GET['page'] : 'home';
+// Verifica che la pagina richiesta sia valida, altrimenti usa il default
+$page = isset($_GET['page']) && array_key_exists($_GET['page'], $pageMap) ? $_GET['page'] : 'home';
 
-switch ($page) {
-    case 'products':
-        $templateParams["main-content"] = "template/products.php";
-        $templateParams["titolo"] = "CoffeeShop - Prodotti";
-        break;
-    case 'contacts':
-        $templateParams["main-content"] = "template/contacts.php";
-        $templateParams["titolo"] = "CoffeeShop - Contatti";
+// Imposta i parametri del template
+$templateParams["main-content"] = $pageMap[$page]['file'];
+$templateParams["title"] = $pageMap[$page]['title'];
 
-        break;
-    case 'home':
-    default:
-        $templateParams["main-content"] = "template/landing-page.php";
-        $templateParams["titolo"] = "CoffeeShop - Home";
-        break;
-}
 require("template/base.php");
