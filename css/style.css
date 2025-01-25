@@ -1,0 +1,25 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+html,body {
+  height: 100%; /* Rende l'altezza della pagina 100% */
+  margin: 0;
+}
+.navbar .navbar-nav .nav-item .logout-link {
+  color: red;
+}
+
+main {
+  min-height: 100vh; /* Imposta la minima altezza per il main in modo che il footer resti sempre in fondo */
+  display: flex;
+  flex-direction: column;
+}
+
+footer {
+  margin-top: auto; /* Forza il footer a spostarsi verso il basso, dopo il contenuto principale */
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  padding: 20px;
+}
