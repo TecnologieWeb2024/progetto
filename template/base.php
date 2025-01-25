@@ -22,24 +22,24 @@
             </button>
             <div class="collapse flex-grow-1 navbar-collapse justify-content-center collapsibleNavbar">
                 <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link" href="index.php?page=home"><i class="fa fa-home d-md-none">&nbsp;</i>Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="index.php?page=products"><i class="fa fa-coffee d-md-none">&nbsp;</i>Prodotti</a></li>
-                    <li class="nav-item"><a class="nav-link" href="index.php?page=contacts"><i class="fa fa-file-text-o	d-md-none"></i>&nbsp;Contatti</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.php?page=home"><i class="fa fa-home d-md-none">&nbsp;</i>Home Page</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.php?page=products"><i class="fa fa-coffee d-md-none">&nbsp;</i>I nostri prodotti</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.php?page=contacts"><i class="fa fa-file-text-o	d-md-none">&nbsp;</i>Contattaci</a></li>
                 </ul>
             </div>
             <div class="collapse flex-grow-1 navbar-collapse justify-content-end collapsibleNavbar">
-                <?php if (!isUserLoggedIn()) : ?>
+                <?php if (isUserLoggedIn()) : ?>
                     <ul class="navbar-nav">
                         <!-- TODO: Usare icone per Carrello e Logout -->
-                        <li class="nav-item"><a class="nav-link" href="#"><i class="fa fa-shopping-bag"></i><span class="d-md-none">&nbsp;Carrello</span></a></li>
+                        <li class="nav-item"><a class="nav-link" href="#"><i class="fa fa-shopping-bag">&nbsp;</i><span class="d-md-none">Carrello</span></a></li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fa fa-user"></i><span class="d-md-none">&nbsp;Profilo</span>
+                                <i class="fa fa-user">&nbsp;</i><span class="d-md-none">Account</span>
 
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                <li><a href="#" class="dropdown-item">Impostazioni</a></li>
-                                <li><a href="index.php?page=orders" class="dropdown-item">I miei ordini</a></li>
+                                <li><a href="#" class="dropdown-item"><i class="fa fa-cog"></i>&nbsp;Impostazioni Account</a></li>
+                                <li><a href="index.php?page=orders" class="dropdown-item"><i class="fa fa-list-alt"></i>&nbsp;I miei ordini</a></li>
                                 <li><a href="#" class="dropdown-item link-danger link-underline-opacity-0"><i class="fa fa-sign-out"></i>&nbsp;Logout</a></li>
                             </ul>
                         </li>
