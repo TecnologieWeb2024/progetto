@@ -21,9 +21,9 @@
             </button>
             <div class="collapse flex-grow-1 navbar-collapse justify-content-center collapsibleNavbar">
                 <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Prodotti</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Contatti</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.php?page=home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.php?page=products">Prodotti</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.php?page=contacts">Contatti</a></li>
                 </ul>
             </div>
             <div class="collapse flex-grow-1 navbar-collapse justify-content-end collapsibleNavbar">
