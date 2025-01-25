@@ -15,7 +15,7 @@
     <nav class="navbar navbar-expand-md bg-dark navbar-dark sticky-top">
         <div class="container-fluid d-flex">
             <div class="d-flex flex-grow-1">
-                <a class="navbar-brand" href="#">COFFEEBO</a>
+                <a class="navbar-brand" href="index.php?page=home">COFFEEBO</a>
             </div>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".collapsibleNavbar">
                 <span class="navbar-toggler-icon"></span>
