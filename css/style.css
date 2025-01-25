@@ -6,9 +6,6 @@ html,body {
   height: 100%; /* Rende l'altezza della pagina 100% */
   margin: 0;
 }
-.navbar .navbar-nav .nav-item .logout-link {
-  color: red;
-}
 
 main {
   min-height: 100vh; /* Imposta la minima altezza per il main in modo che il footer resti sempre in fondo */
