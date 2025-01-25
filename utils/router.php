@@ -14,6 +14,10 @@ class Router
             'file' => 'template/contacts.php',
             'title' => 'CoffeeBo - Contatti',
         ],
+        'orders' => [
+            'file' => 'template/orders.php',
+            'title' => 'CoffeeBo - Ordini',
+        ]
     ];
 
     public function getRoute() 
