@@ -1,16 +1,20 @@
 -- Database Section
 -- ________________ 
-drop schema if exists CaffeBoDB;
+DROP SCHEMA IF EXISTS CaffeBoDB;
 
-create database CaffeBoDB;
+CREATE DATABASE CaffeBoDB;
 
-use CaffeBoDB;
+USE CaffeBoDB;
 
-DROP USER IF EXISTS 'db_user';
+-- Elimina l'utente esistente
+DROP USER IF EXISTS 'db_user'@'localhost';
+-- Crea un nuovo utente con una password sicura
+CREATE USER 'db_user'@'localhost' IDENTIFIED BY '1234';
+-- Concedi privilegi solo sul database specifico
+GRANT ALL PRIVILEGES ON CaffeBoDB.* TO 'db_user'@'localhost';
+-- Applica i cambiamenti
+FLUSH PRIVILEGES;
 
-CREATE USER IF NOT EXISTS 'db_user'@'%' IDENTIFIED BY '1234';
--- DROP USER IF EXISTS db_user;
-GRANT ALL PRIVILEGES ON *.* TO 'db_user'@'%' WITH GRANT OPTION;
 -- Tables Section
 -- _____________ 
 CREATE TABLE
@@ -21,7 +25,6 @@ CREATE TABLE
         status VARCHAR(50) NOT NULL
     ) ENGINE = InnoDB;
 
-
 CREATE TABLE
     Roles (
         role_id INTEGER PRIMARY KEY AUTO_INCREMENT,
@@ -29,7 +32,7 @@ CREATE TABLE
     ) ENGINE = InnoDB;
 
 CREATE TABLE
-    User (
+    `User` (
         user_id INTEGER PRIMARY KEY AUTO_INCREMENT,
         first_name VARCHAR(30) NOT NULL,
         last_name VARCHAR(30) NOT NULL,
@@ -40,9 +43,6 @@ CREATE TABLE
         role INTEGER NOT NULL,
         FOREIGN KEY (role) REFERENCES Roles (role_id)
     ) ENGINE = InnoDB;
-
-
-
 
 CREATE TABLE
     Category (
@@ -66,7 +66,7 @@ CREATE TABLE
         wishlist_id INTEGER PRIMARY KEY AUTO_INCREMENT,
         user_id INTEGER NOT NULL,
         product_id INTEGER NOT NULL,
-        FOREIGN KEY (user_id) REFERENCES User (user_id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES `User` (user_id) ON DELETE CASCADE,
         FOREIGN KEY (product_id) REFERENCES Product (product_id) ON DELETE CASCADE,
         UNIQUE (user_id, product_id) -- Ensures a user cannot add the same product multiple times
     ) ENGINE = InnoDB;
@@ -87,7 +87,7 @@ CREATE TABLE
         user_id INTEGER NOT NULL,
         shipment_id INTEGER NOT NULL,
         payment_id INTEGER NOT NULL,
-        FOREIGN KEY (user_id) REFERENCES User (user_id),
+        FOREIGN KEY (user_id) REFERENCES `User` (user_id),
         FOREIGN KEY (shipment_id) REFERENCES Shipment (shipment_id),
         FOREIGN KEY (payment_id) REFERENCES Payment (payment_id)
     ) ENGINE = InnoDB;
@@ -109,15 +109,17 @@ CREATE TABLE
         user_id INTEGER NOT NULL,
         product_id INTEGER NOT NULL,
         quantity INTEGER NOT NULL,
-        FOREIGN KEY (user_id) REFERENCES User (user_id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES `User` (user_id) ON DELETE CASCADE,
         FOREIGN KEY (product_id) REFERENCES Product (product_id) ON DELETE CASCADE,
         UNIQUE (user_id, product_id) -- Ensures a user cannot have duplicate entries for the same product
     ) ENGINE = InnoDB;
     
 
+
+
+
 -- -----------------------------------------
 -- -- riempio il db
-
 -- inserisco i ruoli
 INSERT INTO `Roles` (`role_id`, `first_name`) VALUES ('1', 'seller');
 INSERT INTO `Roles` (`role_id`, `first_name`) VALUES ('2', 'buyer');
