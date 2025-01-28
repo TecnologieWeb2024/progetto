@@ -17,9 +17,9 @@ class Router
         'orders' => [
             'file' => 'template/orders.php',
             'title' => 'CoffeeBo - Ordini',
-        ],'test' => [
-            'file' => 'template/test.php',
-            'title' => 'CoffeeBo - TEST',
+        ],'registrazione' => [
+            'file' => 'template/registrazione.php',
+            'title' => 'CoffeeBo - Registrazione',
         ]
     ];
 
