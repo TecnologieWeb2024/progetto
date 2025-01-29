@@ -10,15 +10,15 @@
                     <div class="modal-body">
                         <form action="register.php" method="post" class="needs-validation" novalidate>
                             <div class="mb-3">
-                                <label for="name" class="form-label">Nome:</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
+                                <label for="first_name" class="form-label">Nome:</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" required>
                                 <div class="invalid-feedback">
                                     Inserisci il tuo nome.
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label for="surname" class="form-label">Cognome:</label>
-                                <input type="text" class="form-control" id="surname" name="surname" required>
+                                <label for="last_name" class="form-label">Cognome:</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" required>
                                 <div class="invalid-feedback">
                                     Inserisci il tuo cognome.
                                 </div>
