@@ -3,7 +3,7 @@
         <div class="modal-content">
             <div class="modal-header bg-dark text-light">
                 <p class="modal-title" id="loginModalLabel">Login</p>
-                <a href="index.php?page=home" title="close" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></a>
+                <a href="#" title="close" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></a>
             </div>
             <div class="container-fluid d-flex justify-content-center align-items-center">
                 <div class="col-md-4">
@@ -37,10 +37,10 @@
         </div>
     </div>
     <div class="modal-footer fixed-bottom justify-content-center text-center bg-light py-3">
-        Non hai un account?<a href="index.php?page=register" class="btn btn-link">Registrati</a>
+        Non hai un account?<a href="#" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#registerModal" style="text-decoration: none"><em class="fa fa-user-plus"></em>&nbsp;Registrati</a>
     </div>
 </div>
-
+<?php require("register.php"); ?>
 <script>
     (function() {
         'use strict'
