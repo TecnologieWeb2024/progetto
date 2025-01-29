@@ -5,6 +5,8 @@ class DatabaseHelper
     public function __construct($servername, $username, $password, $dbname, $port)
     {
         $this->db = new mysqli($servername, $username, $password, $dbname, $port);
+        mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
         if ($this->db->connect_error) {
             die("Connessione al Database fallita: " . $this->db->connect_error);
         }
@@ -59,8 +61,20 @@ class DatabaseHelper
                 return $user;  // Autenticazione riuscita
             }
         }
-
         // Se l'utente non esiste o la password è errata, ritorna false
         return false;
+    }
+
+    public function registerUser($first_name, $last_name, $email, $password, $phone, $role, $address)
+    {
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+        $query = "INSERT INTO `User`(`first_name`,`last_name`,`email`,`passwordHash`,`address`,`phone_number`,`role`) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("sssssis", $first_name, $last_name, $email, $passwordHash, $address, $phone, $role);
+        if ($stmt->execute()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
