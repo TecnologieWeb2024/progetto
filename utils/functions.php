@@ -2,6 +2,6 @@
 function isUserLoggedIn()
 {
     // TODO: Implement
-    return true;
+    return false;
 }
 ?>
