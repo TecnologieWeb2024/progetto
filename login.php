@@ -40,7 +40,7 @@
         Non hai un account?<a href="#" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#registerModal" style="text-decoration: none"><em class="fa fa-user-plus"></em>&nbsp;Registrati</a>
     </div>
 </div>
-<?php require("register.php"); ?>
+<?php require("registration.php"); ?>
 <script>
     (function() {
         'use strict'
