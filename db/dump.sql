@@ -38,7 +38,7 @@ CREATE TABLE
         last_name VARCHAR(30) NOT NULL,
         email VARCHAR(100) NOT NULL UNIQUE,
         passwordHash VARCHAR(255) NOT NULL,
-        address VARCHAR(100) NOT NULL,
+        address VARCHAR(100), -- Si potrebbe rimuovere il campo, basta che l'utente lo inserisca al momento dell'ordine
         phone_number VARCHAR(12) NOT NULL,
         role INTEGER NOT NULL,
         FOREIGN KEY (role) REFERENCES Roles (role_id)
