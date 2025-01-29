@@ -17,6 +17,10 @@ class Router
         'orders' => [
             'file' => 'template/orders.php',
             'title' => 'CoffeeBo - Ordini',
+        ],
+        'modale' => [
+            'file' => 'template/modale.php',
+            'title' => 'CoffeeBo - modale',
         ]
     ];
 
