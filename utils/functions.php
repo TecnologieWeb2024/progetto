@@ -1,7 +1,7 @@
 <?php
 function isUserLoggedIn()
 {
-    // TODO: Implement
-    return false;
+    return $_SESSION["auth_success"] ?? false;
 }
+
 ?>
