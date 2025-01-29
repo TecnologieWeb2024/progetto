@@ -5,7 +5,7 @@ $_SESSION["testUsername"] = "TestUser";
 require_once("utils/functions.php");
 
 //Includere db
-require_once("db/database.php");
+require_once("db/databaseHelper.php");
 $servername = "localhost";
 $username = "db_user";
 $password = "1234";
