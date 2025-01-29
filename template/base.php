@@ -22,33 +22,33 @@
             </button>
             <div class="col-6 collapse flex-grow-1 navbar-collapse justify-content-center collapsibleNavbar">
                 <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link" href="index.php?page=home"><i class="fa fa-home d-md-none">&nbsp;</i>Home Page</a></li>
-                    <li class="nav-item"><a class="nav-link" href="index.php?page=products"><i class="fa fa-coffee d-md-none">&nbsp;</i>I nostri prodotti</a></li>
-                    <li class="nav-item"><a class="nav-link" href="index.php?page=contacts"><i class="fa fa-file-text-o	d-md-none">&nbsp;</i>Contattaci</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.php?page=home"><em class="fa fa-home d-md-none">&nbsp;</em>Home Page</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.php?page=products"><em class="fa fa-coffee d-md-none">&nbsp;</em>I nostri prodotti</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.php?page=contacts"><em class="fa fa-file-text-o	d-md-none">&nbsp;</em>Contattaci</a></li>
                 </ul>
             </div>
             <div class="col-3 collapse flex-grow-1 navbar-collapse justify-content-end collapsibleNavbar">
                 <?php if (isUserLoggedIn()) : ?>
                     <ul class="navbar-nav">
                         <!-- TODO: Usare icone per Carrello e Logout -->
-                        <li class="nav-item"><a class="nav-link" href="#"><i class="fa fa-shopping-bag">&nbsp;</i><span class="d-md-none">Carrello</span></a></li>
+                        <li class="nav-item"><a class="nav-link" href="#"><em class="fa fa-shopping-bag">&nbsp;</em><span class="d-md-none">Carrello</span></a></li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fa fa-user">&nbsp;</i><span class="d-md-none">Account</span>
+                                <em class="fa fa-user">&nbsp;</em><span class="d-md-none">Account</span>
 
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                <li><a href="#" class="dropdown-item"><i class="fa fa-cog"></i>&nbsp;Impostazioni Account</a></li>
-                                <li><a href="index.php?page=orders" class="dropdown-item"><i class="fa fa-list-alt"></i>&nbsp;I miei ordini</a></li>
-                                <li><a href="#" class="dropdown-item link-danger link-underline-opacity-0"><i class="fa fa-sign-out"></i>&nbsp;Logout</a></li>
+                                <li><a href="#" class="dropdown-item"><em class="fa fa-cog"></em>&nbsp;Impostazioni Account</a></li>
+                                <li><a href="index.php?page=orders" class="dropdown-item"><em class="fa fa-list-alt"></em>&nbsp;I miei ordini</a></li>
+                                <li><a href="#" class="dropdown-item link-danger link-underline-opacity-0"><em class="fa fa-sign-out"></em>&nbsp;Logout</a></li>
                             </ul>
                         </li>
                     </ul>
                 <?php else: ?>
                     <ul class="navbar-nav">
                         <!-- TODO: Usare icone per Login -->
-                        <li class="nav-item"><a href="#" class="btn btn-primary d-none d-md-inline" style="text-decoration: none"><i class="fa fa-sign-in"></i>&nbsp;Login</a></li>
-                        <li class="nav-item"><a href="#" class="link-primary d-inline d-md-none" style="text-decoration: none"><i class="fa fa-sign-in"></i>&nbsp;Login</a></li>
+                        <li class="nav-item"><a href="#" class="btn btn-primary d-none d-md-inline" style="text-decoration: none" data-bs-toggle="modal" data-bs-target="#loginModal"><em class="fa fa-sign-in"></em>&nbsp;Login</a></li>
+                        <li class="nav-item"><a href="#" class="link-primary d-inline d-md-none" style="text-decoration: none" data-bs-toggle="modal" data-bs-target="#loginModal"><em class="fa fa-sign-in"></em>&nbsp;Login</a></li>
                     </ul>
                 <?php endif; ?>
             </div>
@@ -59,14 +59,17 @@
         <?php
         if (!empty($templateParams["main-content"])) :
             require($templateParams["main-content"]);
-        endif
+        endif;
+        if (!isUserLoggedIn()):
+            require("login.php");
+        endif;
         ?>
     </main>
     <aside>
         <?php
         if (!empty($templateParams["aside-content"])) :
             require($templateParams["aside-content"]);
-        endif
+        endif;
         ?>
     </aside>
     <footer class="py-4 bg-dark text-center">
