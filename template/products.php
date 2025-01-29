@@ -1,5 +1,5 @@
-<h1 class="text-center">I nostri prodotti</h1>
 <section>
+    <h2 class="text-center">I nostri prodotti</h2>
     <div class="container">
         <div class="row">
             <?php
@@ -38,10 +38,10 @@
                     <div class="card mb-4">
                         <img src="<?php echo $product['image'] ?>" class="card-img-top" alt="<?php echo $product['name'] ?>">
                         <div class="card-body border border-0">
-                            <h5 class="card-title"><?php echo $product['name'] ?></h5>
+                            <h3 class="card-title"><?php echo $product['name'] ?></h3>
                             <p class="card-text"><?php echo $product['price'] ?>€</p>
                             <!-- TODO: Aggiungere un selettore di quantità -->
-                            <a href="#" class="btn btn-primary float-end"><i class="fa fa-cart-plus"></i></a>
+                            <a href="#" class="btn btn-primary float-end"><em class="fa fa-cart-plus"></em></a>
                         </div>
                     </div>
                 </div>

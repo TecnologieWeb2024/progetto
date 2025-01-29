@@ -4,7 +4,7 @@
         <section>
             <div class="container d-flex justify-content-center">
                 <div class="row m-2 bg-white border border-3 p-4 rounded">
-                    <h4>Ordini recenti</h4>
+                    <h2>Ordini recenti</h2>
                     <?php
                     // TODO: Ovviamente, i dati devono essere recuperati dal database. Recupera gli ultimi 4 ordini
                     $orders = [
@@ -37,7 +37,7 @@
                                 <div class="card-header border border-0">
                                     <!-- NOTE: Il link deve puntare a order.php?id=... -->
                                     <a href="#">
-                                        <h6 class="card-title text-center">Ordinato il: <?php echo $order['date']; ?></h6>
+                                        <p class="card-title text-center">Ordinato il: <?php echo $order['date']; ?></p>
                                     </a>
                                 </div>
                                 <div class="card-body border border-0">
