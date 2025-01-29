@@ -8,7 +8,7 @@
             <div class="container-fluid d-flex justify-content-center align-items-center">
                 <div class="col-md-4">
                     <div class="modal-body">
-                        <form action="authenticate.php" method="post" class="needs-validation" novalidate>
+                        <form action="register.php" method="post" class="needs-validation" novalidate>
                             <div class="mb-3">
                                 <label for="name" class="form-label">Nome:</label>
                                 <input type="text" class="form-control" id="name" name="name" required>
