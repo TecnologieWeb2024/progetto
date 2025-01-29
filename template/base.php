@@ -14,20 +14,20 @@
 <body>
     <nav class="navbar navbar-expand-md bg-dark navbar-dark sticky-top">
         <div class="container-fluid d-flex">
-            <div class="d-flex flex-grow-1">
+            <div class="col-3 d-flex flex-grow-1">
                 <a class="navbar-brand" href="index.php?page=home">COFFEEBO</a>
             </div>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".collapsibleNavbar">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse flex-grow-1 navbar-collapse justify-content-center collapsibleNavbar">
+            <div class="col-6 collapse flex-grow-1 navbar-collapse justify-content-center collapsibleNavbar">
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link" href="index.php?page=home"><i class="fa fa-home d-md-none">&nbsp;</i>Home Page</a></li>
                     <li class="nav-item"><a class="nav-link" href="index.php?page=products"><i class="fa fa-coffee d-md-none">&nbsp;</i>I nostri prodotti</a></li>
                     <li class="nav-item"><a class="nav-link" href="index.php?page=contacts"><i class="fa fa-file-text-o	d-md-none">&nbsp;</i>Contattaci</a></li>
                 </ul>
             </div>
-            <div class="collapse flex-grow-1 navbar-collapse justify-content-end collapsibleNavbar">
+            <div class="col-3 collapse flex-grow-1 navbar-collapse justify-content-end collapsibleNavbar">
                 <?php if (isUserLoggedIn()) : ?>
                     <ul class="navbar-nav">
                         <!-- TODO: Usare icone per Carrello e Logout -->
