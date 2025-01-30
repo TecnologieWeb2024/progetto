@@ -54,4 +54,3 @@ if ($registrationResult !== true) {
 }
 header('Location: index.php');
 ?>
-<div>Result: <?php var_dump($registrationResult) ?></div>
