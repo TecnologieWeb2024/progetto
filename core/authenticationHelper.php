@@ -1,4 +1,5 @@
 <?php
+require_once('core/formFieldsValidator.php');
 class AuthenticationHelper
 {
     private $dbh;
@@ -11,33 +12,29 @@ class AuthenticationHelper
     public function login()
     {
         // Ripulisce gli input
-        $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
+        $email = trim($_POST['email'], FILTER_VALIDATE_EMAIL);
         $password = trim($_POST['password']);
 
         // Validazione degli input
-        if (!$email) {
+        $email = FormFieldsValidator::validateEmail($email);
+        if ($email === false) {
             return ['success' => false, 'message' => 'Email non valida.'];
         }
 
-        if (empty($password)) {
-            return ['success' => false, 'message' => 'Password non può essere vuota.'];
+        if (FormFieldsValidator::validatePassword($password) === false) {
+            return ['success' => false, 'message' => 'Password non valida.'];
         }
 
-        try {
-            $authResult = $this->dbh->authUser($email, $password);
+        $authResult = $this->dbh->authUser($email, $password);
 
-            if ($authResult !== false) {
-                $this->setSessionData($authResult);
-                session_regenerate_id(true);  // Rigenera l'ID della sessione per sicurezza
-                return ['success' => true, 'message' => 'Autenticazione riuscita.'];
-            } else {
-                return ['success' => false, 'message' => 'Email o password errati.'];
-            }
-        } catch (Exception $e) {
-            // Log dell'errore per eventuali problemi durante l'autenticazione
-            error_log('Errore durante il login: ' . $e->getMessage()); // Salva nei log
-            return ['success' => false, 'message' => 'Si è verificato un errore, riprova più tardi.'];
+        if ($authResult !== false) {
+            $this->setSessionData($authResult);
+            session_regenerate_id(true);  // Rigenera l'ID della sessione per sicurezza
+            return ['success' => true, 'message' => 'Autenticazione riuscita.'];
+        } else {
+            return ['success' => false, 'message' => 'Email o password errati.'];
         }
+        return ['success' => false, 'message' => 'Si è verificato un errore, riprova più tardi.'];
     }
 
     private function setSessionData($authResult)
