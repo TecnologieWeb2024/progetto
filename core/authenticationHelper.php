@@ -12,27 +12,23 @@ class AuthenticationHelper
     public function login()
     {
         // Ripulisce gli input
-        $email = trim($_POST['email'], FILTER_VALIDATE_EMAIL);
+        $email = trim($_POST['email']);
         $password = trim($_POST['password']);
 
         // Validazione degli input
-        $email = FormFieldsValidator::validateEmail($email);
-        if ($email === false) {
+        if(!FormFieldsValidator::validateEmail($email)) {
             return ['success' => false, 'message' => 'Email non valida.'];
         }
 
-        if (FormFieldsValidator::validatePassword($password) === false) {
+        if (!FormFieldsValidator::validatePassword($password)) {
             return ['success' => false, 'message' => 'Password non valida.'];
         }
 
         $authResult = $this->dbh->authUser($email, $password);
-
         if ($authResult !== false) {
             $this->setSessionData($authResult);
             session_regenerate_id(true);  // Rigenera l'ID della sessione per sicurezza
             return ['success' => true, 'message' => 'Autenticazione riuscita.'];
-        } else {
-            return ['success' => false, 'message' => 'Email o password errati.'];
         }
         return ['success' => false, 'message' => 'Si è verificato un errore, riprova più tardi.'];
     }
