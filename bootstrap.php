@@ -1,6 +1,7 @@
 <?php 
-session_start();
-$_SESSION["testUsername"] = "TestUser";
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 //Includere functions
 require_once("utils/functions.php");
 
