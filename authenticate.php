@@ -1,15 +1,24 @@
 <?php
 class Authenticator
 {
-    public function login($email, $password)
+    private $dbh;
+
+    public function __construct($dbh)
+    {
+        $this->dbh = $dbh;
+    }
+
+    public function login()
     {
         // Ripulisce gli input
-        $email = trim($email);
-        $password = trim($password);
+        $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
+        $password = trim($_POST['password']);
+
+
+        //unset($_POST['email'], $_POST['password']);
 
         // Chiama il metodo per autenticare l'utente
-        require_once('bootstrap.php');
-        $authResult = $this->authUser($email, $password);
+        $authResult = $this->dbh->authUser($email, $password);
 
         // Se l'autenticazione è riuscita
         if ($authResult !== false) {
@@ -22,18 +31,12 @@ class Authenticator
         return false;
     }
 
-    private function authUser($email, $password)
-    {
-        global $dbh;
-        return $dbh->authUser($email, $password);
-    }
-
     private function setSessionData($authResult)
     {
-        // Rimuove eventuali dati di sessione preesistenti
+        $_SESSION['auth_success'] = false; // di default l'autenticazione non è riuscita.
+
         unset($_SESSION['customer'], $_SESSION['seller']);
 
-        // Determina il ruolo
         $role = '';
         if ($authResult['role'] == 1) {
             $role = 'seller';
@@ -59,12 +62,13 @@ class Authenticator
     }
 }
 
-$authenticator = new Authenticator();
+require_once('bootstrap.php');
+$authenticator = new Authenticator($dbh);
 
-if (isset($_POST['login-email'], $_POST['login-password'])) {
-    if ($authenticator->login($_POST['login-email'], $_POST['login-password'])) {
-        header('Location: index.php');
-    } else {
-        $loginError = 'Email o password errati.';
-    }
+$authenticator->login();
+
+if ($_SESSION['auth_success'] === true) {
+    header('Location: index.php');
+} else {
+    echo 'Email o password errati.';
 }
