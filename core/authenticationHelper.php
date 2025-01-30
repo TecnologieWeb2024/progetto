@@ -16,7 +16,7 @@ class AuthenticationHelper
         $password = trim($_POST['password']);
 
         // Validazione degli input
-        if(!FormFieldsValidator::validateEmail($email)) {
+        if (!FormFieldsValidator::validateEmail($email)) {
             return ['success' => false, 'message' => 'Email non valida.'];
         }
 
@@ -35,7 +35,6 @@ class AuthenticationHelper
 
     private function setSessionData($authResult)
     {
-        $_SESSION['auth_success'] = false; // Di default l'autenticazione non è riuscita.
         unset($_SESSION['customer'], $_SESSION['seller']); // Pulisce le sessioni esistenti
 
         $role = '';
@@ -51,14 +50,35 @@ class AuthenticationHelper
             $_SESSION[$role]['email'] = $authResult['email'];
             $_SESSION[$role]['role'] = $role;
             $_SESSION['user_id'] = $authResult['user_id'];
-            $_SESSION['auth_success'] = true;
         }
     }
 
     public function logout()
     {
-        // Rimuove tutte le variabili di sessione e distrugge la sessione
-        session_unset();
+        // Inizia la sessione, se non è già stata avviata
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Elimina tutte le variabili di sessione
+        unset($_SESSION['customer'], $_SESSION['seller'], $_SESSION['user_id'], $_SESSION['auth']['success']);
+
+        // Elimina il cookie di sessione se esiste
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(
+                session_name(),
+                '',
+                time() - 42000,
+                $params["path"],
+                $params["domain"],
+                $params["secure"],
+                $params["httponly"]
+            );
+        }
+
+        // Distrugge la sessione
         session_destroy();
+        header("Location: index.php");
     }
 }
