@@ -1,33 +1,34 @@
 <?php
 require_once("core/alertGenerator/alertFactory.php");
 
-if (isset($_SESSION['registration_errors'])) {
-    $errors = $_SESSION['registration_errors'];
-    foreach ($errors as $error) {
-        $alert = AlertFactory::createAlert('danger', $error);
-        $alert->display();
-    }
-    unset($_SESSION['registration_errors']);
-}
-
+// Generic error message
 if (isset($_SESSION['error_message'])) {
     $alert = AlertFactory::createAlert('danger', $_SESSION['error_message']);
     $alert->display();
     unset($_SESSION['error_message']);
 }
 
-if (isset($_SESSION['registration_success'])) {
-    $alert = AlertFactory::createAlert('success', $_SESSION['registration_success']);
+// Generic success message
+if (isset($_SESSION['success_message'])) {
+    $alert = AlertFactory::createAlert('success', $_SESSION['success_message']);
     $alert->display();
-    unset($_SESSION['registration_success']);
+    unset($_SESSION['success_message']);
 }
 
-if (isset($_SESSION['auth_message'])) {
-    echo "<script>console.log('" . $_SESSION['auth_message'] . "');</script>";
-    $type = $_SESSION['auth_success'] === true ? 'success' : 'danger';
-    $alert = AlertFactory::createAlert($type, $_SESSION['auth_message']);
+// Registration message
+if (isset($_SESSION['registration'])) {
+    $type = $_SESSION['registration']['success'] === true ? 'success' : 'danger';
+    $alert = AlertFactory::createAlert($type, $_SESSION['registration']['message']);
     $alert->display();
-    unset($_SESSION['auth_message']);
+    unset($_SESSION['registration']);
+}
+
+// Authentication message
+if(isset($_SESSION['auth'])) {
+    $type = $_SESSION['auth']['success'] === true ? 'success' : 'danger';
+    $alert = AlertFactory::createAlert($type, $_SESSION['auth']['message']);
+    $alert->display();
+    unset($_SESSION['auth']);
 }
 
 ?>
