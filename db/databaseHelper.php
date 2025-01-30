@@ -43,21 +43,19 @@ class DatabaseHelper
         $stmt->execute();
     }
 
-    public function authUser($username, $password)
+    public function authUser($email, $password)
     {
         // Recupera l'utente dal database in base al nome utente
-        $query = "SELECT * FROM user WHERE username = ?";
+        $query = "SELECT * FROM `User` WHERE email = ?";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("s", $username);  // Solo il nome utente, la password non serve nella query
+        $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
-
         // Verifica se esiste l'utente
         if ($result->num_rows > 0) {
-            $user = $result->fetch_assoc();  // Ottieni i dati dell'utente
-
-            // Verifica la password usando password_verify()
-            if (password_verify($password, $user['password'])) {
+            $user = $result->fetch_assoc();
+            // Verifica che gli hash delle password corrispondano
+            if (password_verify($password, $user['passwordHash'])) {
                 return $user;  // Autenticazione riuscita
             }
         }
