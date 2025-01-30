@@ -28,7 +28,6 @@ if(isset($_SESSION['auth'])) {
     $type = $_SESSION['auth']['success'] === true ? 'success' : 'danger';
     $alert = AlertFactory::createAlert($type, $_SESSION['auth']['message']);
     $alert->display();
-    unset($_SESSION['auth']);
 }
 
 ?>
