@@ -1,5 +1,5 @@
 <?php
-require_once("app/alertGenerator/alertFactory.php");
+require_once("core/alertGenerator/alertFactory.php");
 
 if (isset($_SESSION['registration_errors'])) {
     $errors = $_SESSION['registration_errors'];

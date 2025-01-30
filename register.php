@@ -2,7 +2,7 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-require_once('app/registrationHelper.php');
+require_once('core/registrationHelper.php');
 require_once('bootstrap.php');
 $registrationHelper = new RegistrationHelper($dbh);
 

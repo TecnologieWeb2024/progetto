@@ -1,5 +1,5 @@
 <?php
-require_once('app/authenticationHelper.php');
+require_once('core/authenticationHelper.php');
 require_once('bootstrap.php');
 $authenticator = new AuthenticationHelper($dbh);
 

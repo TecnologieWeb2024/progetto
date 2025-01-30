@@ -1,7 +1,7 @@
 <?php
-require_once("app/alertGenerator/alert.php");
-require_once("app/alertGenerator/successAlertStrategy.php");
-require_once("app/alertGenerator/dangerAlertStrategy.php");
+require_once("core/alertGenerator/alert.php");
+require_once("core/alertGenerator/successAlertStrategy.php");
+require_once("core/alertGenerator/dangerAlertStrategy.php");
 
 class AlertFactory
 {
