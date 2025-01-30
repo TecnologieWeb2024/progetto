@@ -54,7 +54,13 @@
             </div>
         </div>
     </nav>
-
+    <div>
+        <?php
+        if (!empty($templateParams["alerts"])) :
+            require($templateParams["alerts"]);
+        endif;
+        ?>
+    </div>
     <main class="flex-fill mt-4">
         <?php
         if (!empty($templateParams["main-content"])) :
