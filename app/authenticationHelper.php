@@ -14,28 +14,36 @@ class AuthenticationHelper
         $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
         $password = trim($_POST['password']);
 
-
-        //unset($_POST['email'], $_POST['password']);
-
-        // Chiama il metodo per autenticare l'utente
-        $authResult = $this->dbh->authUser($email, $password);
-
-        // Se l'autenticazione è riuscita
-        if ($authResult !== false) {
-            $this->setSessionData($authResult);
-            session_regenerate_id(true);  // Rigenera l'ID della sessione per sicurezza
-            return true;
+        // Validazione degli input
+        if (!$email) {
+            return ['success' => false, 'message' => 'Email non valida.'];
         }
 
-        // Se l'autenticazione fallisce
-        return false;
+        if (empty($password)) {
+            return ['success' => false, 'message' => 'Password non può essere vuota.'];
+        }
+
+        try {
+            $authResult = $this->dbh->authUser($email, $password);
+
+            if ($authResult !== false) {
+                $this->setSessionData($authResult);
+                session_regenerate_id(true);  // Rigenera l'ID della sessione per sicurezza
+                return ['success' => true, 'message' => 'Autenticazione riuscita.'];
+            } else {
+                return ['success' => false, 'message' => 'Email o password errati.'];
+            }
+        } catch (Exception $e) {
+            // Log dell'errore per eventuali problemi durante l'autenticazione
+            error_log('Errore durante il login: ' . $e->getMessage()); // Salva nei log
+            return ['success' => false, 'message' => 'Si è verificato un errore, riprova più tardi.'];
+        }
     }
 
     private function setSessionData($authResult)
     {
-        $_SESSION['auth_success'] = false; // di default l'autenticazione non è riuscita.
-
-        unset($_SESSION['customer'], $_SESSION['seller']);
+        $_SESSION['auth_success'] = false; // Di default l'autenticazione non è riuscita.
+        unset($_SESSION['customer'], $_SESSION['seller']); // Pulisce le sessioni esistenti
 
         $role = '';
         if ($authResult['role'] == 1) {
@@ -61,4 +69,3 @@ class AuthenticationHelper
         session_destroy();
     }
 }
-?>

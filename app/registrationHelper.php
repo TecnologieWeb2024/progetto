@@ -1,42 +1,62 @@
 <?php
 class RegistrationHelper
 {
+    private $dbh;
+
+    public function __construct($dbh)
+    {
+        $this->dbh = $dbh;
+    }
+
     public function register()
     {
         require_once('bootstrap.php');
-        $errors = [];
+
+        // Pulizia e validazione input
         $email = filter_var($_POST['registration-email'], FILTER_VALIDATE_EMAIL);
         $password = trim($_POST['registration-password']);
         $first_name = htmlspecialchars(trim($_POST['first_name']));
         $last_name = htmlspecialchars(trim($_POST['last_name']));
-        $role = 2; // È possibile registrare solo utenti di tipo customer dal form di registrazione.
-        $phone = $_POST['phone'];
+        $phone = trim($_POST['phone']);
+        $role = 2; // Solo utenti di tipo "customer"
+        $address = ''; // TODO: Decidere se rimuovere dal database
 
+        // Validazioni
         if (!$email) {
-            $errors[] = 'Email non valida.';
+            return ['success' => false, 'message' => 'Email non valida.'];
         }
 
-        // Controllo numero di telefono (da 10 a 15 caratteri con il + all'inizio opzionale)
-        if (!preg_match('/^\+?[0-9]{10,15}$/', $phone)) {
-            $errors[] = 'Numero di telefono non valido.';
+        if (!$this->validatePassword($password)) {
+            return ['success' => false, 'message' => 'La password non soddisfa i requisiti di sicurezza.'];
         }
 
-        if (!empty($errors)) {
-            return ['success' => false, 'errors' => $errors];
+        if (!$this->validatePhone($phone)) {
+            return ['success' => false, 'message' => 'Numero di telefono non valido.'];
         }
 
-        unset($_POST['registration-email'], $_POST['registration-password'], $_POST['first_name'], $_POST['last_name'], $_POST['phone']);
+        // Registrazione utente
+        try {
+            $registrationResult = $this->dbh->registerUser($first_name, $last_name, $email, $password, $phone, $role, $address);
 
-        $address = ''; // TODO: Da decidere se rimuovere da DB.
+            if (!$registrationResult) {
+                throw new RuntimeException('Errore durante la registrazione.');
+            }
 
-        $registrationResult = $dbh->registerUser($first_name, $last_name, $email, $password, $phone, $role, $address);
-        unset($email, $password, $first_name, $last_name, $role, $phone, $address);
-
-        if ($registrationResult) {
             return ['success' => true, 'message' => 'Registrazione avvenuta con successo.'];
-        } else {
-            return ['success' => false, 'errors' => ['Errore durante la registrazione.']];
+        } catch (Exception $e) {
+            // Logga l'errore e restituisci un messaggio generico
+            error_log('Errore nella registrazione: ' . $e->getMessage()); // Salva nei log dell'applicazione
+            return ['success' => false, 'message' => 'Si è verificato un errore, riprova più tardi.'];
         }
     }
+
+    private function validatePassword($password)
+    {
+        return preg_match('/^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[\W_]).{8,}$/', $password);
+    }
+
+    private function validatePhone($phone)
+    {
+        return preg_match('/^\+?[0-9]{10,15}$/', $phone);
+    }
 }
-?>
