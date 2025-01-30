@@ -3,11 +3,15 @@ require_once('app/authenticationHelper.php');
 require_once('bootstrap.php');
 $authenticator = new AuthenticationHelper($dbh);
 
-$authenticator->login();
+$authenticationSuccess = $authenticator->login();
 
-if ($_SESSION['auth_success'] === true) {
-    header('Location: index.php');
+if($authenticationSuccess['success'] === true) {
+    $_SESSION['auth_success'] = true;
+    $_SESSION['auth_message'] = $authenticationSuccess['message'];
 } else {
-    echo 'Email o password errati.';
+    $_SESSION['auth_success'] = false;
+    $_SESSION['auth_message'] = $authenticationSuccess['message'];
 }
+
+header('Location: index.php');
 ?>

@@ -1,15 +1,27 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 require_once('app/registrationHelper.php');
-$registrationHelper = new RegistrationHelper();
+require_once('bootstrap.php');
+$registrationHelper = new RegistrationHelper($dbh);
+
 try {
     $registrationResult = $registrationHelper->register();
 } catch (Exception $e) {
-    return $e->getMessage();
+    // In caso di errore, salva l'errore nella sessione e fai il redirect
+    $_SESSION['error_message'] = 'Si è verificato un errore: ' . $e->getMessage();
 }
 
-if($registrationResult === true) {
-    header('Location: login.php');
+// Verifica se la registrazione ha avuto successo
+if ($registrationResult['success'] === true) {
+    $_SESSION['registration_success'] = $registrationResult['message'];
 } else {
-    echo $registrationResult;
+    if (isset($_SESSION['registration_errors'])) {
+        unset($_SESSION['registration_errors']);
+    }
+    // Salva gli errori nella sessione e fai il redirect alla pagina di registrazione
+    $_SESSION['registration_errors'] = $registrationResult['errors'];
 }
-?>
+
+header('Location: index.php');
