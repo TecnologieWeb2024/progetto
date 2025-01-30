@@ -1,7 +1,7 @@
 <?php
 function isUserLoggedIn()
 {
-    return $_SESSION["auth_success"] ?? false;
+    return $_SESSION['auth']['success'] ?? false;
 }
 
 ?>
