@@ -1,6 +1,6 @@
 <div class="container">
     <?php if (isUserLoggedIn()): ?>
-        <h1 class="text-center">Bentornato, <?php echo $_SESSION["testUsername"] ?></h1>
+        <h1 class="text-center">Bentornato, <?php echo $_SESSION['customer']['first_name'] ?></h1>
         <section>
             <div class="container d-flex justify-content-center">
                 <div class="row m-2 bg-white border border-3 p-4 rounded">
