@@ -18,7 +18,7 @@ class FormFieldsValidator
      */
     public static function validatePassword($password)
     {
-        $pattern = '/^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[\W_]).{8,}$/';
+        $pattern = '/^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,32}$/';
         return self::validate($pattern, $password);
     }
 
@@ -61,9 +61,9 @@ class FormFieldsValidator
      * @param string $pattern
      * @return bool True if the string matches the pattern, false otherwise
      */
-    public static function validate($string, $pattern)
+    public static function validate($pattern, $string)
     {
-        return preg_match($pattern, $string);
+        return preg_match($pattern, $string) === 1;
     }
 }
 ?>
