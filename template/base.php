@@ -67,9 +67,9 @@
     </main>
     <aside>
         <?php
-        if (!empty($templateParams["aside-content"])) :
+        if (!empty($templateParams["aside-content"])) {
             require($templateParams["aside-content"]);
-        endif;
+        }
         ?>
     </aside>
     <footer class="py-4 bg-dark text-center">
