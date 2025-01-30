@@ -1,5 +1,5 @@
 <?php
-require_once("app/alertGenerator/alertStrategy.php");
+require_once("core/alertGenerator/alertStrategy.php");
 
 class Alert
 {

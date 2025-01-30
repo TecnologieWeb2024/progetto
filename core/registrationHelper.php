@@ -1,4 +1,5 @@
 <?php
+require_once('core/formFieldsValidator.php');
 class RegistrationHelper
 {
     private $dbh;
@@ -13,50 +14,45 @@ class RegistrationHelper
         require_once('bootstrap.php');
 
         // Pulizia e validazione input
-        $email = filter_var($_POST['registration-email'], FILTER_VALIDATE_EMAIL);
+        $email = trim($_POST['registration-email']);
         $password = trim($_POST['registration-password']);
-        $first_name = htmlspecialchars(trim($_POST['first_name']));
-        $last_name = htmlspecialchars(trim($_POST['last_name']));
+        $first_name = trim($_POST['first_name']);
+        $last_name = trim($_POST['last_name']);
         $phone = trim($_POST['phone']);
         $role = 2; // Solo utenti di tipo "customer"
         $address = ''; // TODO: Decidere se rimuovere dal database
 
         // Validazioni
-        if (!$email) {
+        if(!FormFieldsValidator::validateEmail($email)) {
             return ['success' => false, 'message' => 'Email non valida.'];
         }
 
-        if (!$this->validatePassword($password)) {
+        if (!FormFieldsValidator::validatePassword($password)) {
             return ['success' => false, 'message' => 'La password non soddisfa i requisiti di sicurezza.'];
         }
 
-        if (!$this->validatePhone($phone)) {
+        if (!FormFieldsValidator::validateName($first_name)) {
+            return ['success' => false, 'message' => 'Nome non valido.'];
+        }
+
+        if (!FormFieldsValidator::validateName($last_name)) {
+            return ['success' => false, 'message' => 'Cognome non valido.'];
+        }
+
+        if (!FormFieldsValidator::validatePhone($phone)) {
             return ['success' => false, 'message' => 'Numero di telefono non valido.'];
         }
 
-        // Registrazione utente
-        try {
-            $registrationResult = $this->dbh->registerUser($first_name, $last_name, $email, $password, $phone, $role, $address);
-
-            if (!$registrationResult) {
-                throw new RuntimeException('Errore durante la registrazione.');
-            }
-
-            return ['success' => true, 'message' => 'Registrazione avvenuta con successo.'];
-        } catch (Exception $e) {
-            // Logga l'errore e restituisci un messaggio generico
-            error_log('Errore nella registrazione: ' . $e->getMessage()); // Salva nei log dell'applicazione
-            return ['success' => false, 'message' => 'Si è verificato un errore, riprova più tardi.'];
+        if (!FormFieldsValidator::validateAddress($address)) {
+            return ['success' => false, 'message' => 'Indirizzo non valido.'];
         }
-    }
 
-    private function validatePassword($password)
-    {
-        return preg_match('/^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[\W_]).{8,}$/', $password);
-    }
+        // Registrazione utente
+        $registrationResult = $this->dbh->registerUser($first_name, $last_name, $email, $password, $phone, $role, $address);
 
-    private function validatePhone($phone)
-    {
-        return preg_match('/^\+?[0-9]{10,15}$/', $phone);
+        if ($registrationResult !== false) {
+            return ['success' => true, 'message' => 'Registrazione avvenuta con successo.'];
+        }
+        return ['success' => false, 'message' => 'Si è verificato un errore, riprova più tardi.'];
     }
 }
