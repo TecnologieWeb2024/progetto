@@ -68,7 +68,7 @@
             </div>
         </section>
     <?php else: ?>
-        <h1>Welcome to CoffeeBo</h1>
+        <h1 class="text-center">Benvenuto su CoffeeBo</h1>
     <?php endif;
     require("template/products.php");
     ?>
