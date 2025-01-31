@@ -96,7 +96,7 @@ class DatabaseHelper
     /**
      * Recupera i primi $n_products prodotti dal database.
      * @param int $n_products
-     * @return array
+     * @return array Un array di prodotti.
      */
     public function getProducts($n_products)
     {
@@ -110,7 +110,7 @@ class DatabaseHelper
 
     /**
      * Recupera tutti i prodotti dal database.
-     * @return array
+     * @return array Un array di prodotti.
      */
     public function getAllProducts()
     {
@@ -126,13 +126,28 @@ class DatabaseHelper
     /**
      * Recupera un ordine dal database in base all'id.
      * @param int $order_id
-     * @return array|null
+     * @return array Un array di ordini.
      */
     public function getOrders($user_id, $n_orders)
     {
         $query = "SELECT * FROM `Order` WHERE user_id = ? LIMIT ?";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("ii", $user_id, $n_orders);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    /**
+     * Recupera tutti gli ordini di un utente dal database.
+     * @param int $user_id L'id dell'utente
+     * @return array Un array di ordini
+     */
+    public function getAllOrders($user_id)
+    {
+        $query = "SELECT * FROM `Order` WHERE user_id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $user_id);
         $stmt->execute();
         $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC);
