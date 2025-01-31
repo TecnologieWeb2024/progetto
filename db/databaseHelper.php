@@ -7,6 +7,9 @@ class DatabaseHelper
         $this->db = new mysqli($servername, $username, $password, $dbname, $port);
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
+        // Imposta il charset a utf8mb4 per supportare emoji e caratteri speciali.
+        $this->db->set_charset("utf8mb4");
+
         if ($this->db->connect_error) {
             die("Connessione al Database fallita: " . $this->db->connect_error);
         }
