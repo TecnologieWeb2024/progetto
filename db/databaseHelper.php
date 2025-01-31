@@ -85,5 +85,16 @@ class DatabaseHelper
         $result = $stmt->get_result();
         return $result->fetch_assoc();
     }
+
+    public function getProducts($n_products)
+    {
+        $query = "SELECT * FROM `Product` LIMIT ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $n_products);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
 }
 ?>
