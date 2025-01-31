@@ -7,11 +7,14 @@ CREATE DATABASE CaffeBoDB;
 USE CaffeBoDB;
 
 -- Elimina l'utente esistente
-DROP USER IF EXISTS 'db_user'@'localhost';
+DROP
+    USER IF EXISTS 'db_user'@'localhost';
 -- Crea un nuovo utente con una password sicura
-CREATE USER 'db_user'@'localhost' IDENTIFIED BY '1234';
+CREATE USER 'db_user'@'localhost' 
+    IDENTIFIED BY '1234';
 -- Concedi privilegi solo sul database specifico
-GRANT ALL PRIVILEGES ON CaffeBoDB.* TO 'db_user'@'localhost';
+GRANT ALL PRIVILEGES 
+    ON CaffeBoDB.* TO 'db_user'@'localhost';
 -- Applica i cambiamenti
 FLUSH PRIVILEGES;
 
@@ -19,7 +22,7 @@ FLUSH PRIVILEGES;
 -- _____________ 
 CREATE TABLE
     Shipment (
-        shipment_id INTEGER PRIMARY KEY,
+        shipment_id INTEGER PRIMARY KEY AUTO_INCREMENT,
         shipment_date DATETIME NOT NULL,
         address VARCHAR(100) NOT NULL,
         status VARCHAR(50) NOT NULL
@@ -28,7 +31,7 @@ CREATE TABLE
 CREATE TABLE
     Roles (
         role_id INTEGER PRIMARY KEY AUTO_INCREMENT,
-        first_name VARCHAR(30) NOT NULL
+        role_name VARCHAR(30) NOT NULL
     ) ENGINE = InnoDB;
 
 CREATE TABLE
@@ -37,8 +40,9 @@ CREATE TABLE
         first_name VARCHAR(30) NOT NULL,
         last_name VARCHAR(30) NOT NULL,
         email VARCHAR(100) NOT NULL UNIQUE,
-        passwordHash VARCHAR(255) NOT NULL,
-        address VARCHAR(100), -- Si potrebbe rimuovere il campo, basta che l'utente lo inserisca al momento dell'ordine
+        passwordHash VARCHAR(60) NOT NULL,
+        address VARCHAR(100),
+        -- Si potrebbe rimuovere il campo, basta che l'utente lo inserisca al momento dell'ordine
         phone_number VARCHAR(12) NOT NULL,
         role INTEGER NOT NULL,
         FOREIGN KEY (role) REFERENCES Roles (role_id)
@@ -54,13 +58,14 @@ CREATE TABLE
     Product (
         product_id INTEGER PRIMARY KEY,
         SKU VARCHAR(100) NOT NULL,
-        description TEXT NOT NULL,
+        product_name VARCHAR(50) NOT NULL,
+        product_description TEXT NOT NULL,
         price DECIMAL(10, 2) NOT NULL,
         stock INTEGER NOT NULL,
         category_id INTEGER NOT NULL,
         FOREIGN KEY (category_id) REFERENCES Category (category_id)
     ) ENGINE = InnoDB;
-    
+
 CREATE TABLE
     Wishlist (
         wishlist_id INTEGER PRIMARY KEY AUTO_INCREMENT,
@@ -93,8 +98,8 @@ CREATE TABLE
     ) ENGINE = InnoDB;
 
 CREATE TABLE
-    Order_Item (
-        order_item_id INTEGER PRIMARY KEY,
+    Order_Detail (
+        order_detail_id INTEGER PRIMARY KEY,
         order_id INTEGER NOT NULL,
         product_id INTEGER NOT NULL,
         quantity INTEGER NOT NULL,
@@ -102,7 +107,7 @@ CREATE TABLE
         FOREIGN KEY (order_id) REFERENCES `Order` (order_id),
         FOREIGN KEY (product_id) REFERENCES `Product` (product_id)
     ) ENGINE = InnoDB;
-    
+
 CREATE TABLE
     Cart (
         cart_id INTEGER PRIMARY KEY AUTO_INCREMENT,
