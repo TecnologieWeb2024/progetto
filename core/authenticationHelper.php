@@ -49,7 +49,7 @@ class AuthenticationHelper
             $_SESSION[$role]['first_name'] = $authResult['first_name'];
             $_SESSION[$role]['email'] = $authResult['email'];
             $_SESSION[$role]['role'] = $role;
-            $_SESSION['user_id'] = $authResult['user_id'];
+            $_SESSION[$role]['user_id'] = $authResult['user_id'];
         }
     }
 
