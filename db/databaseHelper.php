@@ -46,6 +46,14 @@ class DatabaseHelper
         $stmt->execute();
     }
 
+    /* Query User */
+
+    /**
+     * Verifica che mail e password siano corretti e autentica l'utente.
+     * @param string $email
+     * @param string $password
+     * @return array|bool Un array con i dati dell'utente se l'autenticazione è riuscita, false altrimenti.
+     */
     public function authUser($email, $password)
     {
         // Recupera l'utente dal database in base al nome utente
@@ -66,17 +74,46 @@ class DatabaseHelper
         return false;
     }
 
+    /**
+     * Registra un nuovo utente nel database.
+     * @param string $first_name Nome
+     * @param string $last_name Cognome
+     * @param string $email Email
+     * @param string $password Password
+     * @param string $phone Numero di telefono
+     * @param int $role Ruolo (1 = venditore, 2 = cliente)
+     * @param string $address Indirizzo
+     * @return bool True se la registrazione è avvenuta con successo, false altrimenti.
+     */
     public function registerUser($first_name, $last_name, $email, $password, $phone, $role, $address)
     {
+        $this->db->begin_transaction();
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
         $query = "INSERT INTO `User`(`first_name`,`last_name`,`email`,`passwordHash`,`address`,`phone_number`,`role`) VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("sssssis", $first_name, $last_name, $email, $passwordHash, $address, $phone, $role);
         if ($stmt->execute()) {
+            $this->db->rollback();
             return true;
-        } else {
-            return false;
         }
+
+        $this->db->commit();
+        return false;
+    }
+
+    /**
+     * Recupera un utente dal database in base all'id.
+     * @param int $user_id
+     * @return array|null
+     */
+    public function getUserInfo($user_id)
+    {
+        $query = "SELECT * FROM `User` WHERE user_id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
     }
 
     /* Query Prodotti */
@@ -319,4 +356,3 @@ class DatabaseHelper
         return true;
     }
 }
-?>
