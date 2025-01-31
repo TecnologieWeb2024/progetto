@@ -121,5 +121,23 @@ class DatabaseHelper
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
+    /* Query Ordini */
+
+    /**
+     * Recupera un ordine dal database in base all'id.
+     * @param int $order_id
+     * @return array|null
+     */
+    public function getOrders($user_id, $n_orders)
+    {
+        $query = "SELECT * FROM `Order` WHERE user_id = ? LIMIT ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ii", $user_id, $n_orders);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    
 }
 ?>
