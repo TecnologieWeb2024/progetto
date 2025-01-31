@@ -168,6 +168,106 @@ class DatabaseHelper
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    
+    /**
+     * Inserisce un ordine nel database.
+     * @param int $user_id L'id dell'utente
+     * @param array $products Un array di prodotti
+     * @param int $shipment_id L'id della spedizione
+     * @param int $payment_id L'id del pagamento
+     * @return array Un array con il risultato dell'operazione
+     */
+
+    public function insertOrder($user_id, array $products, int $shipment_id, int $payment_id): array
+    {
+        // Inizia la transazione
+        $this->db->begin_transaction();
+
+        // Calcola il prezzo totale dell'ordine
+        $total_price = $this->calculateTotalPrice($products);
+        if ($total_price === false) {
+            $this->db->rollback();
+            return ['success' => false, 'message' => 'Errore nella creazione dell\'ordine: dati prodotto mancanti.'];
+        }
+
+        // Inserisce l'ordine
+        $order_id = $this->insertOrderIntoDatabase($user_id, $total_price, $shipment_id, $payment_id);
+        if ($order_id === false) {
+            $this->db->rollback();
+            return ['success' => false, 'message' => 'Errore nella creazione dell\'ordine. Impossibile inserire l\'ordine.'];
+        }
+
+        // Inserisce i dettagli dell'ordine
+        if (!$this->insertOrderDetails($order_id, $products)) {
+            $this->db->rollback();
+            return ['success' => false, 'message' => 'Errore nella creazione dell\'ordine. Impossibile inserire i dettagli dell\'ordine.'];
+        }
+
+        // Completa la transazione
+        $this->db->commit();
+
+        return ['success' => true, 'message' => 'Ordine #' . $order_id . ' creato con successo.'];
+    }
+
+    /*********************** Funzioni di utility per l'inserimento di un ordine **********************/
+    /**
+     * Calcola il prezzo totale dell'ordine.
+     * @param array $products Un array di prodotti
+     * @return float|bool Il prezzo totale, false in caso di errore
+     */
+    private function calculateTotalPrice(array $products)
+    {
+        $total_price = 0;
+
+        foreach ($products as $product) {
+            if (!isset($product['product_id'], $product['quantity'], $product['price'])) {
+                return false; // Se i dati del prodotto sono incompleti, ritorna false
+            }
+            $total_price += $product['quantity'] * $product['price'];
+        }
+
+        return $total_price;
+    }
+
+    /**
+     * Esegue l'inserimento effettivo dell'ordine nel database.
+     * @param int $user_id L'id dell'utente
+     * @param float $total_price Il prezzo totale dell'ordine
+     * @param int $shipment_id L'id della spedizione
+     * @param int $payment_id L'id del pagamento
+     * @return int|bool L'id dell'ordine appena creato, false in caso di errore
+     */
+    private function insertOrderIntoDatabase($user_id, $total_price, $shipment_id, $payment_id)
+    {
+        $query = "INSERT INTO `Order` (order_date, total_price, user_id, shipment_id, payment_id) VALUES (NOW(), ?, ?, ?, ?)";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("diii", $total_price, $user_id, $shipment_id, $payment_id);
+
+        if (!$stmt->execute()) {
+            return false;
+        }
+
+        return $this->db->insert_id; // Restituisce l'ID dell'ordine appena creato
+    }
+
+    /**
+     * Inserisce i dettagli di un ordine nel database.
+     * @param int $order_id L'id dell'ordine
+     * @param array $products Un array di prodotti
+     * @return bool True se l'inserimento è avvenuto con successo, false altrimenti
+     */
+    private function insertOrderDetails($order_id, array $products)
+    {
+        $query = "INSERT INTO Order_Detail (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)";
+        $stmt = $this->db->prepare($query);
+
+        foreach ($products as $product) {
+            $stmt->bind_param("iiid", $order_id, $product['product_id'], $product['quantity'], $product['price']);
+            if (!$stmt->execute()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
 ?>
