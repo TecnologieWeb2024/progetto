@@ -75,4 +75,15 @@ class DatabaseHelper
             return false;
         }
     }
+
+    public function getProduct($product_id)
+    {
+        $query = "SELECT * FROM `Product` WHERE product_id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $product_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
+    }
 }
+?>
