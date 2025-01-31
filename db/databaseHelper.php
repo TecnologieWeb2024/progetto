@@ -126,6 +126,21 @@ class DatabaseHelper
     /**
      * Recupera un ordine dal database in base all'id.
      * @param int $order_id
+     * @return array Un array con i campi dell'ordine.
+     */
+    public function getOrder($order_id)
+    {
+        $query = "SELECT * FROM `Order` WHERE order_id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $order_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
+    }
+
+    /**
+     * Recupera un ordine dal database in base all'id.
+     * @param int $order_id
      * @return array Un array di ordini.
      */
     public function getOrders($user_id, $n_orders)
