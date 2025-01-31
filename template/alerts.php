@@ -24,10 +24,12 @@ if (isset($_SESSION['registration'])) {
 }
 
 // Authentication message
-if(isset($_SESSION['auth'])) {
+if(isset($_SESSION['auth']) && !isset($_SESSION['auth']['alert_displayed'])) {
     $type = $_SESSION['auth']['success'] === true ? 'success' : 'danger';
     $alert = AlertFactory::createAlert($type, $_SESSION['auth']['message']);
     $alert->display();
+    // I can't use unset() here because I need to keep the 'auth' key in the session.
+    $_SESSION['auth']['alert_displayed'] = true;
 }
 
 ?>
