@@ -2,51 +2,61 @@
 -- -- riempio il db
 -- inserisco i ruoli
 INSERT INTO
-    `Roles` (`role_id`, `first_name`)
+    `Roles` (`role_id`, `role_name`)
 VALUES
-    ('1', 'seller'),
-    ('2', 'buyer');
+    (1, 'seller'),
+    (2, 'customer');
 
--- inserisco un venditore
 INSERT INTO
-    `User` (
-        first_name,
-        last_name,
-        email,
-        passwordHash,
-        address,
-        phone_number,
-        role
-    )
-VALUES
-    (
-        'VenditoreEsempio',
-        'CognomeVenditore',
-        'venditore@example.com',
-        '$2a$12$YdBzuFDfMhBHwgj5HG3doeibBe2AWlkfON69gGQq42Z9yZ9k/Jlrm', -- password: Venditore-1234
-        'Via Esempio 123, Cesena, FC',
-        '3331231231',
-        1
-    );
-
--- Aggiungi Categorie
-INSERT INTO
-    Category (category_id, name)
+    `Category` (`category_id`, `NAME`)
 VALUES
     (1, 'Caffè in grani'),
     (2, 'Caffè macinato'),
     (3, 'Caffè Decaffeinato');
 
--- Aggiungi Prodotti (5 prodotti, 3 diversi tipi di caffè)
 INSERT INTO
-    Product (
-        product_id,
-        SKU,
-        product_name,
-        product_description,
-        price,
-        stock,
-        category_id
+    `User` (
+        `user_id`,
+        `first_name`,
+        `last_name`,
+        `email`,
+        `passwordHash`,
+        `address`,
+        `phone_number`,
+        `role`
+    )
+VALUES
+    (
+        1,
+        'VenditoreEsempio',
+        'CognomeVenditore',
+        'venditore@example.com',
+        '$2a$12$YdBzuFDfMhBHwgj5HG3doeibBe2AWlkfON69gGQq42Z9yZ9k/Jlrm',
+        'Via Esempio 123, Cesena, FC',
+        '3331231231',
+        1
+    ),
+    (
+        5,
+        'ProvaNomeUno',
+        'ProvaCognomeUno',
+        'prova-1@test.com',
+        '$2y$10$kZSfGM9OgyOfrBf8I0WdZutr7lcaXGSRX0ewQlvGs.tJEYIb6EepC',
+        '',
+        '3331231231',
+        2
+    );
+
+INSERT INTO
+    `Product` (
+        `product_id`,
+        `SKU`,
+        `product_name`,
+        `product_description`,
+        `price`,
+        `stock`,
+        `category_id`,
+        `image`
     )
 VALUES
     (
@@ -56,8 +66,9 @@ VALUES
         'Caffè arabica in grani, 250g',
         5.99,
         100,
-        1
-    ), -- Categoria: Caffè in grani
+        1,
+        NULL
+    ),
     (
         2,
         'CAF002',
@@ -65,8 +76,9 @@ VALUES
         'Caffè robusta in grani, 250g',
         4.99,
         150,
-        1
-    ), -- Categoria: Caffè in grani
+        1,
+        NULL
+    ),
     (
         3,
         'CAF003',
@@ -74,8 +86,9 @@ VALUES
         'Caffè macinato, 250g',
         5.49,
         120,
-        2
-    ), -- Categoria: Caffè macinato
+        2,
+        NULL
+    ),
     (
         4,
         'CAF004',
@@ -83,8 +96,9 @@ VALUES
         'Caffè decaffeinato in grani, 250g',
         6.49,
         80,
-        3
-    ), -- Categoria: Caffè Decaffeinato
+        3,
+        NULL
+    ),
     (
         5,
         'CAF005',
@@ -92,8 +106,6 @@ VALUES
         'Caffè decaffeinato macinato, 250g',
         6.99,
         70,
-        3
+        3,
+        NULL
     );
-
--- Categoria: Caffè Decaffeinato
--- Gli utenti devono essere registrati dal sito.
