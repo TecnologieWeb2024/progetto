@@ -172,6 +172,52 @@ class DatabaseHelper
     }
 
     /**
+     * Recupera tutti i prodotti all'interno di un ordine dal database.
+     * @param int $order_id L'id dell'ordine
+     * @return array Un array di prodotti
+     */
+    function getOrderProducts($order_id)
+    {
+        // Prepara la query SQL per ottenere i dettagli dell'ordine
+        $query = "
+            SELECT 
+                p.product_id, 
+                p.product_name AS product_name, 
+                p.price AS product_price, 
+                p.image AS product_image,
+                od.quantity
+            FROM 
+                Order_Detail od
+            JOIN 
+                Product p ON od.product_id = p.product_id
+            WHERE 
+                od.order_id = ?
+        ";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $order_id);
+        if (!$stmt->execute()) {
+            return false;
+        }
+
+        $result = $stmt->get_result();
+
+        $products = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $products[] = [
+                'product_id'    => $row['product_id'],
+                'product_name'  => $row['product_name'],
+                'product_price' => $row['product_price'],
+                'product_image' => $row['product_image'],
+                'quantity'      => $row['quantity']
+            ];
+        }
+        return $products;
+    }
+
+
+    /**
      * Inserisce un ordine nel database.
      * @param int $user_id L'id dell'utente
      * @param array $products Un array di prodotti
