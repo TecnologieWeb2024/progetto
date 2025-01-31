@@ -29,7 +29,7 @@ CREATE TABLE
         `user_id` int (11) NOT NULL,
         `product_id` int (11) NOT NULL,
         `quantity` int (11) NOT NULL
-    ) ENGINE = InnoDB DEFAULT CHARSET = latin1 COLLATE = latin1_swedish_ci;
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 --
@@ -39,7 +39,7 @@ CREATE TABLE
     `Category` (
         `category_id` int (11) NOT NULL,
         `NAME` varchar(100) NOT NULL
-    ) ENGINE = InnoDB DEFAULT CHARSET = latin1 COLLATE = latin1_swedish_ci;
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 --
@@ -53,7 +53,7 @@ CREATE TABLE
         `user_id` int (11) NOT NULL,
         `shipment_id` int (11) NOT NULL,
         `payment_id` int (11) NOT NULL
-    ) ENGINE = InnoDB DEFAULT CHARSET = latin1 COLLATE = latin1_swedish_ci;
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 --
@@ -66,7 +66,7 @@ CREATE TABLE
         `product_id` int (11) NOT NULL,
         `quantity` int (11) NOT NULL,
         `price` decimal(10, 2) NOT NULL
-    ) ENGINE = InnoDB DEFAULT CHARSET = latin1 COLLATE = latin1_swedish_ci;
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 --
@@ -78,7 +78,7 @@ CREATE TABLE
         `payment_date` datetime NOT NULL,
         `payment_method` varchar(100) NOT NULL,
         `amount` decimal(10, 2) NOT NULL
-    ) ENGINE = InnoDB DEFAULT CHARSET = latin1 COLLATE = latin1_swedish_ci;
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 --
@@ -94,7 +94,7 @@ CREATE TABLE
         `stock` int (11) NOT NULL,
         `category_id` int (11) NOT NULL,
         `image` varchar(255) DEFAULT NULL
-    ) ENGINE = InnoDB DEFAULT CHARSET = latin1 COLLATE = latin1_swedish_ci;
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 --
@@ -104,7 +104,7 @@ CREATE TABLE
     `Roles` (
         `role_id` int (11) NOT NULL,
         `role_name` varchar(30) NOT NULL
-    ) ENGINE = InnoDB DEFAULT CHARSET = latin1 COLLATE = latin1_swedish_ci;
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 --
@@ -116,7 +116,7 @@ CREATE TABLE
         `shipment_date` datetime NOT NULL,
         `address` varchar(100) NOT NULL,
         `STATUS` varchar(50) NOT NULL
-    ) ENGINE = InnoDB DEFAULT CHARSET = latin1 COLLATE = latin1_swedish_ci;
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 --
@@ -132,7 +132,7 @@ CREATE TABLE
         `address` varchar(100) DEFAULT NULL,
         `phone_number` varchar(12) NOT NULL,
         `role` int (11) NOT NULL
-    ) ENGINE = InnoDB DEFAULT CHARSET = latin1 COLLATE = latin1_swedish_ci;
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 --
@@ -143,7 +143,7 @@ CREATE TABLE
         `wishlist_id` int (11) NOT NULL,
         `user_id` int (11) NOT NULL,
         `product_id` int (11) NOT NULL
-    ) ENGINE = InnoDB DEFAULT CHARSET = latin1 COLLATE = latin1_swedish_ci;
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 --
 -- Indexes for dumped tables
