@@ -76,6 +76,13 @@ class DatabaseHelper
         }
     }
 
+    /* Query Prodotti */
+
+    /**
+     * Recupera un prodotto dal database in base all'id.
+     * @param int $product_id
+     * @return array|null
+     */
     public function getProduct($product_id)
     {
         $query = "SELECT * FROM `Product` WHERE product_id = ?";
@@ -86,6 +93,11 @@ class DatabaseHelper
         return $result->fetch_assoc();
     }
 
+    /**
+     * Recupera i primi $n_products prodotti dal database.
+     * @param int $n_products
+     * @return array
+     */
     public function getProducts($n_products)
     {
         $query = "SELECT * FROM `Product` LIMIT ?";
@@ -95,6 +107,11 @@ class DatabaseHelper
         $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC);
     }
+
+    /**
+     * Recupera tutti i prodotti dal database.
+     * @return array
+     */
     public function getAllProducts()
     {
         $query = "SELECT * FROM `Product`";
