@@ -23,7 +23,8 @@
                     <div class="card mb-4">
                         <img src="<?php echo $product['image'] ?>" class="card-img-top" alt="<?php echo $product['name'] ?>">
                         <div class="card-body border border-0">
-                            <h3 class="card-title"><?php echo $product['product_name'] ?></h3>
+                            <!-- NOTE: L'altezza minima è impostata per supportare titoli che occupano più di una riga -->
+                            <h3 class="card-title" style="min-height: 4em;"><?php echo $product['product_name'] ?></h3>
                             <p class="card-text"><?php echo $product['price'] ?>€</p>
                             <!-- TODO: Aggiungere un selettore di quantità -->
                             <a href="#" title="add-to-cart" class="btn btn-primary float-end"><em class="fa fa-cart-plus"></em></a>
