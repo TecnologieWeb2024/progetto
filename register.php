@@ -9,5 +9,5 @@ $registrationResult = $registrationHelper->register();
 $_SESSION['registration']['success'] = $registrationResult['success'];
 $_SESSION['registration']['message'] = $registrationResult['message'];
 
-header('Location: index.php');
+header('Location: /index.php');
 ?>
