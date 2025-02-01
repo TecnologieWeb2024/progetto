@@ -1,7 +1,7 @@
 <?php
 require_once("core/alertGenerator/alertFactory.php");
 
-class AlertManager
+class AlertGenerator
 {
     /**
      * Seleziona il tipo di alert da visualizzare e crea l'oggetto Alert corrispondente, quindi lo visualizza.

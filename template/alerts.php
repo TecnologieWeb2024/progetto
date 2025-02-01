@@ -1,8 +1,8 @@
 <?php
 require_once("core/alertGenerator/alertFactory.php");
-require_once("core/alertGenerator/alertManager.php");
+require_once("core/alertGenerator/alertGenerator.php");
 
-AlertManager::displayAllAlerts();
+AlertGenerator::displayAllAlerts();
 ?>
 
 <script>
