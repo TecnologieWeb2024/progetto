@@ -52,7 +52,7 @@ class DatabaseHelper
      * Verifica che mail e password siano corretti e autentica l'utente.
      * @param string $email
      * @param string $password
-     * @return array|bool Un array con i dati dell'utente se l'autenticazione è riuscita, false altrimenti.
+     * @return array|array Un array con i dati dell'utente se l'autenticazione è riuscita o ['success' => false, 'message' => '...'] in caso di errore.
      */
     public function authUser($email, $password)
     {
@@ -69,9 +69,10 @@ class DatabaseHelper
             if (password_verify($password, $user['passwordHash'])) {
                 return $user;  // Autenticazione riuscita
             }
+            return ['success' => false, 'message' => 'Password errata'];
         }
         // Se l'utente non esiste o la password è errata, ritorna false
-        return false;
+        return ['success' => false, 'message' => 'Utente non trovato'];
     }
 
     /**
@@ -83,7 +84,7 @@ class DatabaseHelper
      * @param string $phone Numero di telefono
      * @param int $role Ruolo (1 = venditore, 2 = cliente)
      * @param string $address Indirizzo
-     * @return bool True se la registrazione è avvenuta con successo, false altrimenti.
+     * @return array ['success' => true|false, 'message' => '...'].
      */
     public function registerUser($first_name, $last_name, $email, $password, $phone, $role, $address)
     {
@@ -92,13 +93,13 @@ class DatabaseHelper
         $query = "INSERT INTO `User`(`first_name`,`last_name`,`email`,`passwordHash`,`address`,`phone_number`,`role`) VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("sssssis", $first_name, $last_name, $email, $passwordHash, $address, $phone, $role);
-        if ($stmt->execute()) {
+        if (!$stmt->execute()) {
             $this->db->rollback();
-            return true;
+            return ['success' => false, 'message' => 'Errore nella registrazione dell\'utente.'];
         }
 
         $this->db->commit();
-        return false;
+        return ['success' => true, 'message' => 'Registrazione avvenuta con successo.'];
     }
 
     /**
@@ -196,7 +197,7 @@ class DatabaseHelper
     /**
      * Recupera tutti gli ordini di un utente dal database.
      * @param int $user_id L'id dell'utente
-     * @return array Un array di ordini
+     * @return array Un array di ordini.
      */
     public function getAllOrders($user_id)
     {
@@ -211,7 +212,7 @@ class DatabaseHelper
     /**
      * Recupera tutti i prodotti all'interno di un ordine dal database.
      * @param int $order_id L'id dell'ordine
-     * @return array Un array di prodotti
+     * @return array|array Un array di prodotti o ['success' => false, 'message' => '...'] in caso di errore.
      */
     function getOrderProducts($order_id)
     {
@@ -234,7 +235,7 @@ class DatabaseHelper
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("i", $order_id);
         if (!$stmt->execute()) {
-            return false;
+            return ['success' => false, 'message' => 'Impossibile ottenere i dettagli dell\'ordine #'.$order_id];
         }
 
         $result = $stmt->get_result();
@@ -260,35 +261,30 @@ class DatabaseHelper
      * @param array $products Un array di prodotti
      * @param int $shipment_id L'id della spedizione
      * @param int $payment_id L'id del pagamento
-     * @return array Un array con il risultato dell'operazione
+     * @return array ['success' => true|false, 'message' => '...'] in base all'esito dell'operazione.
      */
 
     public function insertOrder($user_id, array $products, int $shipment_id, int $payment_id): array
     {
-        // Inizia la transazione
         $this->db->begin_transaction();
 
-        // Calcola il prezzo totale dell'ordine
         $total_price = $this->calculateTotalPrice($products);
         if ($total_price === false) {
             $this->db->rollback();
             return ['success' => false, 'message' => 'Errore nella creazione dell\'ordine: dati prodotto mancanti.'];
         }
 
-        // Inserisce l'ordine
         $order_id = $this->insertOrderIntoDatabase($user_id, $total_price, $shipment_id, $payment_id);
         if ($order_id === false) {
             $this->db->rollback();
             return ['success' => false, 'message' => 'Errore nella creazione dell\'ordine. Impossibile inserire l\'ordine.'];
         }
 
-        // Inserisce i dettagli dell'ordine
         if (!$this->insertOrderDetails($order_id, $products)) {
             $this->db->rollback();
             return ['success' => false, 'message' => 'Errore nella creazione dell\'ordine. Impossibile inserire i dettagli dell\'ordine.'];
         }
 
-        // Completa la transazione
         $this->db->commit();
 
         return ['success' => true, 'message' => 'Ordine #' . $order_id . ' creato con successo.'];
