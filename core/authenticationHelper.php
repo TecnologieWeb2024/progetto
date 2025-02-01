@@ -37,7 +37,12 @@ class AuthenticationHelper
 
     private function setSessionData($authResult)
     {
-        unset($_SESSION['customer'], $_SESSION['seller']); // Pulisce le sessioni esistenti
+        if (isset($_SESSION['customer'])) {
+            unset($_SESSION['customer']);
+        }
+        if (isset($_SESSION['seller'])) {
+            unset($_SESSION['seller']);
+        }
 
         $role = '';
         if ($authResult['role'] == 1) {
@@ -57,11 +62,6 @@ class AuthenticationHelper
 
     public function logout()
     {
-        // Inizia la sessione, se non è già stata avviata
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
         // Elimina tutte le variabili di sessione
         unset($_SESSION['customer'], $_SESSION['seller'], $_SESSION['user_id'], $_SESSION['auth']['success']);
 
@@ -78,9 +78,9 @@ class AuthenticationHelper
                 $params["httponly"]
             );
         }
-
         // Distrugge la sessione
         session_destroy();
-        header("Location: index.php");
+
+        session_start();
     }
 }
