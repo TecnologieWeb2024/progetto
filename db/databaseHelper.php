@@ -91,16 +91,27 @@ class DatabaseHelper
         $this->db->begin_transaction();
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
         $query = "INSERT INTO `User`(`first_name`,`last_name`,`email`,`passwordHash`,`address`,`phone_number`,`role`) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("sssssis", $first_name, $last_name, $email, $passwordHash, $address, $phone, $role);
-        if (!$stmt->execute()) {
-            $this->db->rollback();
-            return ['success' => false, 'message' => 'Errore nella registrazione dell\'utente.'];
-        }
 
-        $this->db->commit();
-        return ['success' => true, 'message' => 'Registrazione avvenuta con successo.'];
+        try {
+            $stmt = $this->db->prepare($query);
+            $stmt->bind_param("sssssis", $first_name, $last_name, $email, $passwordHash, $address, $phone, $role);
+
+            if ($stmt->execute() === false) {
+                $this->db->rollback();
+                return ['success' => false, 'message' => 'Errore nella registrazione dell\'utente.'];
+            }
+            $this->db->commit();
+            return ['success' => true, 'message' => 'Registrazione avvenuta con successo.'];
+        } catch (mysqli_sql_exception $e) {
+            $this->db->rollback();
+            // Puoi verificare l'errore specifico (es. duplicate entry) e personalizzare il messaggio
+            if ($e->getCode() === 1062) { // Duplicate entry
+                return ['success' => false, 'message' => 'L\'email è già in uso.'];
+            }
+            return ['success' => false, 'message' => 'Errore nella registrazione: ' . $e->getMessage()];
+        }
     }
+
 
     /**
      * Recupera un utente dal database in base all'id.
@@ -235,7 +246,7 @@ class DatabaseHelper
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("i", $order_id);
         if (!$stmt->execute()) {
-            return ['success' => false, 'message' => 'Impossibile ottenere i dettagli dell\'ordine #'.$order_id];
+            return ['success' => false, 'message' => 'Impossibile ottenere i dettagli dell\'ordine #' . $order_id];
         }
 
         $result = $stmt->get_result();
@@ -321,10 +332,14 @@ class DatabaseHelper
     private function insertOrderIntoDatabase($user_id, $total_price, $shipment_id, $payment_id)
     {
         $query = "INSERT INTO `Order` (order_date, total_price, user_id, shipment_id, payment_id) VALUES (NOW(), ?, ?, ?, ?)";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("diii", $total_price, $user_id, $shipment_id, $payment_id);
 
-        if (!$stmt->execute()) {
+        try {
+            $stmt = $this->db->prepare($query);
+            $stmt->bind_param("diii", $total_price, $user_id, $shipment_id, $payment_id);
+            if($stmt->execute() === false) {
+                return false;
+            }
+        } catch (mysqli_sql_exception $e) {
             return false;
         }
 
@@ -340,13 +355,17 @@ class DatabaseHelper
     private function insertOrderDetails($order_id, array $products)
     {
         $query = "INSERT INTO Order_Detail (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)";
-        $stmt = $this->db->prepare($query);
+        try{
+            $stmt = $this->db->prepare($query);
 
-        foreach ($products as $product) {
-            $stmt->bind_param("iiid", $order_id, $product['product_id'], $product['quantity'], $product['price']);
-            if (!$stmt->execute()) {
-                return false;
+            foreach ($products as $product) {
+                $stmt->bind_param("iiid", $order_id, $product['product_id'], $product['quantity'], $product['price']);
+                if($stmt->execute() === false) {
+                    return false;
+                }
             }
+        } catch (mysqli_sql_exception $e) {
+            return false;
         }
 
         return true;
