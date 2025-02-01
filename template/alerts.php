@@ -24,12 +24,19 @@ if (isset($_SESSION['registration'])) {
 }
 
 // Authentication message
-if(isset($_SESSION['auth']) && !isset($_SESSION['auth']['alert_displayed'])) {
-    $type = $_SESSION['auth']['success'] === true ? 'success' : 'danger';
-    $alert = AlertFactory::createAlert($type, $_SESSION['auth']['message']);
-    $alert->display();
-    // I can't use unset() here because I need to keep the 'auth' key in the session.
-    $_SESSION['auth']['alert_displayed'] = true;
+if (isset($_SESSION['auth'])) {
+    // Se non abbiamo ancora visualizzato l'alert oppure l'ID corrente è diverso da quello già mostrato...
+    if (!isset($_SESSION['auth']['last_alert_displayed']) ||
+        $_SESSION['auth']['last_alert_displayed'] !== $_SESSION['auth']['alert_id']) {
+
+        // Determina il tipo dell'alert in base al successo o fallimento
+        $type = $_SESSION['auth']['success'] === true ? 'success' : 'danger';
+        $alert = AlertFactory::createAlert($type, $_SESSION['auth']['message']);
+        $alert->display();
+
+        // Registra l'ID dell'alert appena mostrato
+        $_SESSION['auth']['last_alert_displayed'] = $_SESSION['auth']['alert_id'];
+    }
 }
 
 ?>

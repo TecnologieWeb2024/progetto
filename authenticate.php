@@ -5,8 +5,11 @@ $authenticator = new AuthenticationHelper($dbh);
 
 $authenticationSuccess = $authenticator->login();
 
-$_SESSION['auth']['success'] = $authenticationSuccess['success'];
-$_SESSION['auth']['message'] = $authenticationSuccess['message'];
+$_SESSION['auth'] = [
+    'success' => $authenticationSuccess['success'],
+    'message' => $authenticationSuccess['message'],
+    'alert_id' => uniqid()
+];
 
 header('Location: index.php');
 ?>

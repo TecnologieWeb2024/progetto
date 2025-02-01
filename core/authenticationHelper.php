@@ -25,12 +25,14 @@ class AuthenticationHelper
         }
 
         $authResult = $this->dbh->authUser($email, $password);
-        if ($authResult !== false) {
-            $this->setSessionData($authResult);
-            session_regenerate_id(true);  // Rigenera l'ID della sessione per sicurezza
-            return ['success' => true, 'message' => 'Autenticazione riuscita.'];
+        if (isset($authResult['success']) && $authResult['success'] === false) {
+            $_SESSION['auth']['success'] = false;
+            $_SESSION['auth']['message'] = $authResult['message'];
+            return ['success' => $authResult['success'], 'message' => $authResult['message']];
         }
-        return ['success' => false, 'message' => 'Si è verificato un errore, riprova più tardi.'];
+        $this->setSessionData($authResult);
+        session_regenerate_id(true);
+        return ['success' => true, 'message' => 'Autenticazione riuscita.'];
     }
 
     private function setSessionData($authResult)
