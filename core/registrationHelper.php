@@ -48,11 +48,7 @@ class RegistrationHelper
         }
 
         // Registrazione utente
-        $registrationResult = $this->dbh->registerUser($first_name, $last_name, $email, $password, $phone, $role, $address);
+        return $this->dbh->registerUser($first_name, $last_name, $email, $password, $phone, $role, $address);
 
-        if ($registrationResult !== false) {
-            return ['success' => true, 'message' => 'Registrazione avvenuta con successo.'];
-        }
-        return ['success' => false, 'message' => 'Si è verificato un errore, riprova più tardi.'];
     }
 }
