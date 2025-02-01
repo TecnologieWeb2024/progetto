@@ -112,6 +112,51 @@ class DatabaseHelper
         }
     }
 
+    /**
+     * Aggiorna la password di un utente nel database.
+     * @param int $user_id
+     * @param string $new_password
+     * @return array ['success' => true|false, 'message' => '...'] in base all'esito dell'operazione.
+     */
+    public function updatePassword(int $user_id, string $new_password): array
+    {
+        // Controlla la password attuale dell'utente
+        $query = "SELECT passwordHash FROM `User` WHERE user_id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $user_id); // Cambiato "s" in "i"
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        // Se l'utente non esiste
+        if ($result->num_rows === 0) {
+            return ['success' => false, 'message' => 'Utente non trovato.'];
+        }
+
+        $old_password = $result->fetch_assoc()['passwordHash'];
+
+        // La nuova password non può essere uguale a quella attuale
+        if (password_verify($new_password, $old_password)) {
+            return ['success' => false, 'message' => 'La nuova password non può essere uguale a quella attuale.'];
+        }
+
+        $new_passwordHash = password_hash($new_password, PASSWORD_DEFAULT);
+
+        $this->db->begin_transaction();
+        $query = "UPDATE `User` SET passwordHash = ? WHERE user_id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("si", $new_passwordHash, $user_id);
+
+        if (!$stmt->execute()) {
+            $this->db->rollback();
+            return ['success' => false, 'message' => 'Errore nell\'aggiornamento della password.'];
+        }
+
+        if($this->db->commit()) {
+            return ['success' => true, 'message' => 'Password aggiornata con successo.'];
+        }
+        $this->db->rollback();
+        return ['success' => false, 'message' => 'Errore nel salvataggio della password: rollback eseguito.'];
+    }
 
     /**
      * Recupera un utente dal database in base all'id.
@@ -336,7 +381,7 @@ class DatabaseHelper
         try {
             $stmt = $this->db->prepare($query);
             $stmt->bind_param("diii", $total_price, $user_id, $shipment_id, $payment_id);
-            if($stmt->execute() === false) {
+            if ($stmt->execute() === false) {
                 return false;
             }
         } catch (mysqli_sql_exception $e) {
@@ -355,12 +400,12 @@ class DatabaseHelper
     private function insertOrderDetails($order_id, array $products)
     {
         $query = "INSERT INTO Order_Detail (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)";
-        try{
+        try {
             $stmt = $this->db->prepare($query);
 
             foreach ($products as $product) {
                 $stmt->bind_param("iiid", $order_id, $product['product_id'], $product['quantity'], $product['price']);
-                if($stmt->execute() === false) {
+                if ($stmt->execute() === false) {
                     return false;
                 }
             }
