@@ -1,7 +1,7 @@
 <?php
 require_once('bootstrap.php');
 if (!isset($_SESSION['customer']['user_id'])) {
-    header('Location: login.php');
+    header('Location: /login.php');
     exit;
 }
 $orders = $dbh->getAllOrders($_SESSION['customer']['user_id']);

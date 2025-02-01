@@ -5,7 +5,7 @@ $user = $dbh->getUserInfo($_SESSION['customer']['user_id']);
 ?>
 <h1 class="text-center">Impostazioni Account</h1>
 <div class="container col-md-4 mt-4">
-    <form action="update_account.php" method="post">
+    <form action="/updateAccount.php" method="post">
         <div class="form-group">
             <label class="mt-2" for="first_name">Nome:</label>
             <input type="text" class="form-control mt-2" id="first_name" value="<?php echo htmlspecialchars($user['first_name']); ?>" readonly>
@@ -20,8 +20,8 @@ $user = $dbh->getUserInfo($_SESSION['customer']['user_id']);
         </div>
         <h6 class="mt-4 text-danger text-center">Modifica Password</h6>
         <div class="form-group">
-            <label for="password">Nuova Password:</label>
-            <input type="password" class="form-control" id="password" name="password">
+            <label for="new_password">Nuova Password:</label>
+            <input type="password" class="form-control" id="new_password" name="new_password">
         </div>
         <div class="form-group">
             <label for="confirm_password">Conferma Password:</label>
