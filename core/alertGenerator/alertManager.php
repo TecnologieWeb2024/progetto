@@ -3,55 +3,56 @@ require_once("core/alertGenerator/alertFactory.php");
 
 class AlertManager
 {
+    /**
+     * Seleziona il tipo di alert da visualizzare e crea l'oggetto Alert corrispondente, quindi lo visualizza.
+     * @param bool $success true per alert di successo, false per alert di errore.
+     * @param string $message Il messaggio da visualizzare nell'alert.
+     */
+    public static function processAlert($success, $message)
+    {
+        $type = $success === true || $success === '1' ? 'success' : 'danger';
+        $alert = AlertFactory::createAlert($type, $message);
+        $alert->display();
+    }
+
+    /**
+     * Visualizza tutti gli alert presenti nella sessione e li rimuove dopo la visualizzazione.
+     */
     public static function displayAllAlerts()
     {
-        // Generic error message
+        // Example for simple session alerts using the common method
         if (isset($_SESSION['error_message'])) {
-            $alert = AlertFactory::createAlert('danger', $_SESSION['error_message']);
-            $alert->display();
+            self::processAlert(false, $_SESSION['error_message']);
             unset($_SESSION['error_message']);
         }
-
-        // Generic success message
         if (isset($_SESSION['success_message'])) {
-            $alert = AlertFactory::createAlert('success', $_SESSION['success_message']);
-            $alert->display();
+            self::processAlert(true, $_SESSION['success_message']);
             unset($_SESSION['success_message']);
         }
 
-        // Registration message
+        // Special case: registration alert stored as array with a success flag and message
         if (isset($_SESSION['registration'])) {
-            $type = $_SESSION['registration']['success'] === true ? 'success' : 'danger';
-            $alert = AlertFactory::createAlert($type, $_SESSION['registration']['message']);
-            $alert->display();
+            self::processAlert($_SESSION['registration']['success'], $_SESSION['registration']['message']);
             unset($_SESSION['registration']);
         }
 
-        // Authentication message
+        // Special case: authentication alert with duplicate prevention
         if (isset($_SESSION['auth'])) {
-            // Se non abbiamo ancora visualizzato l'alert oppure l'ID corrente è diverso da quello già mostrato...
             if (
                 !isset($_SESSION['auth']['last_alert_displayed']) ||
                 $_SESSION['auth']['last_alert_displayed'] !== $_SESSION['auth']['alert_id']
             ) {
-
-                // Determina il tipo dell'alert in base al successo o fallimento
-                $type = $_SESSION['auth']['success'] === true ? 'success' : 'danger';
-                $alert = AlertFactory::createAlert($type, $_SESSION['auth']['message']);
-                $alert->display();
-
-                // Registra l'ID dell'alert appena mostrato
+                self::processAlert($_SESSION['auth']['success'], $_SESSION['auth']['message']);
                 $_SESSION['auth']['last_alert_displayed'] = $_SESSION['auth']['alert_id'];
             }
         }
 
-        // Password change message
+        // Process cookie alerts (example: password_change)
         if (isset($_COOKIE['password_change']['message'])) {
-            $type = $_COOKIE['password_change']['success'] == '1' ? 'success' : 'danger';
-            $alert = AlertFactory::createAlert($type, $_COOKIE['password_change']['message']);
-            $alert->display();
+            self::processAlert($_COOKIE['password_change']['success'], $_COOKIE['password_change']['message']);
             setcookie('password_change[success]', '', time() - 3600, '/');
             setcookie('password_change[message]', '', time() - 3600, '/');
         }
     }
 }
+?>
