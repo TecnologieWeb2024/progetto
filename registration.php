@@ -8,7 +8,8 @@
             <div class="container-fluid d-flex justify-content-center align-items-center">
                 <div class="col-md-4">
                     <div class="modal-body">
-                        <form action="register.php" method="post" class="needs-validation" novalidate>
+
+                        <form id="myForm" action="register.php" method="post" class="needs-validation" novalidate>
                             <div class="mb-3">
                                 <label for="first_name" class="form-label">Nome:</label>
                                 <input type="text" class="form-control" id="first_name" name="first_name" required>
@@ -52,9 +53,26 @@
                                     Inserisci un numero di telefono.
                                 </div>
                             </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipoCliente" id="buyer" value="2" checked>
+                                <label class="form-check-label" for="buyer">
+                                    Sono un cliente
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipoCliente" id="seller" value="1">
+                                <label class="form-check-label" for="seller">
+                                    Sono un venditore
+                                </label>
+                            </div>
+
+
+
                             <button type="submit" class="btn btn-primary w-100">Registrati</button>
                         </form>
                     </div>
+                    <button onclick="logFormValues('myForm')">Log Form Values</button>
                 </div>
             </div>
         </div>
@@ -63,6 +81,26 @@
         Sei già registrato?<a href="#" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#loginModal" style="text-decoration: none"><em class="fa fa-sign-in"></em>&nbsp;Login</a>
     </div>
 </div>
+
+<script>
+    function logFormValues(formId="myForm") {
+    const form = document.getElementById(formId);
+    if (!form) {
+        console.error("Form not found!");
+        return;
+    }
+    
+    const formData = new FormData(form);
+    
+    formData.forEach((value, key) => {
+        console.log(`${key}: ${value}`);
+    });
+}
+
+
+</script>
+
+
 
 <script>
     // Example starter JavaScript for disabling form submissions if there are invalid fields
@@ -85,4 +123,4 @@
                 }, false)
             })
     })();
-</script>
+</scrip>
