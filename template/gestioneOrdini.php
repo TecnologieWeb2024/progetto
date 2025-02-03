@@ -11,13 +11,16 @@ require_once('bootstrap.php');
 <div>
 
     <?php 
-    $products = $dbh->getAllProducts();
-    $totalProducts = count($products);
+    $orders = $dbh->getAllOrders(); // ? Aggiungere range?
+    
+    $totalOrders = count($orders);
     ?>
-    <!-- // TODO creare query per gli ordini
-    // TODO totale ordini
-    // TODO totale ordini da evadere
-    // TODO totale ordini evasi
-    // TODO totale ordini conclusi -->
-    <h5>Nel DB ci sono <?php echo $totalProducts ?> prodotti</h5>
+    CIAO
+    <!-- 
+        // TODO totale ordini
+        // TODO totale ordini da evadere
+        // TODO totale ordini evasi
+        // TODO totale ordini conclusi -->
+        <h5>Nel DB ci sono <?php echo $totalOrders ?> prodotti</h5>
+        <h5>ORDINI <?php print_r($orders) ?> </h5>
 </div>

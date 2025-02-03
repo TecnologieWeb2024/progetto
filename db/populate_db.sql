@@ -81,7 +81,7 @@ VALUES
         5.99,
         100,
         1,
-        NULL
+        'assets\\img\\products\\CAFF001.jpg'
     ),
     (
         2,
@@ -91,7 +91,7 @@ VALUES
         4.99,
         150,
         1,
-        NULL
+        'assets\\img\\products\\CAFF001.jpg'
     ),
     (
         3,
@@ -101,7 +101,7 @@ VALUES
         5.49,
         120,
         2,
-        NULL
+        'assets\\img\\products\\CAFF001.jpg'
     ),
     (
         4,
@@ -111,7 +111,7 @@ VALUES
         6.49,
         80,
         3,
-        NULL
+        'assets\\img\\products\\CAFF001.jpg'
     ),
     (
         5,
@@ -121,7 +121,7 @@ VALUES
         6.99,
         70,
         3,
-        NULL
+        'assets\\img\\products\\CAFF001.jpg'
     );
     
 INSERT INTO `order` (`order_id`, `total_price`, `user_id`, `order_state_id`) VALUES ('1', '10', '1', '1');
