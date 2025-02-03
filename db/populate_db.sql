@@ -14,6 +14,20 @@ VALUES
     (2, 'Caffè macinato'),
     (3, 'Caffè Decaffeinato');
 
+
+INSERT INTO
+    `order_state` (`order_state_id`, `descrizione`)
+VALUES
+    ('1', 'in elaborazione'),
+    ('2', 'spedito'),
+    ('3', 'in consegna'),
+    ('4', 'consegnato'),
+    ('5', 'cancellato'),
+    ('6', 'disperso'),
+    ('7', 'rimborsato');
+
+
+
 INSERT INTO
     `User` (
         `user_id`,
@@ -109,3 +123,4 @@ VALUES
         3,
         NULL
     );
+
