@@ -68,12 +68,7 @@ CREATE TABLE `Cart` (
     FOREIGN KEY (`product_id`) REFERENCES `Product` (`product_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
-CREATE TABLE `Shipment` (
-    `shipment_id` int (11) NOT NULL PRIMARY KEY,
-    `shipment_date` datetime NOT NULL,
-    `address` varchar(100) NOT NULL,
-    `STATUS` varchar(50) NOT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+
 
 CREATE TABLE `Order_state` (
     `order_state_id` int (11) NOT NULL PRIMARY KEY,
@@ -82,15 +77,11 @@ CREATE TABLE `Order_state` (
 
 CREATE TABLE `Order` (
     `order_id` int (11) NOT NULL PRIMARY KEY,
-    `order_date` datetime NOT NULL,
+    `order_date` datetime DEFAULT (CURRENT_DATE),
     `total_price` decimal(10, 2) NOT NULL,
     `user_id` int (11) NOT NULL,
-    `shipment_id` int (11) NOT NULL,
-    `payment_id` int (11) NOT NULL,
     `order_state_id` int (11) NOT NULL,
     FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`),
-    FOREIGN KEY (`shipment_id`) REFERENCES `Shipment` (`shipment_id`),
-    FOREIGN KEY (`payment_id`) REFERENCES `Payment` (`payment_id`),
     FOREIGN KEY (`order_state_id`) REFERENCES `Order_state` (`order_state_id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
@@ -102,6 +93,14 @@ CREATE TABLE `Order_Detail` (
     `price` decimal(10, 2) NOT NULL,
     FOREIGN KEY (`order_id`) REFERENCES `Order` (`order_id`) ON DELETE CASCADE,
     FOREIGN KEY (`product_id`) REFERENCES `Product` (`product_id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+
+CREATE TABLE `Shipment` (
+    `shipment_id` int (11) NOT NULL PRIMARY KEY,
+    `shipment_date` datetime NOT NULL,
+    `address` varchar(100) NOT NULL,
+    `order_id` int (11) NOT NULL,
+    FOREIGN KEY (`order_id`) REFERENCES `Order` (`order_id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 CREATE TABLE `Wishlist` (

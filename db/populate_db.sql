@@ -51,12 +51,12 @@ VALUES
         1
     ),
     (
-        5,
+        2,
         'ProvaNomeUno',
         'ProvaCognomeUno',
         'prova-1@test.com',
         '$2y$10$kZSfGM9OgyOfrBf8I0WdZutr7lcaXGSRX0ewQlvGs.tJEYIb6EepC',
-        '',
+        'Via Controesempio 123, Cesena, FC',
         '3331231231',
         2
     );
@@ -123,4 +123,5 @@ VALUES
         3,
         NULL
     );
-
+    
+INSERT INTO `order` (`order_id`, `total_price`, `user_id`, `order_state_id`) VALUES ('1', '10', '1', '1');
