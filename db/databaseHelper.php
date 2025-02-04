@@ -328,7 +328,7 @@ class DatabaseHelper
     /**
      * Inserisce un ordine nel database.
      * @param int $user_id L'id dell'utente
-     * @param array $products Un array di prodotti
+    * @param array $products Un array di prodotti e quantità (es. [['product_id' => 1, 'quantity' => 2, 'price' => 10.99], ['product_id' => 2, 'quantity' => 1, 'price' => 5.99], ...])
      * @param int $shipment_id L'id della spedizione
      * @param int $payment_id L'id del pagamento
      * @return array ['success' => true|false, 'message' => '...'] in base all'esito dell'operazione.
