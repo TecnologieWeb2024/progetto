@@ -70,9 +70,9 @@ require_once('bootstrap.php');
                                 <div class="container d-flex justify-content-center">
                                     <div class="d-flex align-items-center ">
                                         <?php if ($product['available'] == 1): ?>
-                                            <button type="button" class="btn btn-danger">Nascondi</button>
+                                            <button type="button" id="nascondiBtn" class="btn btn-danger"  data-id="<?php echo $product['product_id'] ?>">Nascondi</button>
                                         <?php else: ?>
-                                            <button type="button" class="btn btn-success">Mostra</button>
+                                            <button type="button" id="mostraBtn"   class="btn btn-success" data-id="<?php echo $product['product_id'] ?>">Mostra</button>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -153,3 +153,23 @@ require_once('bootstrap.php');
         });
     });
 </script>
+<!-- 
+<script>
+    $(document).ready(function(){
+        $("#nascondiBtn").click(function(){
+            var userId = $(this).data("id"); // Get the ID from the button attribute
+
+            $.ajax({
+                url: "query.php",
+                type: "POST",
+                data: { action: "nascondi", id: userId }, // Send ID to PHP
+                success: function(response) {
+                    $("#risultato").html(response);
+                },
+                error: function() {
+                    $("#risultato").html("<p style='color:red;'>Error in AJAX request</p>");
+                }
+            });
+        });
+    });
+</script> -->
