@@ -3,7 +3,7 @@
         <div class="modal-content">
             <div class="container-fluid d-flex justify-content-center align-items-center">
                 <div class="col-12">
-                    <div class="modal-body d-flex container p-0 pt-4">
+                    <div class="container modal-body d-flex p-0 pt-4">
                         <div class="col-md-6 col-4">
                             <img id="modalProductImage" src="" class="img-fluid" alt="">
                         </div>
@@ -42,5 +42,4 @@
             </div>
         </div>
     </div>
-
 </div>
