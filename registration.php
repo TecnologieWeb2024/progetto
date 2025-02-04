@@ -72,7 +72,7 @@
                             <button type="submit" class="btn btn-primary w-100">Registrati</button>
                         </form>
                     </div>
-                    <button onclick="logFormValues('myForm')">Log Form Values</button>
+                    <!-- <button onclick="logFormValues('myForm')">Log Form Values</button> -->
                 </div>
             </div>
         </div>
@@ -82,7 +82,7 @@
     </div>
 </div>
 
-<script>
+<!-- <script>
     function logFormValues(formId="myForm") {
     const form = document.getElementById(formId);
     if (!form) {
@@ -96,7 +96,7 @@
         console.log(`${key}: ${value}`);
     });
 }
-</script>
+</script> -->
 <script>
 
    // Example starter JavaScript for disabling form submissions if there are invalid fields
