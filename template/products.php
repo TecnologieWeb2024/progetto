@@ -8,6 +8,9 @@
             require("prodotto.php");
             $products = $dbh->getAllProducts();
 
+            // tolgo i prodotti non disponibili e terminati
+            $products = array_filter($products, fn ($p) => $p["available"] == 1 && $p["stock"] > 0);
+
             // Pagination logic
             $totalProducts = count($products);
             $productsPerPage = 9;

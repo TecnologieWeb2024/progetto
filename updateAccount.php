@@ -18,6 +18,6 @@ if ($changePasswordResult['success'] === true) {
     header('Location: /logout.php');
     exit;
 }
-header('Location: /index.php?page=account');
+header('Location: index.php?page=account');
 exit;
 ?>

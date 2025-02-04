@@ -11,5 +11,5 @@ $_SESSION['auth'] = [
     'alert_id' => uniqid()
 ];
 
-header('Location: /index.php');
+header('Location: index.php');
 ?>

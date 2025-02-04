@@ -27,7 +27,8 @@
                                         <div class="row">
                                             <?php for ($i = 0; $i < 4; $i++): ?>
                                                 <div class="col-6 mb-2">
-                                                    <?php if (count($products) > 0): ?>
+                                                    <?php if (count($products) > 0 ): ?>
+                                                        
                                                         <?php if ($i == 3 && count($products) > 3): ?>
                                                             <a href="#" class="d-block h-100">
                                                                 <div class="card h-100 border border-0">

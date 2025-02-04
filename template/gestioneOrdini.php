@@ -24,3 +24,4 @@ require_once('bootstrap.php');
         <h5>Nel DB ci sono <?php echo $totalOrders ?> prodotti</h5>
         <h5>ORDINI <?php print_r($orders) ?> </h5>
 </div>
+
