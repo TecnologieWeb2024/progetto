@@ -70,7 +70,8 @@ INSERT INTO
         `price`,
         `stock`,
         `category_id`,
-        `image`
+        `image`,
+        `available`
     )
 VALUES
     (
@@ -81,7 +82,8 @@ VALUES
         5.99,
         100,
         1,
-        'assets\\img\\products\\CAFF001.jpg'
+        'assets\\img\\products\\CAFF001.jpg',
+        1
     ),
     (
         2,
@@ -91,7 +93,8 @@ VALUES
         4.99,
         150,
         1,
-        'assets\\img\\products\\CAFF001.jpg'
+        'assets\\img\\products\\CAFF001.jpg',
+        1
     ),
     (
         3,
@@ -101,7 +104,8 @@ VALUES
         5.49,
         120,
         2,
-        'assets\\img\\products\\CAFF001.jpg'
+        'assets\\img\\products\\CAFF001.jpg',
+        0
     ),
     (
         4,
@@ -111,7 +115,8 @@ VALUES
         6.49,
         80,
         3,
-        'assets\\img\\products\\CAFF001.jpg'
+        'assets\\img\\products\\CAFF001.jpg',
+        0
     ),
     (
         5,
@@ -121,7 +126,8 @@ VALUES
         6.99,
         70,
         3,
-        'assets\\img\\products\\CAFF001.jpg'
+        'assets\\img\\products\\CAFF001.jpg',
+        1
     );
     
 INSERT INTO `order` (`order_id`, `total_price`, `user_id`, `order_state_id`) VALUES ('1', '26.95', '2', '1');
