@@ -22,6 +22,18 @@ class Router
             'file' => 'template/account.php',
             'title' => 'CoffeeBo - Account',
         ],
+        'seller' => [
+            'file' => 'template/seller.php',
+            'title' => 'CoffeeBo - Seller',
+        ],
+        'gestioneProdotti' => [
+            'file' => 'template/gestioneProdotti.php',
+            'title' => 'CoffeeBo - Gestione Prodotti',
+        ],
+        'gestioneOrdini' => [
+            'file' => 'template/gestioneOrdini.php',
+            'title' => 'CoffeeBo - Gestione Ordini',
+        ],
     ];
 
     public function getRoute() 

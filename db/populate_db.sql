@@ -14,6 +14,20 @@ VALUES
     (2, 'Caffè macinato'),
     (3, 'Caffè Decaffeinato');
 
+
+INSERT INTO
+    `Order_state` (`order_state_id`, `descrizione`)
+VALUES
+    ('1', 'in elaborazione'),
+    ('2', 'spedito'),
+    ('3', 'in consegna'),
+    ('4', 'consegnato'),
+    ('5', 'cancellato'),
+    ('6', 'disperso'),
+    ('7', 'rimborsato');
+
+
+
 INSERT INTO
     `User` (
         `user_id`,
@@ -31,18 +45,18 @@ VALUES
         'VenditoreEsempio',
         'CognomeVenditore',
         'venditore@example.com',
-        '$2a$12$YdBzuFDfMhBHwgj5HG3doeibBe2AWlkfON69gGQq42Z9yZ9k/Jlrm',
+        '$2a$12$YdBzuFDfMhBHwgj5HG3doeibBe2AWlkfON69gGQq42Z9yZ9k/Jlrm', -- password: Venditore-1234
         'Via Esempio 123, Cesena, FC',
         '3331231231',
         1
     ),
     (
-        5,
+        2,
         'ProvaNomeUno',
         'ProvaCognomeUno',
         'prova-1@test.com',
-        '$2y$10$kZSfGM9OgyOfrBf8I0WdZutr7lcaXGSRX0ewQlvGs.tJEYIb6EepC',
-        '',
+        '$2y$10$kZSfGM9OgyOfrBf8I0WdZutr7lcaXGSRX0ewQlvGs.tJEYIb6EepC', -- password: Prova-1234
+        'Via Controesempio 123, Cesena, FC',
         '3331231231',
         2
     );
@@ -67,7 +81,7 @@ VALUES
         5.99,
         100,
         1,
-        NULL
+        'assets\\img\\products\\CAFF001.jpg'
     ),
     (
         2,
@@ -77,7 +91,7 @@ VALUES
         4.99,
         150,
         1,
-        NULL
+        'assets\\img\\products\\CAFF001.jpg'
     ),
     (
         3,
@@ -87,7 +101,7 @@ VALUES
         5.49,
         120,
         2,
-        NULL
+        'assets\\img\\products\\CAFF001.jpg'
     ),
     (
         4,
@@ -97,7 +111,7 @@ VALUES
         6.49,
         80,
         3,
-        NULL
+        'assets\\img\\products\\CAFF001.jpg'
     ),
     (
         5,
@@ -107,5 +121,9 @@ VALUES
         6.99,
         70,
         3,
-        NULL
+        'assets\\img\\products\\CAFF001.jpg'
     );
+    
+INSERT INTO `order` (`order_id`, `total_price`, `user_id`, `order_state_id`) VALUES ('1', '26.95', '2', '1');
+INSERT INTO `order_detail` (`order_detail_id`, `order_id`, `product_id`, `quantity`, `price`) VALUES ('1', '1', '1', '2', '5.99');
+INSERT INTO `order_detail` (`order_detail_id`, `order_id`, `product_id`, `quantity`, `price`) VALUES ('2', '1', '2', '3', '4.99');

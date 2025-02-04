@@ -255,7 +255,7 @@ class DatabaseHelper
      * @param int $user_id L'id dell'utente
      * @return array Un array di ordini.
      */
-    public function getAllOrders($user_id)
+    public function getAllUserOrders($user_id)
     {
         $query = "SELECT * FROM `Order` WHERE user_id = ?";
         $stmt = $this->db->prepare($query);
@@ -265,6 +265,20 @@ class DatabaseHelper
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
+        /**
+     * Recupera tutti gli ordini  dal database.
+     * @return array Un array di ordini.
+     */
+    public function getAllOrders()
+    {
+        $query = "SELECT * FROM `Order`";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    
     /**
      * Recupera tutti i prodotti all'interno di un ordine dal database.
      * @param int $order_id L'id dell'ordine

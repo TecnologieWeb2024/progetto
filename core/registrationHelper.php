@@ -13,13 +13,15 @@ class RegistrationHelper
     {
         require_once('bootstrap.php');
 
+
         // Pulizia e validazione input
         $email = trim($_POST['registration-email']);
         $password = trim($_POST['registration-password']);
         $first_name = trim($_POST['first_name']);
         $last_name = trim($_POST['last_name']);
         $phone = trim($_POST['phone']);
-        $role = 2; // Solo utenti di tipo "customer"
+        // $role = 2; // Solo utenti di tipo "customer"
+        $role = trim($_POST['tipoCliente']);;
         $address = ''; // TODO: Decidere se rimuovere dal database
 
         // Validazioni
