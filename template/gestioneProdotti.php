@@ -69,11 +69,16 @@ require_once('bootstrap.php');
                             <div class="card-footer">
                                 <div class="container d-flex justify-content-center">
                                     <div class="d-flex align-items-center ">
-                                        <?php if ($product['available'] == 1): ?>
-                                            <button type="button" id="nascondiBtn" class="btn btn-danger"  data-id="<?php echo $product['product_id'] ?>">Nascondi</button>
-                                        <?php else: ?>
-                                            <button type="button" id="mostraBtn"   class="btn btn-success" data-id="<?php echo $product['product_id'] ?>">Mostra</button>
-                                        <?php endif; ?>
+                                        <form method="POST" action="changeAvailable.php">
+                                        <input type="hidden" name="product_id" value="<?php echo $product['product_id']; ?>">
+                                        <!-- <input type="hidden" name="product_id" value="10000"> -->
+                                            <?php if ($product['available'] == 1): ?>
+                                                <button type="submit" name="runQuery" id="nascondiBtn" class="btn btn-danger" >Nascondi</button>
+                                                <!-- <button type="button" id="nascondiBtn" class="btn btn-danger"  data-id="<?php echo $product['product_id'] ?>">Nascondi</button> -->
+                                            <?php else: ?>
+                                                <button type="submit" name="runQuery" id="mostraBtn" class="btn btn-success" >Mostra</button>  
+                                            <?php endif; ?>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
