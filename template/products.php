@@ -23,13 +23,22 @@
             foreach ($currentProducts as $product): ?>
                 <div class="col-sm-6 col-md-4">
                     <div class="card mb-4">
-                        <img src="<?php echo $product['image'] ?>" class="card-img-top" alt="<?php echo $product['product_name'] ?>">
+                        <a  data-bs-toggle="modal"
+                            data-bs-target="#productModal"
+                            data-product-id="<?php echo $product['product_id']; ?>"
+                            data-name="<?php echo htmlspecialchars($product['product_name']); ?>"
+                            data-price="<?php echo $product['price']; ?>"
+                            data-image="<?php echo $product['image']; ?>"
+                            data-description="<?php echo htmlspecialchars($product['product_description'] ?? ''); ?>"
+                            data-max="<?php echo $product['stock']; ?>">
+                            <img src="<?php echo $product['image'] ?>" class="card-img-top" alt="<?php echo $product['product_name'] ?>">
+                        </a>
                         <div class="container d-flex flex-column m-0 p-0">
                             <div class="col-12">
                                 <div class="card-body d-flex flex-column" style="min-height: 10em">
                                     <!-- Titolo e link per il modale -->
-                                    <a type="button"
-                                        class="h4 card-title btn-link"
+                                    <a
+                                        class="h4 card-title btn-link text-decoration-none"
                                         data-bs-toggle="modal"
                                         data-bs-target="#productModal"
                                         data-product-id="<?php echo $product['product_id']; ?>"
