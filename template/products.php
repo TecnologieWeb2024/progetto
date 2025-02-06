@@ -4,11 +4,8 @@
     <div class="container">
         <div class="row">
             <?php
-            ini_set('display_errors', 1);
-            ini_set('display_startup_errors', 1);
-            error_reporting(E_ALL);
             require_once('bootstrap.php');
-            require("prodotto.php");
+            require("productModal.php");
             $products = $dbh->getAllProducts();
 
             // Pagination logic
@@ -59,18 +56,22 @@
                                                     <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8"></path>
                                                 </svg>
                                             </button>
-                                            <label for="quantity-<?php echo $product['product_id'] ?>" class="visually-hidden">Quantità</label>
-                                            <input type="number" id="quantity-<?php echo $product['product_id'] ?>" name="quantity" class="form-control text-center rounded rounded-0" value="1" min="1" max="<?php echo $product['stock'] ?>" style="width:3em">
+                                            <label for="quantity-<?php echo $product['product_id']; ?>" class="visually-hidden">Quantità</label>
+                                            <input type="number" id="quantity-<?php echo $product['product_id']; ?>" name="quantity" class="form-control text-center rounded rounded-0" value="1" min="1" max="<?php echo $product['stock']; ?>" style="width:3em">
                                             <button type="button" class="quantity-right-plus btn btn-secondary btn-number rounded rounded-0 rounded-end" data-type="plus" data-field="">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
                                                     <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
                                                 </svg>
                                             </button>
                                         </div>
-                                        <a href="#" title="add-to-cart" class="btn btn-primary btn-add-to-cart float-end w-25 me-2"
-                                            data-product-id="<?php echo $product['product_id']; ?>">
-                                            <em class="fa fa-cart-plus"></em>
-                                        </a>
+                                        <?php if (!isUserLoggedIn()): ?>
+                                            <a href="#" class="btn btn-primary float-end w-25 me-2" style="text-decoration: none" data-bs-toggle="modal" data-bs-target="#loginModal"><em class="fa fa-cart-plus"></em></a>
+                                        <?php else: ?>
+                                            <a href="#" title="add-to-cart" class="btn btn-primary btn-add-to-cart float-end w-25 me-2"
+                                                data-product-id="<?php echo $product['product_id']; ?>">
+                                                <em class="fa fa-cart-plus"></em>
+                                            </a>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
