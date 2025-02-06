@@ -20,33 +20,7 @@ class DatabaseHelper
     /******************* QUERY *******************/
     /*********************************************/
 
-    /**
-     * Esempio.SELECT
-     */
-    public function esempioSelect()
-    {
-        $query = "SELECT * FROM user";
-        $stmt = $this->db->prepare($query);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        return $result->fetch_all(MYSQLI_ASSOC);
-    }
-
-
-
-    /**
-     * Esempio INSERT.
-     */
-    public function esempioInsert($a, $b, $c)
-    {
-        $query = "INSERT INTO notification (a, b, c) VALUES (?, ?, ?)";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param($a, $b, $c);
-        $stmt->execute();
-    }
-
-    /* Query User */
+    /* ############################### Query User ############################### */
 
     /**
      * Verifica che mail e password siano corretti e autentica l'utente.
@@ -159,49 +133,6 @@ class DatabaseHelper
     }
 
     /**
-     * Aggiorna la disponibilità di un prodotto nel database.
-     * @param int $id_product
-     */
-    public function changeAvailability(int $product_id)
-    {
-        // Controlla la password attuale dell'utente
-        $query = "SELECT available FROM `product` WHERE product_id = ?";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("i", $product_id); 
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-
-        $available = $result->fetch_assoc()['available'];
-
-        $this->db->begin_transaction();
-        if ($available == 1) {
-            $query = "UPDATE `product` SET available = 0 WHERE product_id = ?";
-        } else {
-            $query = "UPDATE `product` SET available = 1 WHERE product_id = ?";
-        }
-
-        
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("i", $product_id);
-
-        if (!$stmt->execute()) {
-            $this->db->rollback();
-            return ['success' => false, 'message' => 'Errore nell\'aggiornamento della disponibilità.'];
-        }
-
-        if($this->db->commit()) {
-            return ['success' => true, 'message' => 'Disponibilità aggiornata con successo.'];
-        }
-        $this->db->rollback();
-        return ['success' => false, 'message' => 'Errore nel salvataggio della disponibilità: rollback eseguito.'];
-    }
-
-
-
-
-
-    /**
      * Recupera un utente dal database in base all'id.
      * @param int $user_id
      * @return array|null
@@ -216,7 +147,7 @@ class DatabaseHelper
         return $result->fetch_assoc();
     }
 
-    /* Query Prodotti */
+    /* ############################### Query Prodotti ############################### */
 
     /**
      * Recupera un prodotto dal database in base all'id.
@@ -262,6 +193,46 @@ class DatabaseHelper
     }
 
     /**
+     * Aggiorna la disponibilità di un prodotto nel database.
+     * @param int $id_product
+     */
+    public function changeAvailability(int $product_id)
+    {
+        // Controlla la password attuale dell'utente
+        $query = "SELECT available FROM `product` WHERE product_id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $product_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+
+        $available = $result->fetch_assoc()['available'];
+
+        $this->db->begin_transaction();
+        if ($available == 1) {
+            $query = "UPDATE `product` SET available = 0 WHERE product_id = ?";
+        } else {
+            $query = "UPDATE `product` SET available = 1 WHERE product_id = ?";
+        }
+
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $product_id);
+
+        if (!$stmt->execute()) {
+            $this->db->rollback();
+            return ['success' => false, 'message' => 'Errore nell\'aggiornamento della disponibilità.'];
+        }
+
+        if ($this->db->commit()) {
+            return ['success' => true, 'message' => 'Disponibilità aggiornata con successo.'];
+        }
+        $this->db->rollback();
+        return ['success' => false, 'message' => 'Errore nel salvataggio della disponibilità: rollback eseguito.'];
+    }
+
+    /* ############################### Query Carrello ############################### */
+
+    /**
      * Aggiunge un prodotto al carrello di un utente.
      * @param int $user_id
      * @param int $product_id
@@ -286,6 +257,9 @@ class DatabaseHelper
         $this->db->commit();
         return ['success' => true, 'message' => "Prodotto aggiunto al carrello."];
     }
+
+    /* ********************* funzioni di utility per *********************
+       ********************* l'aggiunta al carrello  ********************* */
 
     /**
      * Controlla se un utente ha un carrello e lo crea se non esiste.
@@ -391,7 +365,7 @@ class DatabaseHelper
         return $price;
     }
 
-    /* Query Ordini */
+    /* ############################### Query Ordini ############################### */
 
     /**
      * Recupera un ordine dal database in base all'id.
@@ -451,13 +425,12 @@ class DatabaseHelper
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-
     /**
      * Recupera tutti i prodotti all'interno di un ordine dal database.
      * @param int $order_id L'id dell'ordine
      * @return array|array Un array di prodotti o ['success' => false, 'message' => '...'] in caso di errore.
      */
-    function getOrderProducts($order_id)
+    public function getOrderProducts($order_id)
     {
         // Prepara la query SQL per ottenere i dettagli dell'ordine
         $query = "
@@ -497,7 +470,6 @@ class DatabaseHelper
         return $products;
     }
 
-
     /**
      * Inserisce un ordine nel database.
      * @param int $user_id L'id dell'utente
@@ -533,7 +505,9 @@ class DatabaseHelper
         return ['success' => true, 'message' => 'Ordine #' . $order_id . ' creato con successo.'];
     }
 
-    /*********************** Funzioni di utility per l'inserimento di un ordine **********************/
+    /* ********************* funzioni di utility per *********************
+       ********************* l'inserimento di ordini ********************* */
+
     /**
      * Calcola il prezzo totale dell'ordine.
      * @param array $products Un array di prodotti
