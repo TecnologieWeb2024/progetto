@@ -13,8 +13,8 @@
         ?>
         <div class="row">
             <div class="col-12 mb-4">
-                <h1>Carrello</h1>
-                <p class="text-end h2">Totale: <?php echo $totalPrice ?>€</p>
+                <h1 class="text-center">Carrello</h1>
+                <h2 class="text-center fw-bold">Totale: <?php echo $totalPrice ?>€</h2>
             </div>
         </div>
         <?php foreach ($cartProducts as $product): ?>
@@ -73,72 +73,4 @@
 </div>
 
 <script src="js/products.js"></script>
-
-<script>
-    document.querySelectorAll('.quantity-right-plus').forEach(function(button) {
-        button.addEventListener('click', function() {
-            var input = button.parentElement.querySelector('input');
-            $.ajax({
-                url: 'modifyCartHandler.php',
-                method: 'POST',
-                data: {
-                    product_id: input.id.split('-')[1],
-                    quantity: parseInt(input.value) + 1
-                },
-                success: function(response) {
-                    if (response.success) {
-                        window.location.reload();
-                    } else {
-                        alert(response.message);
-                    }
-                }
-            })            
-        });
-    });
-</script>
-
-<script>
-    document.querySelectorAll('.quantity-left-minus').forEach(function(button) {
-        button.addEventListener('click', function() {
-            var input = button.parentElement.querySelector('input');
-            $.ajax({
-                url: 'modifyCartHandler.php',
-                method: 'POST',
-                data: {
-                    product_id: input.id.split('-')[1],
-                    quantity: parseInt(input.value) - 1
-                },
-                success: function(response) {
-                    if (response.success) {
-                        window.location.reload();
-                    } else {
-                        alert(response.message);
-                    }
-                }
-            })           
-        });
-    });
-</script>
-
-<script>
-    $(document).ready(function() {
-        $('.btn-danger').click(function() {
-            var productId = $(this).data('product-id');
-            $.ajax({
-                url: 'modifyCartHandler.php',
-                method: 'POST',
-                data: {
-                    product_id: productId,
-                    remove: true
-                },
-                success: function(response) {
-                    if (response.success) {
-                        window.location.reload();
-                    } else {
-                        alert(response.message);
-                    }
-                }
-            });
-        });
-    });
-</script>
+<script src="js/cart.js"></script>
