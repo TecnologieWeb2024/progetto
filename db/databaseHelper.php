@@ -159,6 +159,49 @@ class DatabaseHelper
     }
 
     /**
+     * Aggiorna la disponibilità di un prodotto nel database.
+     * @param int $id_product
+     */
+    public function changeAvailability(int $product_id)
+    {
+        // Controlla la password attuale dell'utente
+        $query = "SELECT available FROM `product` WHERE product_id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $product_id); 
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+
+        $available = $result->fetch_assoc()['available'];
+
+        $this->db->begin_transaction();
+        if ($available == 1) {
+            $query = "UPDATE `product` SET available = 0 WHERE product_id = ?";
+        } else {
+            $query = "UPDATE `product` SET available = 1 WHERE product_id = ?";
+        }
+
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $product_id);
+
+        if (!$stmt->execute()) {
+            $this->db->rollback();
+            return ['success' => false, 'message' => 'Errore nell\'aggiornamento della disponibilità.'];
+        }
+
+        if($this->db->commit()) {
+            return ['success' => true, 'message' => 'Disponibilità aggiornata con successo.'];
+        }
+        $this->db->rollback();
+        return ['success' => false, 'message' => 'Errore nel salvataggio della disponibilità: rollback eseguito.'];
+    }
+
+
+
+
+
+    /**
      * Recupera un utente dal database in base all'id.
      * @param int $user_id
      * @return array|null
