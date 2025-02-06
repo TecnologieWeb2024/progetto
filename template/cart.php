@@ -1,6 +1,5 @@
-<div class="container-fluid">
+<div class="container">
     <div class="col-12">
-
         <?php
         require_once('bootstrap.php');
         if (isUserLoggedIn() === false) {
@@ -18,7 +17,7 @@
                 <p class="text-end h2">Totale: <?php echo $totalPrice ?>€</p>
             </div>
             <?php foreach ($cartProducts as $product): ?>
-                <div class="row border-bottom p-3 m-1 bg-light">
+                <div class="row border p-3 m-1 bg-light">
                     <div class="col-2">
                         <img src="<?php echo $product['image'] ?>" class="img-fluid" alt="">
                     </div>
@@ -27,6 +26,7 @@
                             class="h4 card-title btn-link"
                             data-bs-toggle="modal"
                             data-bs-target="#productModal"
+                            data-product-id="<?php echo $product['product_id']; ?>"
                             data-name="<?php echo htmlspecialchars($product['product_name']); ?>"
                             data-price="<?php echo $product['price']; ?>"
                             data-image="<?php echo $product['image']; ?>"
@@ -49,7 +49,6 @@
                     </div>
                 </div>
             <?php endforeach; ?>
-
         </div>
     </div>
 </div>

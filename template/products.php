@@ -35,6 +35,7 @@
                                         class="h4 card-title btn-link"
                                         data-bs-toggle="modal"
                                         data-bs-target="#productModal"
+                                        data-product-id="<?php echo $product['product_id']; ?>"
                                         data-name="<?php echo htmlspecialchars($product['product_name']); ?>"
                                         data-price="<?php echo $product['price']; ?>"
                                         data-image="<?php echo $product['image']; ?>"

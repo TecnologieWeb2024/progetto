@@ -37,10 +37,9 @@
                                 <?php if (!isUserLoggedIn()): ?>
                                     <a href="#" class="btn btn-primary d-none d-md-inline" style="text-decoration: none" data-bs-toggle="modal" data-bs-target="#loginModal"><em class="fa fa-cart-plus"></em></a>
                                 <?php else: ?>
-                                    <a href="#" title="add-to-cart" class="btn btn-primary btn-add-to-cart float-end w-25 me-2"
-                                        data-product-id="<?php echo $product['product_id']; ?>">
-                                        <em class="fa fa-cart-plus"></em>
-                                    </a>
+                                    <a href="#" title="add-to-cart" class="btn btn-primary btn-add-to-cart float-end w-25 me-2">
+                                            <em class="fa fa-cart-plus"></em>
+                                        </a>
                                 <?php endif; ?>
                             </div>
                         </div>

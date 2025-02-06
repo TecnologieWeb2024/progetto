@@ -4,11 +4,14 @@ document.addEventListener("DOMContentLoaded", function() {
     if(productModal){
         productModal.addEventListener("show.bs.modal", function(event) {
             var button = event.relatedTarget;
+
+            var productId = button.getAttribute("data-product-id");
             var productName = button.getAttribute("data-name");
             var productPrice = button.getAttribute("data-price");
             var productImage = button.getAttribute("data-image");
             var productDescription = button.getAttribute("data-description");
             var productMax = button.getAttribute("data-max");
+
             document.getElementById("modalProductName").textContent = productName;
             document.getElementById("modalProductPrice").textContent = productPrice + "€";
             document.getElementById("modalProductImage").src = productImage;
@@ -16,6 +19,11 @@ document.addEventListener("DOMContentLoaded", function() {
             var quantityInput = document.getElementById("quantity");
             if(quantityInput){
                 quantityInput.setAttribute("max", productMax);
+            }
+
+            var addToCartBtn = document.querySelector(".btn-add-to-cart");
+            if (addToCartBtn) {
+                addToCartBtn.setAttribute("data-product-id", productId);
             }
         });
     }
@@ -62,50 +70,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     if (data.success) {
                         console.log("Product added to cart successfully.");
                     } else {
-                        console.log("Failed to add product to cart.");
+                        console.log("Failed to add product to cart: " + data.message);
                     }
                 })
                 .catch(function(error) {
                     console.log("Error while trying to add item to cart:", error);
-                });
-        });
-    });
-});
-
-document.addEventListener("DOMContentLoaded", function() {
-    // Event listener per i bottoni add-to-cart
-    document.querySelectorAll(".btn-add-to-cart").forEach(function(btn) {
-        btn.addEventListener("click", function(e) {
-            e.preventDefault(); // Previene il comportamento di default del link
-
-            // Recupera il product id dal data attribute
-            var productId = this.getAttribute("data-product-id");
-
-            // Risale al container flex che contiene sia l'input che il pulsante
-            var container = this.closest(".d-flex");
-            // Seleziona il campo input del tipo number all'interno di questo container
-            var quantityInput = container.querySelector("input[type='number']");
-            var quantity = quantityInput ? quantityInput.value : 1;
-
-            // Debug: mostra i dati nella console
-            console.log("Product ID:", productId, "Quantity:", quantity);
-
-            fetch('addToCartHandler.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: 'product_id=' + encodeURIComponent(productId) + '&quantity=' + encodeURIComponent(quantity)
-                })
-                .then(function(response) {
-                    return response.json();
-                })
-                .then(function(data) {
-                    // Gestisci la risposta, ad esempio mostra un messaggio o aggiorna il carrello
-                    console.log("Risposta dal server:", data);
-                })
-                .catch(function(error) {
-                    console.error("Errore nella richiesta:", error);
                 });
         });
     });
