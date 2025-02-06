@@ -66,8 +66,6 @@
                     </a>
                 </div>
             </div>
-
-
         <?php endforeach; ?>
     </div>
 </div>

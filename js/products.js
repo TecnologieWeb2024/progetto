@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     
     // Quantity increment and decrement buttons
-    document.querySelectorAll(".quantity-right-plus").forEach(function(button) {
+    document.querySelectorAll(".quantity-right-plus, .quantity-right-plus-modal").forEach(function(button) {
         button.addEventListener("click", function(e) {
             e.preventDefault();
             var input = this.closest(".d-flex").querySelector("input[type='number']");
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     });
-    document.querySelectorAll(".quantity-left-minus").forEach(function(button) {
+    document.querySelectorAll(".quantity-left-minus, .quantity-left-minus-modal").forEach(function(button) {
         button.addEventListener("click", function(e) {
             e.preventDefault();
             var input = this.closest(".d-flex").querySelector("input[type='number']");
@@ -67,6 +67,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 .then(function(data) {
                     if (data.success) {
                         console.log("Product added to cart successfully.");
+                        window.location.reload();
                     } else {
                         console.log("Failed to add product to cart: " + data.message);
                     }
