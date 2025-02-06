@@ -34,6 +34,10 @@ class Router
             'file' => 'template/gestioneOrdini.php',
             'title' => 'CoffeeBo - Gestione Ordini',
         ],
+        'cart' => [
+            'file' => 'template/cart.php',
+            'title' => 'CoffeeBo - Carrello',
+        ],
     ];
 
     public function getRoute() 
