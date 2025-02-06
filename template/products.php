@@ -4,6 +4,9 @@
     <div class="container">
         <div class="row">
             <?php
+            ini_set('display_errors', 1);
+            ini_set('display_startup_errors', 1);
+            error_reporting(E_ALL);
             require_once('bootstrap.php');
             require("prodotto.php");
             $products = $dbh->getAllProducts();
@@ -66,7 +69,14 @@
                                                 </svg>
                                             </button>
                                         </div>
-                                        <a href="#" title="add-to-cart" class="btn btn-primary float-end w-25 me-2"><em class="fa fa-cart-plus"></em></a>
+                                        <?php if (!isUserLoggedIn()): ?>
+                                            <a href="#" class="btn btn-primary d-none d-md-inline" style="text-decoration: none" data-bs-toggle="modal" data-bs-target="#loginModal"><em class="fa fa-cart-plus"></em></a>
+                                        <?php else: ?>
+                                            <a href="#" title="add-to-cart" class="btn btn-primary btn-add-to-cart float-end w-25 me-2"
+                                                data-product-id="<?php echo $product['product_id']; ?>">
+                                                <em class="fa fa-cart-plus"></em>
+                                            </a>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -94,6 +104,7 @@
         </div>
     </div>
 </section>
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         var productModal = document.getElementById("productModal");
@@ -140,6 +151,51 @@
                 if (!isNaN(quantity) && quantity > 1) {
                     input.value = quantity - 1; // Decrement quantity, but not below 1
                 }
+            });
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Event listener per i bottoni add-to-cart
+        document.querySelectorAll(".btn-add-to-cart").forEach(function(btn) {
+            btn.addEventListener("click", function(e) {
+                e.preventDefault(); // Previene il comportamento di default del link
+
+                // Recupera il product id dal data attribute
+                var productId = this.getAttribute("data-product-id");
+
+                // Risale al container flex che contiene sia l'input che il pulsante
+                var container = this.closest(".d-flex");
+                // Seleziona il campo input del tipo number all'interno di questo container
+                var quantityInput = container.querySelector("input[type='number']");
+                var quantity = quantityInput ? quantityInput.value : 1;
+
+                // Debug: mostra i dati nella console
+                console.log("Product ID:", productId, "Quantity:", quantity);
+
+                // Esempio di chiamata AJAX con Fetch API
+                fetch("addToCartHandler.php", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                        },
+                        body: "product_id=" +
+                            encodeURIComponent(productId) +
+                            "&quantity=" +
+                            encodeURIComponent(quantity),
+                    })
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        // Gestisci la risposta, ad esempio mostra un messaggio o aggiorna il carrello
+                        console.log("Risposta dal server:", data);
+                    })
+                    .catch(function(error) {
+                        console.error("Errore nella richiesta:", error);
+                    });
             });
         });
     });

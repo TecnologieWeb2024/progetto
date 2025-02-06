@@ -151,7 +151,7 @@ class DatabaseHelper
             return ['success' => false, 'message' => 'Errore nell\'aggiornamento della password.'];
         }
 
-        if($this->db->commit()) {
+        if ($this->db->commit()) {
             return ['success' => true, 'message' => 'Password aggiornata con successo.'];
         }
         $this->db->rollback();
@@ -261,6 +261,136 @@ class DatabaseHelper
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
+    /**
+     * Aggiunge un prodotto al carrello di un utente.
+     * @param int $user_id
+     * @param int $product_id
+     * @param int $quantity
+     * 
+     */
+    public function addToCart($user_id, $product_id, $quantity)
+    {
+        $this->db->begin_transaction();
+        $cart_id = $this->getOrCreateCart($user_id);
+
+        if (!$this->productExists($product_id)) {
+            $this->db->rollback();
+            return ['success' => false, 'message' => "Prodotto non esistente."];
+        }
+
+        if ($this->productInCart($cart_id, $product_id)) {
+            $this->updateCartItem($cart_id, $product_id, $quantity);
+        } else {
+            $this->insertCartItem($cart_id, $product_id, $quantity);
+        }
+        $this->db->commit();
+        return ['success' => true, 'message' => "Prodotto aggiunto al carrello."];
+    }
+
+    /**
+     * Controlla se un utente ha un carrello e lo crea se non esiste.
+     * @param int $user_id
+     * @return int L'id del carrello.
+     */
+    private function getOrCreateCart($user_id)
+    {
+        $stmt = $this->db->prepare("SELECT cart_id FROM Cart WHERE user_id = ?");
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $stmt->bind_result($cart_id);
+        $stmt->fetch();
+        $stmt->close();
+
+        if (!$cart_id) {
+            $stmt = $this->db->prepare("INSERT INTO Cart (user_id) VALUES (?)");
+            $stmt->bind_param("i", $user_id);
+            $stmt->execute();
+            $cart_id = $stmt->insert_id;
+            $stmt->close();
+        }
+
+        return $cart_id;
+    }
+
+    /**
+     * Verifica se un prodotto esiste nel database.
+     * @param int $product_id
+     * @return bool True se il prodotto esiste, false altrimenti.
+     */
+    private function productExists($product_id)
+    {
+        $stmt = $this->db->prepare("SELECT 1 FROM Product WHERE product_id = ?");
+        $stmt->bind_param("i", $product_id);
+        $stmt->execute();
+        $stmt->store_result();
+        $exists = $stmt->num_rows > 0;
+        $stmt->close();
+        return $exists;
+    }
+
+    /**
+     * Verifica se un prodotto è già presente nel carrello.
+     * @param int $cart_id
+     * @param int $product_id
+     * @return bool True se il prodotto è già presente, false altrimenti.
+     */
+    private function productInCart($cart_id, $product_id)
+    {
+        $stmt = $this->db->prepare("SELECT 1 FROM Cart_Detail WHERE cart_id = ? AND product_id = ?");
+        $stmt->bind_param("ii", $cart_id, $product_id);
+        $stmt->execute();
+        $stmt->store_result();
+        $exists = $stmt->num_rows > 0;
+        $stmt->close();
+        return $exists;
+    }
+
+    /**
+     * Aggiorna la quantità di un prodotto nel carrello.
+     * @param int $cart_id
+     * @param int $product_id
+     * @param int $quantity
+     */
+    private function updateCartItem($cart_id, $product_id, $quantity)
+    {
+        $stmt = $this->db->prepare("UPDATE Cart_Detail SET quantity = quantity + ?, updated_at = NOW() WHERE cart_id = ? AND product_id = ?");
+        $stmt->bind_param("iii", $quantity, $cart_id, $product_id);
+        $stmt->execute();
+        $stmt->close();
+    }
+
+    /**
+     * Inserisce un prodotto nel carrello.
+     * @param int $cart_id
+     * @param int $product_id
+     * @param int $quantity
+     */
+    private function insertCartItem($cart_id, $product_id, $quantity)
+    {
+        $price = $this->getProductPrice($product_id);
+
+        $stmt = $this->db->prepare("INSERT INTO Cart_Detail (cart_id, product_id, quantity, price) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("iiid", $cart_id, $product_id, $quantity, $price);
+        $stmt->execute();
+        $stmt->close();
+    }
+
+    /**
+     * Recupera i prodotti presenti nel carrello di un utente.
+     * @param int $user_id
+     * @return array Un array di prodotti.
+     */
+    private function getProductPrice($product_id)
+    {
+        $stmt = $this->db->prepare("SELECT price FROM Product WHERE product_id = ?");
+        $stmt->bind_param("i", $product_id);
+        $stmt->execute();
+        $stmt->bind_result($price);
+        $stmt->fetch();
+        $stmt->close();
+        return $price;
+    }
+
     /* Query Ordini */
 
     /**
@@ -308,7 +438,7 @@ class DatabaseHelper
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-        /**
+    /**
      * Recupera tutti gli ordini  dal database.
      * @return array Un array di ordini.
      */
@@ -321,7 +451,7 @@ class DatabaseHelper
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    
+
     /**
      * Recupera tutti i prodotti all'interno di un ordine dal database.
      * @param int $order_id L'id dell'ordine
@@ -371,7 +501,7 @@ class DatabaseHelper
     /**
      * Inserisce un ordine nel database.
      * @param int $user_id L'id dell'utente
-    * @param array $products Un array di prodotti e quantità (es. [['product_id' => 1, 'quantity' => 2, 'price' => 10.99], ['product_id' => 2, 'quantity' => 1, 'price' => 5.99], ...])
+     * @param array $products Un array di prodotti e quantità (es. [['product_id' => 1, 'quantity' => 2, 'price' => 10.99], ['product_id' => 2, 'quantity' => 1, 'price' => 5.99], ...])
      * @param int $shipment_id L'id della spedizione
      * @param int $payment_id L'id del pagamento
      * @return array ['success' => true|false, 'message' => '...'] in base all'esito dell'operazione.
