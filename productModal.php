@@ -3,6 +3,7 @@
         <div class="modal-content">
             <div class="container-fluid d-flex justify-content-center align-items-center">
                 <div class="col-12">
+                    <button type="button" class="btn-close float-end pt-4" data-bs-dismiss="modal" aria-label="Close"></button>
                     <div class="container modal-body d-flex p-0 pt-4">
                         <div class="col-md-6 col-4">
                             <img id="modalProductImage" src="assets/image1.jpg" class="img-fluid" alt="placeholder">
@@ -38,8 +39,8 @@
                                     <a href="#" class="btn btn-primary d-none d-md-inline" style="text-decoration: none" data-bs-toggle="modal" data-bs-target="#loginModal"><em class="fa fa-cart-plus"></em></a>
                                 <?php else: ?>
                                     <a href="#" title="add-to-cart" class="btn btn-primary btn-add-to-cart float-end w-25 me-2">
-                                            <em class="fa fa-cart-plus"></em>
-                                        </a>
+                                        <em class="fa fa-cart-plus"></em>
+                                    </a>
                                 <?php endif; ?>
                             </div>
                         </div>
