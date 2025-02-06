@@ -232,6 +232,46 @@ class DatabaseHelper
 
     /* ############################### Query Carrello ############################### */
 
+    public function getCartProducts($user_id)
+    {
+        $query = "
+            SELECT 
+                p.product_id, 
+                p.product_name, 
+                p.price, 
+                p.image, 
+                cd.quantity
+            FROM 
+                Cart c
+            JOIN 
+                Cart_Detail cd ON c.cart_id = cd.cart_id
+            JOIN 
+                Product p ON cd.product_id = p.product_id
+            WHERE 
+                c.user_id = ?
+        ";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $cartProducts = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $cartProducts[] = [
+                'product_id'    => $row['product_id'],
+                'product_name'  => $row['product_name'],
+                'price'         => $row['price'],
+                'image' => $row['image'],
+                'quantity'      => $row['quantity']
+            ];
+        }
+        $total_price = $this->calculateTotalPrice($cartProducts);
+
+        return ['products' => $cartProducts, 'total_price' => $total_price];
+    }
+
     /**
      * Aggiunge un prodotto al carrello di un utente.
      * @param int $user_id
@@ -462,7 +502,7 @@ class DatabaseHelper
             $products[] = [
                 'product_id'    => $row['product_id'],
                 'product_name'  => $row['product_name'],
-                'product_price' => $row['product_price'],
+                'price'         => $row['price'],
                 'product_image' => $row['product_image'],
                 'quantity'      => $row['quantity']
             ];
