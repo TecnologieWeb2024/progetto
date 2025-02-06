@@ -21,7 +21,7 @@ require_once('bootstrap.php');
         <div class="row">
             <?php
             require_once('bootstrap.php');
-            require("prodotto.php");
+            require("productModal.php");
             $products = $dbh->getAllProducts();
 
             // Pagination logic
