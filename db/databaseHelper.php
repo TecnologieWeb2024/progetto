@@ -198,7 +198,6 @@ class DatabaseHelper
      */
     public function changeAvailability(int $product_id)
     {
-        // Controlla la password attuale dell'utente
         $query = "SELECT available FROM `product` WHERE product_id = ?";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("i", $product_id);
@@ -232,12 +231,39 @@ class DatabaseHelper
 
     /* ############################### Query Carrello ############################### */
 
+    /**
+     * Ritorna l'id del carrello associato a un utente.
+     * @param int $user_id L'id dell'utente.
+     * @return int|array L'id del carrello o ['success' => false, 'message' => '...'] in caso di errore.
+     */
+    public function getCart($user_id)
+    {
+        $query = "SELECT cart_id FROM Cart WHERE user_id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $cart = $result->fetch_assoc();
+
+        if (!$cart) {
+            return ['success' => false, 'message' => 'Carrello non trovato.'];
+        }
+        return $cart['cart_id'];
+    }
+
+    /**
+     * Ritorna tutti i prodotti presenti nel carrello di un utente e il totale.
+     * @param int $user_id
+     * 
+     * @return array Un array con i prodotti e il totale: ['products' => [...], 'total_price' => ...].
+     */
     public function getCartProducts($user_id)
     {
         $query = "
             SELECT 
                 p.product_id, 
                 p.product_name, 
+                p.product_description,
                 p.price, 
                 p.image, 
                 cd.quantity
@@ -260,16 +286,122 @@ class DatabaseHelper
 
         while ($row = $result->fetch_assoc()) {
             $cartProducts[] = [
-                'product_id'    => $row['product_id'],
-                'product_name'  => $row['product_name'],
-                'price'         => $row['price'],
-                'image' => $row['image'],
-                'quantity'      => $row['quantity']
+                'product_id'            => $row['product_id'],
+                'product_name'          => $row['product_name'],
+                'product_description'   => $row['product_description'],
+                'price'                 => $row['price'],
+                'image'                 => $row['image'],
+                'quantity'              => $row['quantity']
             ];
         }
         $total_price = $this->calculateTotalPrice($cartProducts);
 
         return ['products' => $cartProducts, 'total_price' => $total_price];
+    }
+
+    /**
+     * Modifica la quantità di un prodotto nel carrello.
+     * @param int $user_id L'id dell'utente.
+     * @param int $product_id L'id del prodotto.
+     * @param int $quantity La nuova quantità.
+     * 
+     * @return array ['success' => true|false, 'message' => '...'] in base all'esito dell'operazione.
+     */
+    public function changeCartProductQuantity($user_id, $product_id, $quantity)
+    {
+        // Verifica che la quantità non sia negativa
+        if ($quantity < 0) {
+            return ['success' => false, 'message' => 'La quantità non può essere negativa.'];
+        }
+
+        // Controlla se il prodotto esiste nel carrello
+        $query = "
+            SELECT cd.quantity 
+            FROM Cart_Detail cd
+            JOIN Cart c ON cd.cart_id = c.cart_id
+            WHERE c.user_id = ? AND cd.product_id = ?
+        ";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ii", $user_id, $product_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $cart_product = $result->fetch_assoc();
+
+        if (!$cart_product) {
+            return ['success' => false, 'message' => 'Prodotto non presente nel carrello.'];
+        }
+
+        // Se la quantità è 0, rimuovi il prodotto dal carrello
+        if ($quantity == 0) {
+            return $this->removeProductFromCart($user_id, $product_id);
+        }
+
+        if (!$this->productExists($product_id)) {
+            return ['success' => false, 'message' => 'Prodotto non esistente.'];
+        }
+        // Controlla la quantità massima disponibile nel magazzino
+        $query = "SELECT stock FROM Product WHERE product_id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $product_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $product = $result->fetch_assoc();
+
+        // Se la quantità richiesta è maggiore della disponibilità, imposta la quantità al massimo disponibile.
+        if ($quantity > $product['stock']) {
+            $quantity = $product['stock'];
+        }
+
+        $this->db->begin_transaction();
+        // Aggiorna la quantità del prodotto nel carrello
+        $query = "
+            UPDATE Cart_Detail cd
+            JOIN Cart c ON cd.cart_id = c.cart_id
+            SET cd.quantity = ?
+            WHERE c.user_id = ? AND cd.product_id = ?
+        ";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("iii", $quantity, $user_id, $product_id);
+
+        if ($stmt->execute() && $stmt->affected_rows > 0) {
+            $this->db->commit();
+            return ['success' => true, 'message' => 'Quantità aggiornata con successo.'];
+        }
+        $this->db->rollback();
+        return ['success' => false, 'message' => 'Errore nell\'aggiornamento della quantità.'];
+    }
+
+    /**
+     * Rimuove un prodotto dal carrello.
+     * @param int $user_id L'id dell'utente.
+     * @param int $product_id L'id del prodotto.
+     * 
+     * @return array ['success' => true|false, 'message' => '...'] in base all'esito dell'operazione.
+     */
+    public function removeProductFromCart($user_id, $product_id)
+    {
+        if (!$this->productExists($product_id)) {
+            return ['success' => false, 'message' => 'Prodotto non esistente.'];
+        }
+
+        $query = "
+            DELETE cd
+            FROM Cart_Detail cd
+            JOIN Cart c ON cd.cart_id = c.cart_id
+            WHERE c.user_id = ? AND cd.product_id = ?
+        ";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ii", $user_id, $product_id);
+        $stmt->execute();
+
+        // Controlla se l'eliminazione è avvenuta con successo
+        if ($stmt->affected_rows > 0) {
+            $this->db->commit();
+            return ['success' => true, 'message' => 'Prodotto rimosso dal carrello.'];
+        } else {
+            $this->db->rollback();
+            return ['success' => false, 'message' => 'Prodotto non presente nel carrello.'];
+        }
     }
 
     /**
