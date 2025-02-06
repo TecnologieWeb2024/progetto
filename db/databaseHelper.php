@@ -264,7 +264,8 @@ class DatabaseHelper
                 p.product_id, 
                 p.product_name, 
                 p.product_description,
-                p.price, 
+                p.price,
+                p.stock, 
                 p.image, 
                 cd.quantity
             FROM 
@@ -291,6 +292,7 @@ class DatabaseHelper
                 'product_description'   => $row['product_description'],
                 'price'                 => $row['price'],
                 'image'                 => $row['image'],
+                'stock'                 => $row['stock'],
                 'quantity'              => $row['quantity']
             ];
         }
