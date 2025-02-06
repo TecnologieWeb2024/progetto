@@ -78,7 +78,6 @@
     document.querySelectorAll('.quantity-right-plus').forEach(function(button) {
         button.addEventListener('click', function() {
             var input = button.parentElement.querySelector('input');
-            console.log(parseInt(input.value) + 1);
             $.ajax({
                 url: 'modifyCartHandler.php',
                 method: 'POST',
@@ -102,7 +101,6 @@
     document.querySelectorAll('.quantity-left-minus').forEach(function(button) {
         button.addEventListener('click', function() {
             var input = button.parentElement.querySelector('input');
-            console.log(parseInt(input.value) - 1); 
             $.ajax({
                 url: 'modifyCartHandler.php',
                 method: 'POST',
