@@ -20,3 +20,16 @@ footer {
   width: 100%;
   padding: 20px;
 }
+
+/* Remove arrows in Chrome, Safari, Edge, and Opera */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Remove arrows in Firefox and Brave */
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
