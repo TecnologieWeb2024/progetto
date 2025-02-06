@@ -16,7 +16,7 @@ VALUES
 
 
 INSERT INTO
-    `Order_state` (`order_state_id`, `descrizione`)
+    `Order_State` (`order_state_id`, `descrizione`)
 VALUES
     ('1', 'in elaborazione'),
     ('2', 'spedito'),
@@ -130,6 +130,6 @@ VALUES
         1
     );
     
-INSERT INTO `order` (`order_id`, `total_price`, `user_id`, `order_state_id`) VALUES ('1', '26.95', '2', '1');
-INSERT INTO `order_detail` (`order_detail_id`, `order_id`, `product_id`, `quantity`, `price`) VALUES ('1', '1', '1', '2', '5.99');
-INSERT INTO `order_detail` (`order_detail_id`, `order_id`, `product_id`, `quantity`, `price`) VALUES ('2', '1', '2', '3', '4.99');
+INSERT INTO `Order` (`order_id`, `total_price`, `user_id`, `order_state_id`) VALUES ('1', '26.95', '2', '1');
+INSERT INTO `Order_Detail` (`order_detail_id`, `order_id`, `product_id`, `quantity`, `price`) VALUES ('1', '1', '1', '2', '5.99');
+INSERT INTO `Order_Detail` (`order_detail_id`, `order_id`, `product_id`, `quantity`, `price`) VALUES ('2', '1', '2', '3', '4.99');

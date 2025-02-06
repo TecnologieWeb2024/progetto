@@ -79,7 +79,7 @@ CREATE TABLE `Cart_Detail` (
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 
-CREATE TABLE `Order_state` (
+CREATE TABLE `Order_State` (
     `order_state_id` int (11) NOT NULL PRIMARY KEY,
     `descrizione` varchar(100) NOT NULL
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
@@ -91,7 +91,7 @@ CREATE TABLE `Order` (
     `user_id` int (11) NOT NULL,
     `order_state_id` int (11) NOT NULL,
     FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`),
-    FOREIGN KEY (`order_state_id`) REFERENCES `Order_state` (`order_state_id`)
+    FOREIGN KEY (`order_state_id`) REFERENCES `Order_State` (`order_state_id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 CREATE TABLE `Order_Detail` (
