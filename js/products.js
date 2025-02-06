@@ -15,11 +15,9 @@ document.addEventListener("DOMContentLoaded", function() {
             document.getElementById("modalProductName").textContent = productName;
             document.getElementById("modalProductPrice").textContent = productPrice + "€";
             document.getElementById("modalProductImage").src = productImage;
+            document.getElementById("modalProductImage").alt = productName+" image";
             document.getElementById("modalProductDescription").textContent = productDescription;
-            var quantityInput = document.getElementById("quantity");
-            if(quantityInput){
-                quantityInput.setAttribute("max", productMax);
-            }
+            document.getElementById("quantity").max = productMax;
 
             var addToCartBtn = document.querySelector(".btn-add-to-cart");
             if (addToCartBtn) {
