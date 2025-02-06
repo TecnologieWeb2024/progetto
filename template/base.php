@@ -87,7 +87,7 @@
     <footer class="py-4 bg-dark text-center">
         <div class="container-fluid justify-content-center text-secondary">
             <div class="mb-3">
-                <a href="#" class="text-light text-decoration-none">About Us</a>
+                <a href="index.php?page=contacts" class="text-light text-decoration-none">About Us</a>
             </div>
             <p>Copyright © <?php echo date("Y"); ?> CoffeeBo All rights reserved.</p>
         </div>
