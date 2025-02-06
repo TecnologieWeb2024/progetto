@@ -82,7 +82,7 @@ VALUES
         5.99,
         100,
         1,
-        'assets\\img\\products\\CAFF001.jpg',
+        'assets/img/products/CAFF001.jpg',
         1
     ),
     (
@@ -93,7 +93,7 @@ VALUES
         4.99,
         150,
         1,
-        'assets\\img\\products\\CAFF001.jpg',
+        'assets/img/products/CAFF001.jpg',
         1
     ),
     (
@@ -104,7 +104,7 @@ VALUES
         5.49,
         120,
         2,
-        'assets\\img\\products\\CAFF001.jpg',
+        'assets/img/products/CAFF001.jpg',
         0
     ),
     (
@@ -115,7 +115,7 @@ VALUES
         6.49,
         80,
         3,
-        'assets\\img\\products\\CAFF001.jpg',
+        'assets/img/products/CAFF001.jpg',
         0
     ),
     (
@@ -126,7 +126,7 @@ VALUES
         6.99,
         70,
         3,
-        'assets\\img\\products\\CAFF001.jpg',
+        'assets/img/products/CAFF001.jpg',
         1
     );
     
