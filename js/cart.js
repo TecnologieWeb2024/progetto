@@ -60,3 +60,24 @@ $(document).ready(function () {
     });
   });
 });
+
+$(document).ready(function () {
+  $("input[type='number']").on("change", function () {
+    var input = $(this);
+    $.ajax({
+      url: "modifyCartHandler.php",
+      method: "POST",
+      data: {
+        product_id: input.attr("id").split("-")[1],
+        quantity: parseInt(input.val()),
+      },
+      success: function (response) {
+        if (response.success) {
+          window.location.reload();
+        } else {
+          alert(response.message);
+        }
+      },
+    });
+  });
+});
