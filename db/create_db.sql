@@ -49,7 +49,7 @@ CREATE TABLE `Roles` (
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 CREATE TABLE `User` (
-    `user_id` int (11) NOT NULL PRIMARY KEY,
+    `user_id` int (11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `first_name` varchar(30) NOT NULL,
     `last_name` varchar(30) NOT NULL,
     `email` varchar(100) NOT NULL UNIQUE,
