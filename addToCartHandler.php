@@ -15,6 +15,7 @@ set_exception_handler(function ($exception) {
 require_once('bootstrap.php');
 
 if (isUserLoggedIn() === false) {
+    $_SESSION['error_message'] = 'Utente non autenticato';
     header('Content-Type: application/json');
     echo json_encode([
         'success' => false,
@@ -27,9 +28,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $productId = $_POST['product_id'] ?? null;
     $quantity = $_POST['quantity'] ?? 1;
 
-    // Assicurati di validare e sanitizzare i dati in ingresso
     if ($productId) {
         $result = $dbh->addToCart($_SESSION['customer']['user_id'], $productId, $quantity);
+        if($result === false) {
+            $_SESSION['error_message'] = 'Errore durante l\'aggiunta al carrello: '. $result['message'];
+        } else {
+            $_SESSION['success_message'] = 'Prodotto aggiunto al carrello';
+        }
         header('Content-Type: application/json');
         echo json_encode([
             'success' => $result['success'],
@@ -41,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Content-Type: application/json');
         echo json_encode([
             'success' => false,
-            'message' => 'Dati non validi'
+            'message' => 'id prodotto non valido'
         ]);
     }
 }
