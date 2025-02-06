@@ -60,14 +60,22 @@ CREATE TABLE `User` (
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 CREATE TABLE `Cart` (
-    `cart_id` int (11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `user_id` int (11) NOT NULL UNIQUE,
-    `product_id` int (11) NOT NULL,
-    `quantity` int (11) NOT NULL,
-    FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`) ON DELETE CASCADE,
-    FOREIGN KEY (`product_id`) REFERENCES `Product` (`product_id`) ON DELETE CASCADE
+    `cart_id` INT (11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT (11) NOT NULL UNIQUE,
+    FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
+CREATE TABLE `Cart_Detail` (
+    `cart_id` INT (11) NOT NULL,
+    `product_id` INT (11) NOT NULL,
+    `quantity` INT (11) NOT NULL CHECK (`quantity` > 0), -- Evita quantità negative
+    `price` DECIMAL(10,2) NOT NULL CHECK (`price` >= 0), -- Evita prezzi negativi
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`cart_id`, `product_id`), -- Garantisce che ogni prodotto sia univoco nel carrello
+    FOREIGN KEY (`cart_id`) REFERENCES `Cart` (`cart_id`) ON DELETE CASCADE,
+    FOREIGN KEY (`product_id`) REFERENCES `Product` (`product_id`) ON DELETE CASCADE
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 
 CREATE TABLE `Order_state` (
