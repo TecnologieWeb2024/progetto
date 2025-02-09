@@ -636,7 +636,7 @@ class DatabaseHelper
             $products[] = [
                 'product_id'    => $row['product_id'],
                 'product_name'  => $row['product_name'],
-                'price'         => $row['price'],
+                'price'         => $row['product_price'],
                 'product_image' => $row['product_image'],
                 'quantity'      => $row['quantity']
             ];

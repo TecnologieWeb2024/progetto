@@ -25,7 +25,7 @@
                                     </div>
                                     <div class="card-body border border-0">
                                         <div class="row">
-                                            <?php for ($i = 0; $i < 4; $i++): ?>
+                                            <?php for ($i = 0; $i < count($products); $i++): ?>
                                                 <div class="col-6 mb-2">
                                                     <?php if (count($products) > 0 ): ?>
                                                         
