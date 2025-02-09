@@ -19,19 +19,19 @@ GRANT ALL PRIVILEGES ON CaffeBoDB.* TO 'db_user' @'localhost';
 FLUSH PRIVILEGES;
 
 CREATE TABLE `Category` (
-    `category_id` int (11) NOT NULL PRIMARY KEY,
+    `category_id` int (11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `NAME` varchar(100) NOT NULL
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 CREATE TABLE `Payment` (
-    `payment_id` int (11) NOT NULL PRIMARY KEY,
+    `payment_id` int (11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `payment_date` datetime NOT NULL,
     `payment_method` varchar(100) NOT NULL,
     `amount` decimal(10, 2) NOT NULL
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 CREATE TABLE `Product` (
-    `product_id` int (11) NOT NULL PRIMARY KEY,
+    `product_id` int (11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `SKU` varchar(100) NOT NULL,
     `product_name` varchar(50) NOT NULL,
     `product_description` text NOT NULL,
