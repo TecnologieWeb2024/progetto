@@ -131,5 +131,18 @@ VALUES
     );
     
 INSERT INTO `Order` (`order_id`, `total_price`, `user_id`, `order_state_id`) VALUES ('1', '26.95', '2', '1');
+
 INSERT INTO `Order_Detail` (`order_detail_id`, `order_id`, `product_id`, `quantity`, `price`) VALUES ('1', '1', '1', '2', '5.99');
 INSERT INTO `Order_Detail` (`order_detail_id`, `order_id`, `product_id`, `quantity`, `price`) VALUES ('2', '1', '2', '3', '4.99');
+
+INSERT INTO `Order` (`order_id`, `total_price`, `user_id`, `order_state_id`) VALUES ('2', '26.95', '2', '1');
+INSERT INTO `Order_Detail` (`order_detail_id`, `order_id`, `product_id`, `quantity`, `price`) VALUES ('3', '2', '1', '2', '5.99');
+INSERT INTO `Order_Detail` (`order_detail_id`, `order_id`, `product_id`, `quantity`, `price`) VALUES ('4', '2', '2', '3', '4.99');
+
+INSERT INTO `Order` (`order_id`, `total_price`, `user_id`, `order_state_id`) VALUES ('3', '26.95', '2', '1');
+INSERT INTO `Order_Detail` (`order_detail_id`, `order_id`, `product_id`, `quantity`, `price`) VALUES ('5', '3', '1', '2', '5.99');
+INSERT INTO `Order_Detail` (`order_detail_id`, `order_id`, `product_id`, `quantity`, `price`) VALUES ('6', '3', '2', '3', '4.99');
+
+INSERT INTO `Order` (`order_id`, `total_price`, `user_id`, `order_state_id`) VALUES ('4', '26.95', '2', '1');
+INSERT INTO `Order_Detail` (`order_detail_id`, `order_id`, `product_id`, `quantity`, `price`) VALUES ('7', '4', '1', '2', '5.99');
+INSERT INTO `Order_Detail` (`order_detail_id`, `order_id`, `product_id`, `quantity`, `price`) VALUES ('8', '4', '2', '3', '4.99');
