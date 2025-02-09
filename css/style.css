@@ -1,6 +1,8 @@
 body {
   margin: 0;
   padding: 0;
+  user-select: none; /* Prevent text selection */
+  caret-color: transparent;
 }
 html,body {
   height: 100%; /* Rende l'altezza della pagina 100% */

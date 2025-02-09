@@ -14,10 +14,11 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/style.css"cursor: none;
+>
 </head>
 
-<body>
+<body">
     <nav class="navbar navbar-expand-md bg-dark navbar-dark sticky-top">
         <div class="container-fluid d-flex">
             <div class="col-3 d-flex flex-grow-1">
