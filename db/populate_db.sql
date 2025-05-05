@@ -203,6 +203,33 @@ VALUES
     (2, 'In transito'),
     (3, 'Consegnato');
 
+INSERT INTO
+    `Shipping_Method` (
+        `shipping_method_id`,
+        `name`,
+        `description`,
+        `price`
+    )
+VALUES
+    (
+        1,
+        'Spedizione Standard',
+        'Spedizione standard con corriere espresso (7-10 giorni lavorativi)',
+        2.99
+    ),
+    (
+        2,
+        'Express',
+        'Spedizione veloce con corriere espresso (3-5 giorni lavorativi)',
+        5.99
+    ),
+    (
+        3,
+        'Ritiro in Negozio',
+        'Ritiro diretto presso il nostro negozio',
+        0.00
+    );
+
 -- Inserimento delle spedizioni
 INSERT INTO
     `Shipment` (
@@ -215,25 +242,25 @@ VALUES
     (
         1,
         'Via Controesempio 123, Cesena, FC',
-        'Standard',
+        1,
         1
     ),
     (
         2,
         'Via Controesempio 123, Cesena, FC',
-        'Standard',
+        1,
         2
     ),
     (
         3,
         'Via Controesempio 123, Cesena, FC',
-        'Express',
+        2,
         2
     ),
     (
         4,
         'Via Controesempio 123, Cesena, FC',
-        'Standard',
+        1,
         3
     );
 

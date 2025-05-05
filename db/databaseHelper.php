@@ -236,7 +236,7 @@ class DatabaseHelper
      * @param int $user_id L'id dell'utente.
      * @return int|array L'id del carrello o ['success' => false, 'message' => '...'] in caso di errore.
      */
-    public function getCart($user_id)
+    public function getCartId($user_id)
     {
         $query = "SELECT cart_id FROM Cart WHERE user_id = ?";
         $stmt = $this->db->prepare($query);
@@ -250,6 +250,12 @@ class DatabaseHelper
         }
         return $cart['cart_id'];
     }
+
+    /**
+     * Calcola il prezzo totale dei prodotti nel carrello.
+     * @param array $cartProducts
+     * @return float Il prezzo totale.
+     */
 
     /**
      * Ritorna tutti i prodotti presenti nel carrello di un utente e il totale.
@@ -1006,5 +1012,29 @@ class DatabaseHelper
         }
         $data = $stmt->get_result()->fetch_assoc();
         return ['success' => true, 'data' => $data, 'message' => 'Dettagli ordine completi recuperati.'];
+    }
+
+    /**
+     * Recupera i metodi di pagamento disponibili.
+     */
+    function getPaymentMethods()
+    {
+        $query = "SELECT * FROM `Payment_Method`";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    /**
+     * Recupera i metodi di spedizione disponibili.
+     */
+    function getShippingMethods()
+    {
+        $query = "SELECT * FROM `Shipping_Method`";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
     }
 }
