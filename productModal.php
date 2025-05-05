@@ -6,7 +6,7 @@
                     <button type="button" class="btn-close float-end pt-4" data-bs-dismiss="modal" aria-label="Close"></button>
                     <div class="container modal-body d-flex p-0 pt-4">
                         <div class="col-md-6 col-4">
-                            <img id="modalProductImage" src="assets/image1.jpg" class="img-fluid" alt="placeholder">
+                            <img id="modalProductImage" src="assets/img/image1.jpg" class="img-fluid" alt="placeholder">
                         </div>
                         <div class="col-md-6 col-8 d-flex flex-column">
                             <div class="row">
