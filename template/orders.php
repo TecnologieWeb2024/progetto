@@ -1,12 +1,3 @@
-<?php
-require_once('bootstrap.php');
-if (!isset($_SESSION['customer']['user_id'])) {
-    header('Location: /login.php');
-    exit;
-}
-$orders = $dbh->getAllUserOrders($_SESSION['customer']['user_id']);
-?>
-<h1 class="text-center">I tuoi ordini</h1>
 <section>
     <div class="container">
         <div class="row">
@@ -15,7 +6,6 @@ $orders = $dbh->getAllUserOrders($_SESSION['customer']['user_id']);
                 $date = DateTime::createFromFormat('Y-m-d H:i:s', $order['order_date']);
             ?>
                 <div class="col-md-4 p-2">
-                    <!-- Card now opens the modal -->
                     <div
                         class="card mb-4 h-100"
                         data-bs-toggle="modal"
@@ -23,7 +13,12 @@ $orders = $dbh->getAllUserOrders($_SESSION['customer']['user_id']);
                         data-order-id="<?php echo $order['order_id']; ?>">
                         <div class="card-header border-0 text-center">
                             <p class="card-title">
-                                Ordinato il: <?php echo $date->format('d/m/Y'); ?>
+                                <?php if (array_key_exists('seller', $_SESSION)): ?>
+                                    Ordine #<?php echo $order['order_id'] ?> del: <?php echo $date->format('d/m/Y') ?> <br>
+                                    Utente: <?php echo $dbh->getUserInfo($order['user_id'])['email'] ?>
+                                <?php else: ?>
+                                    Ordinato il: <?php echo $date->format('d/m/Y'); ?>
+                                <?php endif; ?>
                             </p>
                         </div>
                         <div class="card-body border-0">

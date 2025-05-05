@@ -15,7 +15,7 @@ class Router
             'title' => 'CoffeeBo - Contatti',
         ],
         'orders' => [
-            'file' => 'template/orders.php',
+            'file' => 'template/customerOrders.php',
             'title' => 'CoffeeBo - Ordini',
         ],
         'account' => [
