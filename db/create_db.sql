@@ -94,6 +94,18 @@ CREATE TABLE `Order_State` (
     `descrizione` varchar(100) NOT NULL
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
+CREATE TABLE `Shipment_Status` (
+    `shipment_status_id` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `status` varchar(50) NOT NULL
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+
+CREATE TABLE `Shipping_Method` (
+    `shipping_method_id` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `name` varchar(100) NOT NULL,
+    `description` varchar(255) DEFAULT NULL,
+    `price` decimal(3, 2) NOT NULL
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+
 CREATE TABLE `Shipment` (
     `shipment_id` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `shipment_date` datetime DEFAULT CURRENT_TIMESTAMP,
@@ -102,21 +114,7 @@ CREATE TABLE `Shipment` (
     `shipping_method` int(11) NOT NULL,
     `status` int(11) NOT NULL,
     FOREIGN KEY (`status`) REFERENCES `Shipment_Status` (`shipment_status_id`),
-    FOREIGN KEY (`shipping_method`) REFERENCES `Shipping_Method` (`shipping_method_id`),
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
-
-CREATE TABLE Shipment_Status (
-    `shipment_status_id` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    `status` varchar(50) NOT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
-
-CREATE TABLE `Shipping_Method` (
-    `shipping_method_id` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    `method_name` varchar(100) NOT NULL,
-    `description` varchar(255) DEFAULT NULL,
-    `price` decimal(3, 2) NOT NULL
-    --`icon` varchar(100) DEFAULT NULL,  -- Percorso ad un'icona/immagine rappresentativa
-    --`sort_order` int(11) DEFAULT 0     -- Per controllare l'ordine di visualizzazione
+    FOREIGN KEY (`shipping_method`) REFERENCES `Shipping_Method` (`shipping_method_id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 CREATE TABLE `Order` (
