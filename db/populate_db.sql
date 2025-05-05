@@ -1,12 +1,12 @@
--- -----------------------------------------
--- -- riempio il db
--- inserisco i ruoli
+-- Inserimento dei dati iniziali
+-- Inserimento dei ruoli
 INSERT INTO
     `Roles` (`role_id`, `role_name`)
 VALUES
     (1, 'seller'),
     (2, 'customer');
 
+-- Inserimento delle categorie
 INSERT INTO
     `Category` (`category_id`, `NAME`)
 VALUES
@@ -14,20 +14,78 @@ VALUES
     (2, 'Caffè macinato'),
     (3, 'Caffè Decaffeinato');
 
-
+-- Inserimento degli stati dell'ordine
 INSERT INTO
     `Order_State` (`order_state_id`, `descrizione`)
 VALUES
-    ('1', 'in elaborazione'),
-    ('2', 'spedito'),
-    ('3', 'in consegna'),
-    ('4', 'consegnato'),
-    ('5', 'cancellato'),
-    ('6', 'disperso'),
-    ('7', 'rimborsato');
+    (1, 'Checkout'),
+    (2, 'In attesa di pagamento'),
+    (3, 'Pagato'),
+    (4, 'In preparazione'),
+    (5, 'Spedito'),
+    (6, 'Consegnato'),
+    (7, 'Cancellato'),
+    (8, 'Rimborsato');
 
+-- Inserimento degli stati di pagamento
+INSERT INTO
+    `Payment_Status` (`payment_status_id`, `description`)
+VALUES
+    (1, 'In attesa'), -- pending
+    (2, 'Completato'), -- completed
+    (3, 'Fallito'), -- failed
+    (4, 'Rimborsato'), -- refunded
+    (5, 'Annullato'), -- cancelled
+    (6, 'In elaborazione');
 
+-- processing
+-- Inserimento dei metodi di pagamento
+INSERT INTO
+    `Payment_Method` (
+        `payment_method_id`,
+        `name`,
+        `description`,
+        `is_active`,
+        `sort_order`
+    )
+VALUES
+    (
+        1,
+        'Carta di Credito',
+        'Pagamento con carta di credito/debito',
+        TRUE,
+        10
+    ),
+    (
+        2,
+        'PayPal',
+        'Pagamento tramite conto PayPal',
+        TRUE,
+        20
+    ),
+    (
+        3,
+        'Bonifico Bancario',
+        'Pagamento con bonifico bancario',
+        TRUE,
+        30
+    ),
+    (
+        4,
+        'Contrassegno',
+        'Pagamento alla consegna',
+        TRUE,
+        40
+    ),
+    (
+        5,
+        'Crypto',
+        'Pagamento con criptovalute',
+        FALSE,
+        50
+    );
 
+-- Inserimento degli utenti
 INSERT INTO
     `User` (
         `user_id`,
@@ -61,6 +119,7 @@ VALUES
         2
     );
 
+-- Inserimento dei prodotti
 INSERT INTO
     `Product` (
         `product_id`,
@@ -129,20 +188,96 @@ VALUES
         'assets/img/products/CAFF001.jpg',
         1
     );
-    
-INSERT INTO `Order` (`order_id`, `total_price`, `user_id`, `order_state_id`) VALUES ('1', '26.95', '2', '1');
 
-INSERT INTO `Order_Detail` (`order_detail_id`, `order_id`, `product_id`, `quantity`, `price`) VALUES ('1', '1', '1', '2', '5.99');
-INSERT INTO `Order_Detail` (`order_detail_id`, `order_id`, `product_id`, `quantity`, `price`) VALUES ('2', '1', '2', '3', '4.99');
+-- Creazione dei carrelli per gli utenti
+INSERT INTO
+    `Cart` (`user_id`)
+VALUES
+    (2);
 
-INSERT INTO `Order` (`order_id`, `total_price`, `user_id`, `order_state_id`) VALUES ('2', '26.95', '2', '1');
-INSERT INTO `Order_Detail` (`order_detail_id`, `order_id`, `product_id`, `quantity`, `price`) VALUES ('3', '2', '1', '2', '5.99');
-INSERT INTO `Order_Detail` (`order_detail_id`, `order_id`, `product_id`, `quantity`, `price`) VALUES ('4', '2', '2', '3', '4.99');
+-- Carrello per l'utente customer
+INSERT INTO
+    `Shipment_Status` (`shipment_status_id`, `status`)
+VALUES
+    (1, 'In preparazione'),
+    (2, 'In transito'),
+    (3, 'Consegnato');
 
-INSERT INTO `Order` (`order_id`, `total_price`, `user_id`, `order_state_id`) VALUES ('3', '26.95', '2', '1');
-INSERT INTO `Order_Detail` (`order_detail_id`, `order_id`, `product_id`, `quantity`, `price`) VALUES ('5', '3', '1', '2', '5.99');
-INSERT INTO `Order_Detail` (`order_detail_id`, `order_id`, `product_id`, `quantity`, `price`) VALUES ('6', '3', '2', '3', '4.99');
+-- Inserimento delle spedizioni
+INSERT INTO
+    `Shipment` (
+        `shipment_id`,
+        `address`,
+        `shipping_method`,
+        `status`
+    )
+VALUES
+    (
+        1,
+        'Via Controesempio 123, Cesena, FC',
+        'Standard',
+        1
+    ),
+    (
+        2,
+        'Via Controesempio 123, Cesena, FC',
+        'Standard',
+        2
+    ),
+    (
+        3,
+        'Via Controesempio 123, Cesena, FC',
+        'Express',
+        2
+    ),
+    (
+        4,
+        'Via Controesempio 123, Cesena, FC',
+        'Standard',
+        3
+    );
 
-INSERT INTO `Order` (`order_id`, `total_price`, `user_id`, `order_state_id`) VALUES ('4', '26.95', '2', '1');
-INSERT INTO `Order_Detail` (`order_detail_id`, `order_id`, `product_id`, `quantity`, `price`) VALUES ('7', '4', '1', '2', '5.99');
-INSERT INTO `Order_Detail` (`order_detail_id`, `order_id`, `product_id`, `quantity`, `price`) VALUES ('8', '4', '2', '3', '4.99');
+-- Inserimento degli ordini
+INSERT INTO
+    `Order` (
+        `order_id`,
+        `total_price`,
+        `user_id`,
+        `order_state_id`,
+        `shipment_id`
+    )
+VALUES
+    (1, 26.95, 2, 1, 1),
+    (2, 26.95, 2, 2, 2),
+    (3, 26.95, 2, 3, 3),
+    (4, 26.95, 2, 4, 4);
+
+-- Inserimento dei dettagli degli ordini
+INSERT INTO
+    `Order_Detail` (`order_id`, `product_id`, `quantity`, `price`)
+VALUES
+    (1, 1, 2, 5.99),
+    (1, 2, 3, 4.99),
+    (2, 1, 2, 5.99),
+    (2, 2, 3, 4.99),
+    (3, 1, 2, 5.99),
+    (3, 2, 3, 4.99),
+    (4, 1, 2, 5.99),
+    (4, 2, 3, 4.99);
+
+-- Inserimento dei pagamenti
+INSERT INTO
+    `Payment` (
+        `order_id`,
+        `payment_method_id`,
+        `amount`,
+        `status`,
+        `transaction_reference`
+    )
+VALUES
+    (1, 1, 26.95, 1, 'TXN-2025050501'), -- Carta di Credito, In attesa
+    (2, 2, 26.95, 1, 'PP-2025050502'), -- PayPal, In attesa
+    (3, 1, 26.95, 2, 'TXN-2025050503'), -- Carta di Credito, Completato
+    (4, 3, 26.95, 2, 'BNK-2025050504');
+
+-- Bonifico Bancario, Completato

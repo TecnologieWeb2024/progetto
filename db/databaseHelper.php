@@ -198,7 +198,7 @@ class DatabaseHelper
      */
     public function changeAvailability(int $product_id)
     {
-        $query = "SELECT available FROM `product` WHERE product_id = ?";
+        $query = "SELECT available FROM `Product` WHERE product_id = ?";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("i", $product_id);
         $stmt->execute();
@@ -209,9 +209,9 @@ class DatabaseHelper
 
         $this->db->begin_transaction();
         if ($available == 1) {
-            $query = "UPDATE `product` SET available = 0 WHERE product_id = ?";
+            $query = "UPDATE `Product` SET available = 0 WHERE product_id = ?";
         } else {
-            $query = "UPDATE `product` SET available = 1 WHERE product_id = ?";
+            $query = "UPDATE `Product` SET available = 1 WHERE product_id = ?";
         }
 
         $stmt = $this->db->prepare($query);
@@ -260,21 +260,21 @@ class DatabaseHelper
     public function getCartProducts($user_id)
     {
         $query = "
-            SELECT 
-                p.product_id, 
-                p.product_name, 
+            SELECT
+                p.product_id,
+                p.product_name,
                 p.product_description,
-                p.price,
-                p.stock, 
-                p.image, 
+                cd.price AS price,
+                p.stock,
+                p.image,
                 cd.quantity
-            FROM 
-                Cart c
-            JOIN 
-                Cart_Detail cd ON c.cart_id = cd.cart_id
-            JOIN 
-                Product p ON cd.product_id = p.product_id
-            WHERE 
+            FROM
+                `Cart` c
+            JOIN
+                `Cart_Detail` cd ON c.cart_id = cd.cart_id
+            JOIN
+                `Product` p ON cd.product_id = p.product_id
+            WHERE
                 c.user_id = ?
         ";
 
@@ -608,18 +608,18 @@ class DatabaseHelper
     {
         // Prepara la query SQL per ottenere i dettagli dell'ordine
         $query = "
-            SELECT 
-                p.product_id, 
-                p.product_name AS product_name, 
-                p.price AS product_price, 
-                p.image AS product_image,
+            SELECT
+                p.product_id,
+                p.product_name    AS product_name,
+                od.price          AS product_price,
+                p.image           AS product_image,
                 od.quantity
-            FROM 
-                Order_Detail od
-            JOIN 
-                Product p ON od.product_id = p.product_id
-            WHERE 
-                od.order_id = ?
+            FROM
+                `Order_Detail` od
+            JOIN
+                `Product` p ON od.product_id = p.product_id
+            WHERE
+                od.order_id = ?;
         ";
 
         $stmt = $this->db->prepare($query);
@@ -646,14 +646,13 @@ class DatabaseHelper
 
     /**
      * Inserisce un ordine nel database.
-     * @param int $user_id L'id dell'utente
-     * @param array $products Un array di prodotti e quantità (es. [['product_id' => 1, 'quantity' => 2, 'price' => 10.99], ['product_id' => 2, 'quantity' => 1, 'price' => 5.99], ...])
-     * @param int $shipment_id L'id della spedizione
-     * @param int $payment_id L'id del pagamento
-     * @return array ['success' => true|false, 'message' => '...'] in base all'esito dell'operazione.
+     * @param int   $user_id        L'id dell'utente
+     * @param array $products       Un array di prodotti e quantità
+     * @param int   $order_state_id L'id dello stato iniziale dell'ordine
+     * @param int   $shipment_id    L'id della spedizione
+     * @return array ['success' => true|false, 'message' => '...']
      */
-
-    public function insertOrder($user_id, array $products, int $shipment_id, int $payment_id): array
+    public function insertOrder(int $user_id, array $products, int $order_state_id, int $shipment_id): array
     {
         $this->db->begin_transaction();
 
@@ -663,7 +662,8 @@ class DatabaseHelper
             return ['success' => false, 'message' => 'Errore nella creazione dell\'ordine: dati prodotto mancanti.'];
         }
 
-        $order_id = $this->insertOrderIntoDatabase($user_id, $total_price, $shipment_id, $payment_id);
+        // PASSIAMO ORA $order_state_id invece di $payment_id
+        $order_id = $this->insertOrderIntoDatabase($user_id, $total_price, $order_state_id, $shipment_id);
         if ($order_id === false) {
             $this->db->rollback();
             return ['success' => false, 'message' => 'Errore nella creazione dell\'ordine. Impossibile inserire l\'ordine.'];
@@ -675,7 +675,6 @@ class DatabaseHelper
         }
 
         $this->db->commit();
-
         return ['success' => true, 'message' => 'Ordine #' . $order_id . ' creato con successo.'];
     }
 
@@ -703,23 +702,39 @@ class DatabaseHelper
 
     /**
      * Esegue l'inserimento effettivo dell'ordine nel database.
-     * @param int $user_id L'id dell'utente
-     * @param float $total_price Il prezzo totale dell'ordine
-     * @param int $shipment_id L'id della spedizione
-     * @param int $payment_id L'id del pagamento
-     * @return int|bool L'id dell'ordine appena creato, false in caso di errore
+     * @param int   $user_id        L'id dell'utente
+     * @param float $total_price    Il prezzo totale dell'ordine
+     * @param int   $order_state_id L'id dello stato iniziale dell'ordine
+     * @param int   $shipment_id    L'id della spedizione
+     * @return int|bool             L'id dell'ordine appena creato, false in caso di errore
      */
-    private function insertOrderIntoDatabase($user_id, $total_price, $shipment_id, $payment_id)
+    private function insertOrderIntoDatabase(int $user_id, float $total_price, int $order_state_id, int $shipment_id)
     {
-        $query = "INSERT INTO `Order` (order_date, total_price, user_id, shipment_id, payment_id) VALUES (NOW(), ?, ?, ?, ?)";
+        $query = "
+        INSERT INTO `Order` (
+            order_date,
+            total_price,
+            user_id,
+            order_state_id,
+            shipment_id
+        ) VALUES (
+            NOW(),
+            ?,
+            ?,
+            ?,
+            ?
+        )
+    ";
 
         try {
             $stmt = $this->db->prepare($query);
-            $stmt->bind_param("diii", $total_price, $user_id, $shipment_id, $payment_id);
+            // d = double (per decimal), i = integer
+            $stmt->bind_param("diii", $total_price, $user_id, $order_state_id, $shipment_id);
             if ($stmt->execute() === false) {
                 return false;
             }
         } catch (mysqli_sql_exception $e) {
+            // In caso di eccezione, ritorna false per permettere il rollback a monte
             return false;
         }
 
@@ -749,5 +764,247 @@ class DatabaseHelper
         }
 
         return true;
+    }
+
+    /**
+     * Registra un nuovo pagamento per un ordine.
+     * @param int    $order_id
+     * @param int    $payment_method_id
+     * @param float  $amount
+     * @param int    $status                // payment_status_id
+     * @param string $transaction_reference
+     * @return array ['success' => true|false, 'data' => int|null, 'message' => '...']
+     */
+    public function insertPayment(int $order_id, int $payment_method_id, float $amount, int $status, string $transaction_reference): array
+    {
+        $this->db->begin_transaction();
+        $query = "
+        INSERT INTO `Payment` (
+            order_id,
+            payment_date,
+            payment_method_id,
+            amount,
+            status,
+            transaction_reference
+        ) VALUES (
+            ?, NOW(), ?, ?, ?, ?
+        )
+    ";
+        try {
+            $stmt = $this->db->prepare($query);
+            $stmt->bind_param("iiids", $order_id, $payment_method_id, $amount, $status, $transaction_reference);
+            if (!$stmt->execute()) {
+                $this->db->rollback();
+                return ['success' => false, 'data' => null, 'message' => 'Errore inserimento pagamento.'];
+            }
+            $payment_id = $stmt->insert_id;
+            $this->db->commit();
+            return ['success' => true, 'data' => $payment_id, 'message' => 'Pagamento registrato con successo.'];
+        } catch (mysqli_sql_exception $e) {
+            $this->db->rollback();
+            return ['success' => false, 'data' => null, 'message' => 'Eccezione durante pagamento: ' . $e->getMessage()];
+        }
+    }
+
+    /**
+     * Aggiorna lo stato di un pagamento.
+     * @param int $payment_id
+     * @param int $new_status            // payment_status_id
+     * @return array ['success' => true|false, 'message' => '...']
+     */
+    public function updatePaymentStatus(int $payment_id, int $new_status): array
+    {
+        $query = "
+        UPDATE `Payment`
+        SET status = ?
+        WHERE payment_id = ?
+    ";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ii", $new_status, $payment_id);
+        if ($stmt->execute() && $stmt->affected_rows > 0) {
+            return ['success' => true, 'message' => 'Stato pagamento aggiornato.'];
+        }
+        return ['success' => false, 'message' => 'Nessun pagamento aggiornato o ID non valido.'];
+    }
+
+    /**
+     * Recupera i dettagli di pagamento per un ordine.
+     * @param int $order_id
+     * @return array ['success' => true|false, 'data' => array|null, 'message' => '...']
+     */
+    public function getPaymentDetails(int $order_id): array
+    {
+        $query = "
+        SELECT
+            payment_id,
+            order_id,
+            payment_date,
+            payment_method_id,
+            amount,
+            status,
+            transaction_reference
+        FROM `Payment`
+        WHERE order_id = ?
+    ";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $order_id);
+        if (!$stmt->execute()) {
+            return ['success' => false, 'data' => null, 'message' => 'Impossibile recuperare pagamento.'];
+        }
+        $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        return ['success' => true, 'data' => $result, 'message' => 'Dettagli pagamento recuperati.'];
+    }
+
+    /**
+     * Crea un nuovo record di spedizione.
+     * @param string $address
+     * @param string $tracking_number           // può essere inizialmente null o placeholder
+     * @param string $shipping_method
+     * @return array ['success' => true|false, 'data' => int|null, 'message' => '...']
+     */
+    public function createShipment(string $address, ?string $tracking_number, string $shipping_method): array
+    {
+        $this->db->begin_transaction();
+        $query = "
+        INSERT INTO `Shipment` (
+            shipment_date,
+            address,
+            tracking_number,
+            shipping_method,
+            status
+        ) VALUES (
+            NOW(), ?, ?, ?, 'processing'
+        )
+    ";
+        try {
+            $stmt = $this->db->prepare($query);
+            $stmt->bind_param("sss", $address, $tracking_number, $shipping_method);
+            if (!$stmt->execute()) {
+                $this->db->rollback();
+                return ['success' => false, 'data' => null, 'message' => 'Errore creazione spedizione.'];
+            }
+            $shipment_id = $stmt->insert_id;
+            $this->db->commit();
+            return ['success' => true, 'data' => $shipment_id, 'message' => 'Spedizione creata con successo.'];
+        } catch (mysqli_sql_exception $e) {
+            $this->db->rollback();
+            return ['success' => false, 'data' => null, 'message' => 'Eccezione spedizione: ' . $e->getMessage()];
+        }
+    }
+
+    /**
+     * Aggiorna lo stato e/o tracking di una spedizione.
+     * @param int    $shipment_id
+     * @param string $new_status
+     * @param string $new_tracking_number
+     * @return array ['success' => true|false, 'message' => '...']
+     */
+    public function updateShipmentStatus(int $shipment_id, string $new_status, ?string $new_tracking_number): array
+    {
+        $query = "
+        UPDATE `Shipment`
+        SET status = ?, tracking_number = ?
+        WHERE shipment_id = ?
+    ";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ssi", $new_status, $new_tracking_number, $shipment_id);
+        if ($stmt->execute() && $stmt->affected_rows > 0) {
+            return ['success' => true, 'message' => 'Spedizione aggiornata.'];
+        }
+        return ['success' => false, 'message' => 'Nessuna spedizione aggiornata o ID non valido.'];
+    }
+
+    /**
+     * Collega un ordine a una spedizione esistente.
+     * @param int $order_id
+     * @param int $shipment_id
+     * @return array ['success' => true|false, 'message' => '...']
+     */
+    public function linkOrderToShipment(int $order_id, int $shipment_id): array
+    {
+        $query = "
+        UPDATE `Order`
+        SET shipment_id = ?
+        WHERE order_id = ?
+    ";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ii", $shipment_id, $order_id);
+        if ($stmt->execute() && $stmt->affected_rows > 0) {
+            return ['success' => true, 'message' => 'Ordine collegato alla spedizione.'];
+        }
+        return ['success' => false, 'message' => 'Errore collegamento ordine/spedizione.'];
+    }
+
+    /**
+     * Aggiorna lo stato di un ordine.
+     * @param int $order_id
+     * @param int $order_state_id
+     * @return array ['success' => true|false, 'message' => '...']
+     */
+    public function updateOrderState(int $order_id, int $order_state_id): array
+    {
+        $query = "
+        UPDATE `Order`
+        SET order_state_id = ?
+        WHERE order_id = ?
+    ";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ii", $order_state_id, $order_id);
+        if ($stmt->execute() && $stmt->affected_rows > 0) {
+            return ['success' => true, 'message' => 'Stato ordine aggiornato.'];
+        }
+        return ['success' => false, 'message' => 'Nessuno stato ordine aggiornato o ID non valido.'];
+    }
+
+    /**
+     * Recupera tutti i dettagli dell'ordine, pagamento e spedizione.
+     * @param int $order_id
+     * @return array ['success' => true|false, 'data' => array|null, 'message' => '...']
+     */
+    /**
+     * Recupera tutti i dettagli dell'ordine, pagamento e spedizione.
+     * @param int $order_id
+     * @return array ['success'=>bool,'data'=>array|null,'message'=>string]
+     */
+    public function getFullOrderDetails(int $order_id): array
+    {
+        $query = "
+        SELECT
+            o.order_id,
+            o.order_date,
+            o.total_price,
+
+            os.descrizione       AS order_state,
+
+            pmt.payment_id,
+            pmt.payment_date,
+            pm.name              AS payment_method,
+            pms.description      AS payment_status,
+
+            shp.shipment_id,
+            shp.shipment_date,
+            shp.address          AS shipment_address,
+            shp.shipping_method,
+            shp.tracking_number,
+            ss.status       AS shipment_status
+
+        FROM `Order` o
+        LEFT JOIN `Order_State`       os  ON o.order_state_id       = os.order_state_id
+        LEFT JOIN `Payment`           pmt ON pmt.order_id           = o.order_id
+        LEFT JOIN `Payment_Method`    pm  ON pmt.payment_method_id  = pm.payment_method_id
+        LEFT JOIN `Payment_Status`    pms ON pmt.status             = pms.payment_status_id
+        LEFT JOIN `Shipment`          shp ON o.shipment_id          = shp.shipment_id
+        LEFT JOIN `Shipment_Status`   ss  ON shp.status             = ss.shipment_status_id
+
+        WHERE o.order_id = ?
+
+    ";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $order_id);
+        if (!$stmt->execute()) {
+            return ['success' => false, 'data' => null, 'message' => 'Impossibile recuperare dettagli ordine.'];
+        }
+        $data = $stmt->get_result()->fetch_assoc();
+        return ['success' => true, 'data' => $data, 'message' => 'Dettagli ordine completi recuperati.'];
     }
 }

@@ -5,6 +5,7 @@
             <div class="container d-flex justify-content-center">
                 <?php
                 require_once('bootstrap.php');
+                require("orderModal.php");
                 $orders = $dbh->getOrders($_SESSION['customer']['user_id'], 3);
                 if (count($orders) > 0):
                 ?>
@@ -17,18 +18,25 @@
                                 <div class="card mb-4 h-100">
                                     <div class="card-header border border-0">
                                         <!-- NOTE: Il link deve puntare a order.php?id=... o qualcosa di simile -->
-                                        <a href="#">
-                                            <p class="card-title text-center">Ordinato il: <?php $date = DateTime::createFromFormat('Y-m-d H:i:s', $order['order_date']);
-                                                                                            echo $date->format('d/m/Y'); ?></p>
-
+                                        <a href="#"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#orderModal"
+                                            data-order-id="<?php echo $order['order_id']; ?>">
+                                            <p class="card-title text-center">
+                                                Ordinato il:
+                                                <?php
+                                                $date = DateTime::createFromFormat('Y-m-d H:i:s', $order['order_date']);
+                                                echo $date->format('d/m/Y');
+                                                ?>
+                                            </p>
                                         </a>
                                     </div>
                                     <div class="card-body border border-0">
                                         <div class="row">
                                             <?php for ($i = 0; $i < count($products); $i++): ?>
                                                 <div class="col-6 mb-2">
-                                                    <?php if (count($products) > 0 ): ?>
-                                                        
+                                                    <?php if (count($products) > 0): ?>
+
                                                         <?php if ($i == 3 && count($products) > 3): ?>
                                                             <a href="#" class="d-block h-100">
                                                                 <div class="card h-100 border border-0">
@@ -58,3 +66,4 @@
     require("template/products.php");
     ?>
 </div>
+<script src="js/orders.js"></script>

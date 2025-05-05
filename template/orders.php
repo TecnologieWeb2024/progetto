@@ -12,39 +12,42 @@ $orders = $dbh->getAllUserOrders($_SESSION['customer']['user_id']);
         <div class="row">
             <?php foreach ($orders as $order):
                 $products = $dbh->getOrderProducts($order['order_id']);
+                $date = DateTime::createFromFormat('Y-m-d H:i:s', $order['order_date']);
             ?>
                 <div class="col-md-4 p-2">
-                    <div class="card mb-4 h-100">
-                        <div class="card-header border border-0">
-                            <!-- NOTE: Il link deve puntare a order.php?id=... -->
-                            <a href="#">
-                                <p class="card-title text-center">Ordinato il: <?php $date = DateTime::createFromFormat('Y-m-d H:i:s', $order['order_date']);
-                                                                                echo $date->format('d/m/Y'); ?></p>
-                            </a>
+                    <!-- Card now opens the modal -->
+                    <div
+                        class="card mb-4 h-100"
+                        data-bs-toggle="modal"
+                        data-bs-target="#orderModal"
+                        data-order-id="<?php echo $order['order_id']; ?>">
+                        <div class="card-header border-0 text-center">
+                            <p class="card-title">
+                                Ordinato il: <?php echo $date->format('d/m/Y'); ?>
+                            </p>
                         </div>
-                        <div class="card-body border border-0">
+                        <div class="card-body border-0">
                             <div class="row">
                                 <?php for ($i = 0; $i < 4; $i++): ?>
                                     <div class="col-6 mb-2">
-                                        <?php if (count($products) > 0): ?>
-                                            <?php if ($i == 3 && count($products) > 3): ?>
-                                                <a href="#" class="d-block h-100">
-                                                    <div class="card h-100 border border-0">
-                                                        <div class="card-body text-center d-flex align-items-center justify-content-center">
-                                                            Altro...
-                                                        </div>
-                                                    </div>
-                                                </a>
+                                        <?php if (isset($products[$i])): ?>
+                                            <?php if ($i === 3 && count($products) > 4): ?>
+                                                <div class="card h-100 border-0 d-flex align-items-center justify-content-center">
+                                                    Altro...
+                                                </div>
                                             <?php else: ?>
-                                                <img src="<?php echo $products[$i]['product_image']; ?>" class="img-fluid" alt="<?php echo $products[$i]['product_name']; ?>">
+                                                <img
+                                                    src="<?php echo $products[$i]['product_image']; ?>"
+                                                    class="img-fluid"
+                                                    alt="<?php echo htmlspecialchars($products[$i]['product_name']); ?>">
                                             <?php endif; ?>
                                         <?php endif; ?>
                                     </div>
                                 <?php endfor; ?>
                             </div>
                         </div>
-                        <div class="card-footer border border-0">
-                            <p class="text-center">Totale: <?php echo $order['total_price']; ?>€</p>
+                        <div class="card-footer border-0 text-center">
+                            <p>Totale: <?php echo number_format($order['total_price'], 2, ',', '.'); ?>€</p>
                         </div>
                     </div>
                 </div>
@@ -52,3 +55,8 @@ $orders = $dbh->getAllUserOrders($_SESSION['customer']['user_id']);
         </div>
     </div>
 </section>
+
+<?php require("orderModal.php"); ?>
+
+<script src="js/products.js"></script>
+<script src="js/orders.js"></script>
