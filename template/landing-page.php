@@ -28,7 +28,19 @@
                                                 $date = DateTime::createFromFormat('Y-m-d H:i:s', $order['order_date']);
                                                 echo $date->format('d/m/Y');
                                                 ?>
+                                                <br>
+                                                <?php $orderStatus = $dbh->getOrderState($order['order_id']);
+                                                $badgeClass = match (true) {
+                                                    in_array($orderStatus['order_state_id'], [1, 2, 3]) => 'warning',
+                                                    in_array($orderStatus['order_state_id'], [4, 5, 6]) => 'success',
+                                                    default => 'danger',
+                                                };
+                                                ?>
+                                                <span class="badge bg-<?php echo $badgeClass; ?>">
+                                                    <?php echo $orderStatus['descrizione']; ?>
+                                                </span>
                                             </p>
+
                                         </a>
                                     </div>
                                     <div class="card-body border border-0">
