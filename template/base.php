@@ -14,21 +14,20 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" href="./css/style.css"cursor: none;
->
+    <link rel="stylesheet" href="./css/style.css" cursor: none;>
 </head>
 
 <body">
     <nav class="navbar navbar-expand-md bg-dark navbar-dark sticky-top">
         <div class="container-fluid d-flex">
             <div class="col-3 d-flex flex-grow-1">
-                <a class="navbar-brand" 
-                href="<?php
-                    if (array_key_exists('customer', $_SESSION)) {
-                        echo "index.php";
-                    } else if (array_key_exists('seller', $_SESSION)) {
-                        echo "index.php?page=seller";
-                    }?>">
+                <a class="navbar-brand"
+                    href="<?php
+                            if (!isUserSeller()) {
+                                echo "index.php";
+                            } else {
+                                echo "index.php?page=seller";
+                            } ?>">
                     COFFEEBO</a>
             </div>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".collapsibleNavbar">
@@ -36,14 +35,14 @@
             </button>
             <div class="col-6 collapse flex-grow-1 navbar-collapse justify-content-center collapsibleNavbar">
                 <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link" 
-                    href="<?php
-                    if (array_key_exists('customer', $_SESSION)) {
-                        echo "index.php";
-                    } else if (array_key_exists('seller', $_SESSION)) {
-                        echo "index.php?page=seller";
-                    }?>">
-                    <em class="fa fa-home d-md-none">&nbsp;</em>Home Page</a></li>
+                    <li class="nav-item"><a class="nav-link"
+                            href="<?php
+                                    if (!isUserSeller()) {
+                                        echo "index.php";
+                                    } else {
+                                        echo "index.php?page=seller";
+                                    } ?>">
+                            <em class="fa fa-home d-md-none">&nbsp;</em>Home Page</a></li>
                     <li class="nav-item"><a class="nav-link" href="index.php?page=products"><em class="fa fa-coffee d-md-none">&nbsp;</em>I nostri prodotti</a></li>
                     <li class="nav-item"><a class="nav-link" href="index.php?page=contacts"><em class="fa fa-file-text-o	d-md-none">&nbsp;</em>Contattaci</a></li>
                 </ul>
@@ -107,6 +106,6 @@
             <p>Copyright © <?php echo date("Y"); ?> CoffeeBo All rights reserved.</p>
         </div>
     </footer>
-</body>
+    </body>
 
 </html>

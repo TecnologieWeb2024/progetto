@@ -12,9 +12,9 @@ $_SESSION['auth'] = [
 ];
 
 // print_r($_SESSION);
-if (array_key_exists('customer', $_SESSION)) {
+if (isUserCustomer()) {
     header('Location: index.php');
-} else if (array_key_exists('seller', $_SESSION)) {
+} else if (isUserSeller()) {
     header('Location: index.php?page=seller');
 }
 ?>
