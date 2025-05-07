@@ -593,6 +593,79 @@ class DatabaseHelper
     }
 
     /**
+     * Recupera tutti gli ordini per un venditore dal database.
+     * @param int $seller_id L'id del venditore
+     * @return array Un array di ordini.
+     */
+    public function getAllSellerOrders($seller_id)
+    {
+        $query = "SELECT * FROM `Order` WHERE seller_id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $seller_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    /**
+     * Recupera un ordine dal database in base all'id.
+     * @param int $order_id
+     * @return array Un array con i campi dell'ordine.
+     */
+    public function getOrdersByState($seller_id, $order_state_id)
+    {
+        $query = "SELECT * FROM `Order` WHERE seller_id = ? AND order_state_id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ii", $seller_id, $order_state_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    /**
+     * Recupera gli ordini in attesa di essere accettati, ossia "pagato".
+     * @param int $seller_id L'id del venditore
+     * @return array Un array di ordini in attesa.
+     */
+    public function getWaitingOrders($seller_id)
+    {
+        return array_merge(
+            $this->getOrdersByState($seller_id, 1),
+            $this->getOrdersByState($seller_id, 2),
+            $this->getOrdersByState($seller_id, 3)
+        );
+    }
+
+    /**
+     * Recupera gli ordini accettati, ossia "in preparazione", "spedito" e "consegnato".
+     * @param int $seller_id L'id del venditore
+     * @return array Un array di ordini accettati.
+     */
+    public function getAcceptedOrders($seller_id)
+    {
+        return array_merge(
+            $this->getOrdersByState($seller_id, 4),
+            $this->getOrdersByState($seller_id, 5),
+            $this->getOrdersByState($seller_id, 6)
+        );
+    }
+
+    /**
+     * Recupera gli ordini rifiutati, ossia "rifiutato" e "rimborsato".
+     * @param int $seller_id L'id del venditore
+     * @return array Un array di ordini rifiutati o rimborsati.
+     */
+    public function getCanceledOrders($seller_id)
+    {
+        return array_merge(
+            $this->getOrdersByState($seller_id, 7),
+            $this->getOrdersByState($seller_id, 8)
+        );
+    }
+
+
+
+    /**
      * Recupera tutti gli ordini  dal database.
      * @return array Un array di ordini.
      */
@@ -603,6 +676,16 @@ class DatabaseHelper
         $stmt->execute();
         $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getOrderState($order_id)
+    {
+        $query = "SELECT `Order_State`.`order_state_id`, `Order_State`.`descrizione` FROM `Order_State`, `Order` WHERE `Order`.order_id = ? AND `Order`.order_state_id = `Order_State`.order_state_id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $order_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
     }
 
     /**
@@ -979,6 +1062,8 @@ class DatabaseHelper
             o.order_id,
             o.order_date,
             o.total_price,
+            o.seller_id,
+            o.user_id,
 
             os.descrizione       AS order_state,
 
@@ -1012,6 +1097,73 @@ class DatabaseHelper
         }
         $data = $stmt->get_result()->fetch_assoc();
         return ['success' => true, 'data' => $data, 'message' => 'Dettagli ordine completi recuperati.'];
+    }
+
+    public function getTotalSales(int $seller_id, int $year): float
+    {
+        $query = "
+            SELECT SUM(total_price) AS total_sales
+            FROM `Order`
+            WHERE seller_id = ? AND YEAR(order_date) = ?
+        ";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ii", $seller_id, $year);
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ii", $seller_id, $year);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return (float)($result->fetch_assoc()['total_sales'] ?? 0.0);
+    }
+
+    public function getTotalOrders(int $seller_id, int $year): int
+    {
+        $query = "
+            SELECT COUNT(order_id) AS total_orders
+            FROM `Order`
+            WHERE seller_id = ? AND YEAR(order_date) = ?
+        ";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ii", $seller_id, $year);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc()['total_orders'] ?? 0;
+    }
+
+    public function getBestSellingProducts(int $seller_id, int $year, int $limit = 5): array
+    {
+        $query = "
+            SELECT p.product_id, p.product_name, od.quantity, SUM(od.quantity) AS total_sold
+            FROM `Order_Detail` od
+            JOIN `Order` o ON od.order_id = o.order_id
+            JOIN `Product` p ON od.product_id = p.product_id
+            WHERE o.seller_id = ? AND YEAR(o.order_date) = ?
+            GROUP BY p.product_id
+            ORDER BY total_sold DESC
+            LIMIT ?
+        ";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("iii", $seller_id, $year, $limit);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC) ?? [];
+    }
+
+    public function getBestCustomers(int $seller_id, int $year, int $limit = 5): array
+    {
+        $query = "
+            SELECT u.user_id, u.email, SUM(o.total_price) AS total_spent
+            FROM `Order` o
+            JOIN `User` u ON o.user_id = u.user_id
+            WHERE o.seller_id = ? AND YEAR(o.order_date) = ?
+            GROUP BY u.user_id
+            ORDER BY total_spent DESC
+            LIMIT ?
+        ";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("iii", $seller_id, $year, $limit);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC) ?? [];
     }
 
     /**
