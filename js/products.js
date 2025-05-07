@@ -17,8 +17,19 @@ document.addEventListener("DOMContentLoaded", function() {
             document.getElementById("modalProductImage").src = productImage;
             document.getElementById("modalProductImage").alt = productName+" image";
             document.getElementById("modalProductDescription").textContent = productDescription;
-            document.getElementById("quantity").max = productMax;
 
+            var maxQuantity = document.getElementById("quantity");
+            if (maxQuantity) {
+                document.getElementById("quantity").max = productMax;
+            }
+            var productStockSpan = document.getElementById("modalProductStock");
+            if (productStockSpan) {
+              productStockSpan.textContent = productMax + " in stock";
+            }
+            var productIdSpan = document.getElementById("modalProductId");
+            if (productIdSpan) {
+                productIdSpan.textContent = productId;
+            }
             var addToCartBtn = document.querySelector(".btn-add-to-cart");
             if (addToCartBtn) {
                 addToCartBtn.setAttribute("data-product-id", productId);
