@@ -43,7 +43,7 @@
                                         echo "index.php?page=seller";
                                     } ?>">
                             <em class="fa fa-home d-md-none">&nbsp;</em>Home Page</a></li>
-                    <li class="nav-item"><a class="nav-link" href="index.php?page=products"><em class="fa fa-coffee d-md-none">&nbsp;</em>I nostri prodotti</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.php?page=products"><em class="fa fa-coffee d-md-none">&nbsp;</em><?php echo isUserSeller() ? "Gestione Prodotti" : "I nostri prodotti" ?></a></li>
                     <li class="nav-item"><a class="nav-link" href="index.php?page=contacts"><em class="fa fa-file-text-o	d-md-none">&nbsp;</em>Contattaci</a></li>
                 </ul>
             </div>
@@ -51,7 +51,9 @@
                 <?php if (isUserLoggedIn()) : ?>
                     <ul class="navbar-nav">
                         <!-- TODO: Usare icone per Carrello e Logout -->
-                        <li class="nav-item"><a class="nav-link" href="index.php?page=cart"><em class="fa fa-shopping-bag">&nbsp;</em><span class="d-md-none">Carrello</span></a></li>
+                        <?php if (isUserCustomer()): ?>
+                            <li class="nav-item"><a class="nav-link" href="index.php?page=cart"><em class="fa fa-shopping-bag">&nbsp;</em><span class="d-md-none">Carrello</span></a></li>
+                        <?php endif; ?>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <em class="fa fa-user">&nbsp;</em><span class="d-md-none">Account</span>
