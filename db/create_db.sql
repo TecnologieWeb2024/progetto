@@ -122,9 +122,11 @@ CREATE TABLE `Order` (
     `order_date` datetime DEFAULT CURRENT_TIMESTAMP,
     `total_price` decimal(10, 2) NOT NULL,
     `user_id` int(11) NOT NULL,
+    `seller_id` int(11) DEFAULT NULL, -- Viene settato quando l'ordine viene accettato
     `order_state_id` int(11) NOT NULL,
     `shipment_id` int(11) DEFAULT NULL, -- Può essere NULL inizialmente
     FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`),
+    FOREIGN KEY (`seller_id`) REFERENCES `User` (`user_id`), -- Assumendo che il venditore sia un utente
     FOREIGN KEY (`order_state_id`) REFERENCES `Order_State` (`order_state_id`),
     FOREIGN KEY (`shipment_id`) REFERENCES `Shipment` (`shipment_id`),
     CHECK (`total_price` >= 0) -- Evita prezzi negativi
