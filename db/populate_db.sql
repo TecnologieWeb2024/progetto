@@ -31,11 +31,11 @@ VALUES
 INSERT INTO
     `Payment_Status` (`payment_status_id`, `description`)
 VALUES
-    (1, 'In attesa'), -- pending
-    (2, 'Completato'), -- completed
-    (3, 'Fallito'), -- failed
-    (4, 'Rimborsato'), -- refunded
-    (5, 'Annullato'), -- cancelled
+    (1, 'In attesa'),
+    (2, 'Completato'),
+    (3, 'Fallito'),
+    (4, 'Rimborsato'),
+    (5, 'Annullato'),
     (6, 'In elaborazione');
 
 -- processing
@@ -270,14 +270,15 @@ INSERT INTO
         `order_id`,
         `total_price`,
         `user_id`,
+        `seller_id`,
         `order_state_id`,
         `shipment_id`
     )
 VALUES
-    (1, 26.95, 2, 1, 1),
-    (2, 26.95, 2, 2, 2),
-    (3, 26.95, 2, 3, 3),
-    (4, 26.95, 2, 4, 4);
+    (1, 26.95, 2, 1, 1, 1),
+    (2, 26.95, 2, 1, 2, 2),
+    (3, 26.95, 2, 1, 3, 3),
+    (4, 26.95, 2, 1, 4, 4);
 
 -- Inserimento dei dettagli degli ordini
 INSERT INTO
