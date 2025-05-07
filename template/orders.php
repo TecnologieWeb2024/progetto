@@ -13,7 +13,7 @@
                         data-order-id="<?php echo $order['order_id']; ?>">
                         <div class="card-header border-0 text-center">
                             <p class="card-title">
-                                <?php if (array_key_exists('seller', $_SESSION)): ?>
+                                <?php if (isUserSeller()): ?>
                                     Ordine #<?php echo $order['order_id'] ?> del: <?php echo $date->format('d/m/Y') ?> <br>
                                     Utente: <?php echo $dbh->getUserInfo($order['user_id'])['email'] ?>
                                 <?php else: ?>
