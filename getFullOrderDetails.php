@@ -1,25 +1,26 @@
 <?php
 require_once('bootstrap.php');
-$orderId = (int)$_POST['order_id'];
+$orderId = (int)($_POST['order_id'] ?? 0);
 header('Content-Type: application/json');
 
-// Recupera i dati base
-$response = $dbh->getFullOrderDetails($orderId);
-if (!$response['success']) {
-    echo json_encode($response);
+// 1) Recupera header + pagamento + spedizione
+$baseResp = $dbh->getFullOrderDetails($orderId);
+if (!$baseResp['success']) {
+    echo json_encode($baseResp);
     exit;
 }
+$data = $baseResp['data'];
 
-// Aggiungi l'array items alla risposta
-$data = $response['data'];
-$data['items'] = $dbh->getOrderProducts($orderId);
+$items = isUserSeller() ? $dbh->getSellerOrderDetails($orderId, $_SESSION['seller']['user_id']) : $dbh->getOrderProducts($orderId);
 
-// Assicura che total_price sia float
+$data['items'] = $items;
+
+// 3) Assicura il tipo corretto su total_price
 $data['total_price'] = (float)$data['total_price'];
 
+// 4) Rispondi
 echo json_encode([
     'success' => true,
     'data'    => $data,
-    'message' => $response['message']
+    'message' => $baseResp['message']
 ]);
-?>

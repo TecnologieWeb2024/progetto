@@ -8,7 +8,9 @@ $orders = isUserSeller() ? $dbh->getAllSellerOrders($_SESSION['seller']['user_id
 function renderOrderCards($orders, $dbh)
 {
     foreach ($orders as $order) {
-        $products = $dbh->getOrderProducts($order['order_id']);
+        $products = isUserSeller()
+            ? $dbh->getSellerOrderDetails($order['order_id'], $_SESSION['seller']['user_id'])
+            : $dbh->getOrderProducts($order['order_id']);
         $date = DateTime::createFromFormat('Y-m-d H:i:s', $order['order_date']);
 ?>
         <div class="col-md-4 p-2">
@@ -49,7 +51,7 @@ function renderOrderCards($orders, $dbh)
                                         </div>
                                     <?php else: ?>
                                         <img
-                                            src="<?php echo $products[$i]['product_image']; ?>"
+                                            src="<?php echo $products[$i]['image']; ?>"
                                             class="img-fluid"
                                             alt="<?php echo htmlspecialchars($products[$i]['product_name']); ?>">
                                     <?php endif; ?>
@@ -59,7 +61,8 @@ function renderOrderCards($orders, $dbh)
                     </div>
                 </div>
                 <div class="card-footer border-0 text-center">
-                    <p>Totale: <?php echo number_format($order['total_price'], 2, ',', '.'); ?>€</p>
+                    <?php $sub = array_reduce($products, fn($a, $p) => $a + $p['price'] * $p['quantity'], 0); ?>
+                    <p>Totale ordine: <?= number_format($sub, 2, ',', '.') ?>€</p>
                 </div>
             </div>
         </div>
