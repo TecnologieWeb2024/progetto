@@ -2,7 +2,7 @@
     <?php
     require_once('bootstrap.php');
     require("productModal.php");
-    $products = $dbh->getAllProducts();
+    $products = isUserSeller() ? $dbh->getProductsBySeller($_SESSION['seller']['user_id']) : $dbh->getAllProducts();
     $totalProducts = count($products);
     ?>
     <h2 class="text-center"><?php echo isUserSeller() ? "Prodotti disponibili: $totalProducts" : "I nostri prodotti"  ?> </h2>
