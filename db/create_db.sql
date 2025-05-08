@@ -7,7 +7,7 @@ CREATE DATABASE CaffeBoDB;
 USE CaffeBoDB;
 
 -- Elimina l'utente esistente
-DROP USER IF EXISTS 'db_user' @'localhost';
+DROP USER IF EXISTS 'db_user'@'localhost';
 
 -- Crea un nuovo utente con una password sicura
 CREATE USER 'db_user' @'localhost' IDENTIFIED BY '1234';
@@ -17,6 +17,23 @@ GRANT ALL PRIVILEGES ON CaffeBoDB.* TO 'db_user' @'localhost';
 
 -- Applica i cambiamenti
 FLUSH PRIVILEGES;
+
+CREATE TABLE `Roles` (
+    `role_id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `role_name` varchar(30) NOT NULL
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+
+CREATE TABLE `User` (
+    `user_id` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `first_name` varchar(30) NOT NULL,
+    `last_name` varchar(30) NOT NULL,
+    `email` varchar(100) NOT NULL UNIQUE,
+    `passwordHash` varchar(60) NOT NULL,
+    `address` varchar(100) DEFAULT NULL,
+    `phone_number` varchar(12) NOT NULL,
+    `role` int(11) NOT NULL,
+    FOREIGN KEY (`role`) REFERENCES `Roles` (`role_id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 CREATE TABLE `Category` (
     `category_id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -39,6 +56,7 @@ CREATE TABLE `Payment_Status` (
 
 CREATE TABLE `Product` (
     `product_id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `seller_id` int(11) NOT NULL PRIMARY KEY,
     `SKU` varchar(100) NOT NULL,
     `product_name` varchar(50) NOT NULL,
     `product_description` text NOT NULL,
@@ -46,27 +64,11 @@ CREATE TABLE `Product` (
     `stock` int(11) NOT NULL,
     `category_id` int(11) NOT NULL,
     `image` varchar(255) DEFAULT NULL,
-    `available` int(11) DEFAULT 1,
+    `available` boolean DEFAULT 1,
     FOREIGN KEY (`category_id`) REFERENCES `Category` (`category_id`),
+    FOREIGN KEY (`seller_id`) REFERENCES `User` (`user_id`),
     CHECK (`price` >= 0), -- Evita prezzi negativi
     CHECK (`stock` >= 0)  -- Evita stock negativi
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
-
-CREATE TABLE `Roles` (
-    `role_id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `role_name` varchar(30) NOT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
-
-CREATE TABLE `User` (
-    `user_id` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    `first_name` varchar(30) NOT NULL,
-    `last_name` varchar(30) NOT NULL,
-    `email` varchar(100) NOT NULL UNIQUE,
-    `passwordHash` varchar(60) NOT NULL,
-    `address` varchar(100) DEFAULT NULL,
-    `phone_number` varchar(12) NOT NULL,
-    `role` int(11) NOT NULL,
-    FOREIGN KEY (`role`) REFERENCES `Roles` (`role_id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 CREATE TABLE `Cart` (

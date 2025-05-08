@@ -1,12 +1,12 @@
--- Inserimento dei dati iniziali
--- Inserimento dei ruoli
+-- Inserimento dei dati iniziali (inserts unificati)
+-- Ruoli
 INSERT INTO
     `Roles` (`role_id`, `role_name`)
 VALUES
     (1, 'seller'),
     (2, 'customer');
 
--- Inserimento delle categorie
+-- Categorie
 INSERT INTO
     `Category` (`category_id`, `NAME`)
 VALUES
@@ -14,7 +14,7 @@ VALUES
     (2, 'Caffè macinato'),
     (3, 'Caffè Decaffeinato');
 
--- Inserimento degli stati dell'ordine
+-- Stati ordine
 INSERT INTO
     `Order_State` (`order_state_id`, `descrizione`)
 VALUES
@@ -27,7 +27,7 @@ VALUES
     (7, 'Cancellato'),
     (8, 'Rimborsato');
 
--- Inserimento degli stati di pagamento
+-- Stati pagamento
 INSERT INTO
     `Payment_Status` (`payment_status_id`, `description`)
 VALUES
@@ -38,8 +38,7 @@ VALUES
     (5, 'Annullato'),
     (6, 'In elaborazione');
 
--- processing
--- Inserimento dei metodi di pagamento
+-- Metodi di pagamento
 INSERT INTO
     `Payment_Method` (
         `payment_method_id`,
@@ -85,7 +84,7 @@ VALUES
         50
     );
 
--- Inserimento degli utenti
+-- Utenti
 INSERT INTO
     `User` (
         `user_id`,
@@ -103,7 +102,7 @@ VALUES
         'VenditoreEsempio',
         'CognomeVenditore',
         'venditore@example.com',
-        '$2a$12$YdBzuFDfMhBHwgj5HG3doeibBe2AWlkfON69gGQq42Z9yZ9k/Jlrm', -- password: Venditore-1234
+        '$2a$12$YdBzuFDfMhBHwgj5HG3doeibBe2AWlkfON69gGQq42Z9yZ9k/Jlrm',
         'Via Esempio 123, Cesena, FC',
         '3331231231',
         1
@@ -113,16 +112,27 @@ VALUES
         'ProvaNomeUno',
         'ProvaCognomeUno',
         'prova-1@test.com',
-        '$2y$10$kZSfGM9OgyOfrBf8I0WdZutr7lcaXGSRX0ewQlvGs.tJEYIb6EepC', -- password: Prova-1234
+        '$2y$10$kZSfGM9OgyOfrBf8I0WdZutr7lcaXGSRX0ewQlvGs.tJEYIb6EepC',
         'Via Controesempio 123, Cesena, FC',
         '3331231231',
         2
+    ),
+    (
+        3,
+        'VenditoreDue',
+        'CognomeVenditore',
+        'venditore2@example.com',
+        '$2a$12$YdBzuFDfMhBHwgj5HG3doeibBe2AWlkfON69gGQq42Z9yZ9k/Jlrm',
+        'Via Esempio 456, Cesena, FC',
+        '3331231232',
+        1
     );
 
--- Inserimento dei prodotti
+-- Prodotti
 INSERT INTO
     `Product` (
         `product_id`,
+        `seller_id`,
         `SKU`,
         `product_name`,
         `product_description`,
@@ -135,67 +145,96 @@ INSERT INTO
 VALUES
     (
         1,
+        1,
         'CAF001',
         'Caffè Arabica 250g',
         'Caffè arabica in grani, 250g',
         5.99,
         100,
         1,
-        'assets/img/products/CAFF001.jpg',
+        'assets/img/products/CAF001.jpg',
         1
     ),
     (
         2,
+        1,
         'CAF002',
         'Caffè Robusta 250g',
         'Caffè robusta in grani, 250g',
         4.99,
         150,
         1,
-        'assets/img/products/CAFF001.jpg',
+        'assets/img/products/CAF001.jpg',
         1
     ),
     (
         3,
+        1,
         'CAF003',
         'Caffè Macinato 250g',
         'Caffè macinato, 250g',
         5.49,
         120,
         2,
-        'assets/img/products/CAFF001.jpg',
+        'assets/img/products/CAF001.jpg',
         0
     ),
     (
         4,
+        1,
         'CAF004',
         'Caffè Decaffeinato 250g',
         'Caffè decaffeinato in grani, 250g',
         6.49,
         80,
         3,
-        'assets/img/products/CAFF001.jpg',
+        'assets/img/products/CAF001.jpg',
         0
     ),
     (
         5,
+        1,
         'CAF005',
-        'Caffè Decaffeinato Macinato 250g',
+        'Caffè Decaf. Macinato 250g',
         'Caffè decaffeinato macinato, 250g',
         6.99,
         70,
         3,
-        'assets/img/products/CAFF001.jpg',
+        'assets/img/products/CAF001.jpg',
+        1
+    ),
+    (
+        6,
+        3,
+        'CAF006',
+        'Caffè Specialty 250g',
+        'Caffè specialty in grani, 250g',
+        8.99,
+        50,
+        1,
+        'assets/img/products/CAF001.jpg',
+        1
+    ),
+    (
+        7,
+        3,
+        'CAF007',
+        'Espresso Blend 500g',
+        'Miscela per espresso, 500g',
+        12.49,
+        30,
+        2,
+        'assets/img/products/CAF001.jpg',
         1
     );
 
--- Creazione dei carrelli per gli utenti
+-- Carrelli
 INSERT INTO
     `Cart` (`user_id`)
 VALUES
     (2);
 
--- Carrello per l'utente customer
+-- Stati spedizione
 INSERT INTO
     `Shipment_Status` (`shipment_status_id`, `status`)
 VALUES
@@ -203,6 +242,7 @@ VALUES
     (2, 'In transito'),
     (3, 'Consegnato');
 
+-- Metodi di spedizione
 INSERT INTO
     `Shipping_Method` (
         `shipping_method_id`,
@@ -211,26 +251,11 @@ INSERT INTO
         `price`
     )
 VALUES
-    (
-        1,
-        'Spedizione Standard',
-        'Spedizione standard con corriere espresso (7-10 giorni lavorativi)',
-        2.99
-    ),
-    (
-        2,
-        'Express',
-        'Spedizione veloce con corriere espresso (3-5 giorni lavorativi)',
-        5.99
-    ),
-    (
-        3,
-        'Ritiro in Negozio',
-        'Ritiro diretto presso il nostro negozio',
-        0.00
-    );
+    (1, 'Spedizione Standard', '7-10 giorni', 2.99),
+    (2, 'Express', '3-5 giorni', 5.99),
+    (3, 'Ritiro in Negozio', 'Ritiro diretto', 0.00);
 
--- Inserimento delle spedizioni
+-- Spedizioni
 INSERT INTO
     `Shipment` (
         `shipment_id`,
@@ -239,32 +264,14 @@ INSERT INTO
         `status`
     )
 VALUES
-    (
-        1,
-        'Via Controesempio 123, Cesena, FC',
-        1,
-        1
-    ),
-    (
-        2,
-        'Via Controesempio 123, Cesena, FC',
-        1,
-        2
-    ),
-    (
-        3,
-        'Via Controesempio 123, Cesena, FC',
-        2,
-        2
-    ),
-    (
-        4,
-        'Via Controesempio 123, Cesena, FC',
-        1,
-        3
-    );
+    (1, 'Via Controesempio 123, Cesena, FC', 1, 1),
+    (2, 'Via Controesempio 123, Cesena, FC', 1, 2),
+    (3, 'Via Controesempio 123, Cesena, FC', 2, 2),
+    (4, 'Via Controesempio 123, Cesena, FC', 1, 3),
+    (5, 'Via Esempio 456, Cesena, FC', 2, 1),
+    (6, 'Via Controesempio 123, Cesena, FC', 1, 1);
 
--- Inserimento degli ordini
+-- Ordini
 INSERT INTO
     `Order` (
         `order_id`,
@@ -278,9 +285,10 @@ VALUES
     (1, 26.95, 2, 1, 1, 1),
     (2, 26.95, 2, 1, 2, 2),
     (3, 26.95, 2, 1, 3, 3),
-    (4, 26.95, 2, 1, 4, 4);
+    (4, 26.95, 2, 1, 4, 4),
+    (5, 14.98, 2, 3, 1, 5);
 
--- Inserimento dei dettagli degli ordini
+-- Dettagli ordine
 INSERT INTO
     `Order_Detail` (`order_id`, `product_id`, `quantity`, `price`)
 VALUES
@@ -291,9 +299,11 @@ VALUES
     (3, 1, 2, 5.99),
     (3, 2, 3, 4.99),
     (4, 1, 2, 5.99),
-    (4, 2, 3, 4.99);
+    (4, 2, 3, 4.99),
+    (5, 6, 1, 8.99),
+    (5, 1, 1, 5.99);
 
--- Inserimento dei pagamenti
+-- Pagamenti
 INSERT INTO
     `Payment` (
         `order_id`,
@@ -303,9 +313,9 @@ INSERT INTO
         `transaction_reference`
     )
 VALUES
-    (1, 1, 26.95, 1, 'TXN-2025050501'), -- Carta di Credito, In attesa
-    (2, 2, 26.95, 1, 'PP-2025050502'), -- PayPal, In attesa
-    (3, 1, 26.95, 2, 'TXN-2025050503'), -- Carta di Credito, Completato
-    (4, 3, 26.95, 2, 'BNK-2025050504');
-
--- Bonifico Bancario, Completato
+    (1, 1, 26.95, 1, 'TXN-2025050501'),
+    (2, 2, 26.95, 1, 'PP-2025050502'),
+    (3, 1, 26.95, 2, 'TXN-2025050503'),
+    (4, 3, 26.95, 2, 'BNK-2025050504'),
+    (5, 2, 14.98, 2, 'PP-2025050505');
+    (6, 2, 14.98, 2, 'PP-2025050505');
