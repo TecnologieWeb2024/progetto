@@ -61,7 +61,7 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                 <li><a href="index.php?page=account" class="dropdown-item"><em class="fa fa-cog"></em>&nbsp;Impostazioni Account</a></li>
-                                <li><a href="index.php?page=orders" class="dropdown-item"><em class="fa fa-list-alt"></em>&nbsp;I miei ordini</a></li>
+                                <li><a href="index.php?page=<?php echo isUserSeller()? "gestioneOrdini" : "orders"?>" class="dropdown-item"><em class="fa fa-list-alt"></em>&nbsp;I miei ordini</a></li>
                                 <li><a href="logout.php" class="dropdown-item link-danger link-underline-opacity-0"><em class="fa fa-sign-out"></em>&nbsp;Logout</a></li>
                             </ul>
                         </li>
