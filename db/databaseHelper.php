@@ -193,6 +193,21 @@ class DatabaseHelper
     }
 
     /**
+     * Recupera i prodotti di un venditore dal database.
+     * @param int $seller_id L'id del venditore
+     * @return array Un array di prodotti.
+     */
+    public function getProductsBySeller($seller_id)
+    {
+        $query = "SELECT * FROM `Product` WHERE seller_id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $seller_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    /**
      * Aggiorna la disponibilità di un prodotto nel database.
      * @param int $id_product
      */
@@ -599,7 +614,11 @@ class DatabaseHelper
      */
     public function getAllSellerOrders($seller_id)
     {
-        $query = "SELECT * FROM `Order` WHERE seller_id = ?";
+        $query = "SELECT DISTINCT o.*
+                    FROM `Order` o
+                    JOIN `Order_Detail` od  ON o.order_id = od.order_id
+                    JOIN `Product` p        ON od.product_id = p.product_id
+                    WHERE p.seller_id = ?";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("i", $seller_id);
         $stmt->execute();
@@ -614,7 +633,12 @@ class DatabaseHelper
      */
     public function getOrdersByState($seller_id, $order_state_id)
     {
-        $query = "SELECT * FROM `Order` WHERE seller_id = ? AND order_state_id = ?";
+        $query = "SELECT DISTINCT o.*
+                    FROM `Order` o
+                    JOIN `Order_Detail` od  ON o.order_id = od.order_id
+                    JOIN `Product` p        ON od.product_id = p.product_id
+                    WHERE p.seller_id     = ?
+                    AND o.order_state_id = ?";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("ii", $seller_id, $order_state_id);
         $stmt->execute();
@@ -663,8 +687,6 @@ class DatabaseHelper
         );
     }
 
-
-
     /**
      * Recupera tutti gli ordini  dal database.
      * @return array Un array di ordini.
@@ -701,7 +723,7 @@ class DatabaseHelper
                 p.product_id,
                 p.product_name    AS product_name,
                 od.price          AS product_price,
-                p.image           AS product_image,
+                p.image,
                 od.quantity
             FROM
                 `Order_Detail` od
@@ -726,7 +748,7 @@ class DatabaseHelper
                 'product_id'    => $row['product_id'],
                 'product_name'  => $row['product_name'],
                 'price'         => $row['product_price'],
-                'product_image' => $row['product_image'],
+                'image'         => $row['image'],
                 'quantity'      => $row['quantity']
             ];
         }
@@ -1046,6 +1068,33 @@ class DatabaseHelper
     }
 
     /**
+     * Recupera i dettagli di un ordine (solo i prodotti di questo seller).
+     * @param int $order_id
+     * @param int $seller_id
+     * @return array
+     */
+    public function getSellerOrderDetails(int $order_id, int $seller_id): array
+    {
+        $query = "SELECT
+                    od.order_detail_id,
+                    od.product_id,
+                    p.product_name,
+                    p.image,
+                    p.price,
+                    od.quantity,
+                    od.price
+                FROM `Order_Detail` od
+                JOIN `Product` p
+                    ON od.product_id = p.product_id
+                WHERE od.order_id  = ?
+                AND p.seller_id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ii", $order_id, $seller_id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    /**
      * Recupera tutti i dettagli dell'ordine, pagamento e spedizione.
      * @param int $order_id
      * @return array ['success' => true|false, 'data' => array|null, 'message' => '...']
@@ -1077,7 +1126,8 @@ class DatabaseHelper
             shp.address          AS shipment_address,
             shp.shipping_method,
             shp.tracking_number,
-            ss.status       AS shipment_status
+            ss.status       AS shipment_status,
+            sm.name         AS shipping_method
 
         FROM `Order` o
         LEFT JOIN `Order_State`       os  ON o.order_state_id       = os.order_state_id
@@ -1086,7 +1136,7 @@ class DatabaseHelper
         LEFT JOIN `Payment_Status`    pms ON pmt.status             = pms.payment_status_id
         LEFT JOIN `Shipment`          shp ON o.shipment_id          = shp.shipment_id
         LEFT JOIN `Shipment_Status`   ss  ON shp.status             = ss.shipment_status_id
-
+        LEFT JOIN `Shipping_Method`   sm  ON shp.shipping_method    = sm.shipping_method_id
         WHERE o.order_id = ?
 
     ";
@@ -1099,6 +1149,12 @@ class DatabaseHelper
         return ['success' => true, 'data' => $data, 'message' => 'Dettagli ordine completi recuperati.'];
     }
 
+    /**
+     * Recupera il totale delle vendite per un venditore in un anno specifico.
+     * @param int $seller_id
+     * @param int $year
+     * @return float Il totale delle vendite.
+     */
     public function getTotalSales(int $seller_id, int $year): float
     {
         $query = "
@@ -1115,6 +1171,12 @@ class DatabaseHelper
         return (float)($result->fetch_assoc()['total_sales'] ?? 0.0);
     }
 
+    /**
+     * Recupera il numero totale di ordini per un venditore in un anno specifico.
+     * @param int $seller_id
+     * @param int $year
+     * @return int Il numero totale di ordini.
+     */
     public function getTotalOrders(int $seller_id, int $year): int
     {
         $query = "
@@ -1129,6 +1191,13 @@ class DatabaseHelper
         return $result->fetch_assoc()['total_orders'] ?? 0;
     }
 
+    /**
+     * Recupera i prodotti più venduti per un venditore in un anno specifico.
+     * @param int $seller_id
+     * @param int $year
+     * @param int $limit
+     * @return array Un array di prodotti più venduti.
+     */
     public function getBestSellingProducts(int $seller_id, int $year, int $limit = 5): array
     {
         $query = "
@@ -1136,13 +1205,13 @@ class DatabaseHelper
             FROM `Order_Detail` od
             JOIN `Order` o ON od.order_id = o.order_id
             JOIN `Product` p ON od.product_id = p.product_id
-            WHERE o.seller_id = ? AND YEAR(o.order_date) = ?
+            WHERE o.seller_id = ? AND p.seller_id = ? AND YEAR(o.order_date) = ?
             GROUP BY p.product_id
             ORDER BY total_sold DESC
             LIMIT ?
         ";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("iii", $seller_id, $year, $limit);
+        $stmt->bind_param("iiii", $seller_id, $seller_id, $year, $limit);
         $stmt->execute();
         $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC) ?? [];
