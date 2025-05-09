@@ -702,7 +702,9 @@ class DatabaseHelper
 
     public function getOrderState($order_id)
     {
-        $query = "SELECT `Order_State`.`order_state_id`, `Order_State`.`descrizione` FROM `Order_State`, `Order` WHERE `Order`.order_id = ? AND `Order`.order_state_id = `Order_State`.order_state_id";
+        $query = "SELECT `Order_State`.`order_state_id`, `Order_State`.`descrizione` 
+                    FROM `Order_State`, `Order` 
+                    WHERE `Order`.order_id = ? AND `Order`.order_state_id = `Order_State`.order_state_id";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("i", $order_id);
         $stmt->execute();
@@ -1111,7 +1113,6 @@ class DatabaseHelper
             o.order_id,
             o.order_date,
             o.total_price,
-            o.seller_id,
             o.user_id,
 
             os.descrizione       AS order_state,
@@ -1157,13 +1158,11 @@ class DatabaseHelper
      */
     public function getTotalSales(int $seller_id, int $year): float
     {
-        $query = "
-            SELECT SUM(total_price) AS total_sales
-            FROM `Order`
-            WHERE seller_id = ? AND YEAR(order_date) = ?
-        ";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("ii", $seller_id, $year);
+        $query = "SELECT SUM(od.price * od.quantity) AS total_sales
+            FROM `Order_Detail` od
+            JOIN `Order` o ON od.order_id = o.order_id AND o.order_state_id > 2 AND o.order_state_id < 7-- Solo ordini pagati.
+            JOIN `Product` p ON od.product_id = p.product_id
+            WHERE p.seller_id = ? AND YEAR(o.order_date) = ?";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("ii", $seller_id, $year);
         $stmt->execute();
@@ -1179,11 +1178,11 @@ class DatabaseHelper
      */
     public function getTotalOrders(int $seller_id, int $year): int
     {
-        $query = "
-            SELECT COUNT(order_id) AS total_orders
-            FROM `Order`
-            WHERE seller_id = ? AND YEAR(order_date) = ?
-        ";
+        $query = "SELECT COUNT(DISTINCT o.order_id) AS total_orders
+            FROM `Order` o
+            JOIN `Order_Detail` od ON o.order_id = od.order_id
+            JOIN `Product` p ON od.product_id = p.product_id
+            WHERE p.seller_id = ? AND YEAR(o.order_date) = ? AND o.order_state_id > 2 AND o.order_state_id < 7 -- Solo ordini";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("ii", $seller_id, $year);
         $stmt->execute();
@@ -1200,18 +1199,16 @@ class DatabaseHelper
      */
     public function getBestSellingProducts(int $seller_id, int $year, int $limit = 5): array
     {
-        $query = "
-            SELECT p.product_id, p.product_name, od.quantity, SUM(od.quantity) AS total_sold
+        $query = "SELECT p.product_id, p.product_name, SUM(od.quantity) AS total_sold
             FROM `Order_Detail` od
-            JOIN `Order` o ON od.order_id = o.order_id
+            JOIN `Order` o ON od.order_id = o.order_id AND o.order_state_id > 2 AND o.order_state_id < 7 -- Solo ordini pagati.
             JOIN `Product` p ON od.product_id = p.product_id
-            WHERE o.seller_id = ? AND p.seller_id = ? AND YEAR(o.order_date) = ?
+            WHERE p.seller_id = ? AND YEAR(o.order_date) = ?
             GROUP BY p.product_id
             ORDER BY total_sold DESC
-            LIMIT ?
-        ";
+            LIMIT ?";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("iiii", $seller_id, $seller_id, $year, $limit);
+        $stmt->bind_param("iii", $seller_id, $year, $limit);
         $stmt->execute();
         $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC) ?? [];
@@ -1219,11 +1216,12 @@ class DatabaseHelper
 
     public function getBestCustomers(int $seller_id, int $year, int $limit = 5): array
     {
-        $query = "
-            SELECT u.user_id, u.email, SUM(o.total_price) AS total_spent
+        $query = "SELECT u.user_id, u.email, SUM(od.quantity * od.price) AS total_spent
             FROM `Order` o
             JOIN `User` u ON o.user_id = u.user_id
-            WHERE o.seller_id = ? AND YEAR(o.order_date) = ?
+            JOIN `Order_Detail` od ON o.order_id = od.order_id
+            JOIN `Product` p ON od.product_id = p.product_id
+            WHERE p.seller_id = ? AND YEAR(o.order_date) = ? AND o.order_state_id > 2 AND o.order_state_id < 7 -- Solo ordini pagati.
             GROUP BY u.user_id
             ORDER BY total_spent DESC
             LIMIT ?
