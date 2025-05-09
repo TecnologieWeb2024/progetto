@@ -4,7 +4,8 @@ body {
   /* user-select: none; */ /* Prevent text selection */
   caret-color: transparent;
 }
-html,body {
+html,
+body {
   height: 100%; /* Rende l'altezza della pagina 100% */
   margin: 0;
 }
@@ -26,16 +27,23 @@ footer {
 /* Remove arrows in Chrome, Safari, Edge, and Opera */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 /* Remove arrows in Firefox and Brave */
 input[type="number"] {
-    -moz-appearance: textfield;
-    appearance: textfield;
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 input {
   caret-color: black;
+}
+
+.hover-darken {
+  transition: background-color 0.2s ease;
+}
+.hover-darken:hover {
+  background-color: rgba(0, 0, 0, 0.05); /* leggera scuritura */
 }
