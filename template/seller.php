@@ -68,8 +68,8 @@ $user = $dbh->getUserInfo($_SESSION['seller']['user_id']);
                         <?php
                         $topProducts = $dbh->getBestSellingProducts($_SESSION['seller']['user_id'], $_GET['year'] ?? date("Y"));
                         foreach (array_slice($topProducts, 0, 5) as $product) {
-                            echo isset($product['product_name'], $product['quantity'])
-                                ? '<li>' . $product['product_name'] . " &times; " . $product['quantity'] . '</li>'
+                            echo isset($product['product_name'], $product['total_sold'])
+                                ? '<li>' . $product['product_name'] . " &times; " . $product['total_sold'] . '</li>'
                                 : "";
                         }
                         ?>
