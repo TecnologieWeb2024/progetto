@@ -14,7 +14,10 @@
         <div class="row">
             <div class="col-12 mb-4">
                 <h1 class="text-center">Carrello</h1>
-                <h2 class="text-center fw-bold">Totale: <?php echo $totalPrice ?>€</h2>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="fw-bold mb-0">Totale: <?php echo $totalPrice ?>€</h2>
+                    <a href="index.php?page=checkout" class="btn btn-success">Procedi al pagamento</a>
+                </div>
             </div>
         </div>
         <?php
