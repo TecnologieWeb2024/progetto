@@ -38,6 +38,10 @@ class Router
             'file' => 'template/cart.php',
             'title' => 'CoffeeBo - Carrello',
         ],
+        'checkout' => [
+            'file' => 'template/checkout.php',
+            'title' => 'CoffeeBo - Checkout',
+        ],
     ];
 
     public function getRoute() 
