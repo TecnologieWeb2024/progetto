@@ -31,14 +31,6 @@ START TRANSACTION;
 SET
     time_zone = "+00:00";
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-
-/*!40101 SET NAMES utf8mb4 */;
-
 --
 -- Database: `CaffeBoDB`
 --
@@ -218,7 +210,6 @@ CREATE TABLE
         `order_date` datetime DEFAULT current_timestamp(),
         `total_price` decimal(10, 2) NOT NULL,
         `user_id` int (11) NOT NULL,
-        `seller_id` int (11) DEFAULT NULL,
         `order_state_id` int (11) NOT NULL,
         `shipment_id` int (11) DEFAULT NULL,
         PRIMARY KEY (`order_id`),
