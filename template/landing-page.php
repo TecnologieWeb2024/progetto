@@ -58,7 +58,7 @@
                                                                 </div>
                                                             </a>
                                                         <?php else: ?>
-                                                            <img src="<?php echo $products[$i]['product_image']; ?>" class="img-fluid" alt="<?php echo $products[$i]['product_name']; ?>">
+                                                            <img src="<?php echo $products[$i]['image']; ?>" class="img-fluid" alt="<?php echo $products[$i]['product_name']; ?>">
                                                         <?php endif; ?>
                                                     <?php endif; ?>
                                                 </div>
