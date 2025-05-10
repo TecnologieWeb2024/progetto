@@ -1,7 +1,11 @@
 <?php
 
 require_once('bootstrap.php');
-$user = $dbh->getUserInfo($_SESSION['customer']['user_id']);
+if (isset($_SESSION['customer'])) {
+    $user = $dbh->getUserInfo($_SESSION['customer']['user_id']);
+} elseif (isset($_SESSION['seller'])) {
+    $user = $dbh->getUserInfo($_SESSION['seller']['user_id']);
+}
 ?>
 <h1 class="text-center">Impostazioni Account</h1>
 <div class="container col-md-4 mt-4">

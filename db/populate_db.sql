@@ -204,26 +204,22 @@ INSERT INTO `Shipping_Method`(
     `shipping_method_id`,
     `name`,
     `description`,
-    `icon`,
     `price`
 )
 VALUES(
     1,
     'Spedizione Standard',
     '7-10 giorni',
-    'assets/img/icons/shipping.png',
     2.99
 ),(
     2,
     'Express',
     '3-5 giorni',
-    'assets/img/icons/express_shipping.png',
     5.99
 ),(
     3,
     'Ritiro in Negozio',
     'Ritiro diretto',
-    'assets/img/icons/free_shipping.png',
     0.00
 );
 
