@@ -9,7 +9,7 @@ if (isset($_SESSION['customer'])) {
 ?>
 <h1 class="text-center">Impostazioni Account</h1>
 <div class="container col-md-4 mt-4">
-    <form action="/updateAccount.php" method="post">
+    <form action="updateAccount.php" method="post">
         <div class="form-group">
             <label class="mt-2" for="first_name">Nome:</label>
             <input type="text" class="form-control mt-2" id="first_name" value="<?php echo htmlspecialchars($user['first_name']); ?>" readonly>
