@@ -20,7 +20,7 @@ if (isset($_SESSION['customer'])) {
         </div>
         <div class="form-group">
             <label class="mt-2" for="email">Email:</label>
-            <input type="email" class="form-control mt-2" id="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
+            <input type="email" class="form-control mt-2" id="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" readonly>
         </div>
         <h6 class="mt-4 text-danger text-center">Modifica Password</h6>
         <div class="form-group">
