@@ -39,3 +39,31 @@ input[type="number"] {
 input {
   caret-color: black;
 }
+
+.badge-status-warning {
+    background-color: #facc15; /* yellow-400 */
+    color: white;
+}
+
+.badge-status-indigo-600 {
+    background-color: #5a67d8; /* indigo-600 */
+    color: white;
+}
+
+.badge-status-success {
+    background-color: #22c55e; /* green-500 */
+    color: white;
+}
+
+.badge-status-danger {
+    background-color: #ef4444; /* red-500 */
+    color: white;
+}
+
+.badge {
+    padding: 0.25em 0.6em;
+    font-size: 0.875em;
+    border-radius: 0.25rem;
+    display: inline-block;
+    font-weight: 500;
+}
