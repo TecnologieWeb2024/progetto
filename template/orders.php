@@ -15,7 +15,7 @@ function renderOrderCards($orders, $dbh)
 ?>
         <div class="col-md-4 p-2">
             <div
-                class="card mb-4 h-100"
+                class="card mb-4 h-100 hover-darken"
                 data-bs-toggle="modal"
                 data-bs-target="#orderModal"
                 data-order-id="<?php echo $order['order_id']; ?>">
@@ -48,7 +48,7 @@ function renderOrderCards($orders, $dbh)
                                     <?php else: ?>
                                         <img
                                             src="<?php echo $products[$i]['image']; ?>"
-                                            class="img-fluid"
+                                            class="img-fluid rounded"
                                             alt="<?php echo htmlspecialchars($products[$i]['product_name']); ?>">
                                     <?php endif; ?>
                                 <?php endif; ?>

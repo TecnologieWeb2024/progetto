@@ -47,9 +47,9 @@
         <?php endif;
 
         foreach ($cartProducts as $product): ?>
-            <div class="row border rounded p-3 m-1 bg-light justify-content-center align-items-center">
+            <div class="row border rounded py-4 my-1 justify-content-center align-items-center hover-darken">
                 <div class="col-6 col-md-2 text-center text-md-start">
-                    <img src="<?php echo $product['image']; ?>" class="img-fluid" alt="<?php echo $product['product_name']; ?> image">
+                    <img src="<?php echo $product['image']; ?>" class="img-fluid rounded" alt="<?php echo $product['product_name']; ?> image">
                 </div>
                 <!-- Product Details (Name, Description, Price) -->
                 <div class="col-12 col-md-4 text-center text-md-start">
