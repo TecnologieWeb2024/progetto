@@ -7,11 +7,11 @@ CREATE DATABASE CaffeBoDB;
 USE CaffeBoDB;
 
 -- Elimina l'utente esistente
-DROP USER IF EXISTS 'db_user' @ 'localhost';
+DROP USER IF EXISTS 'db_user'@'localhost';
 -- Crea un nuovo utente con una password sicura
-CREATE USER 'db_user' @'localhost' IDENTIFIED BY '1234';
+CREATE USER 'db_user'@'localhost' IDENTIFIED BY '1234';
 -- Concedi privilegi solo sul database specifico
-GRANT ALL PRIVILEGES ON CaffeBoDB.* TO 'db_user' @'localhost';
+GRANT ALL PRIVILEGES ON CaffeBoDB.* TO 'db_user'@'localhost';
 -- Applica i cambiamenti
 FLUSH PRIVILEGES;
 
@@ -113,7 +113,6 @@ CREATE TABLE
         `cart_id` int (11) NOT NULL AUTO_INCREMENT,
         `user_id` int (11) NOT NULL,
         `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-        `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
         PRIMARY KEY (`cart_id`),
         UNIQUE KEY `user_id` (`user_id`),
         CONSTRAINT `Cart_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`) ON DELETE CASCADE
@@ -129,15 +128,11 @@ CREATE TABLE
         `cart_id` int (11) NOT NULL,
         `product_id` int (11) NOT NULL,
         `quantity` int (11) NOT NULL,
-        `price` decimal(10, 2) NOT NULL,
-        `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-        `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
         PRIMARY KEY (`cart_id`, `product_id`),
         KEY `product_id` (`product_id`),
         CONSTRAINT `Cart_Detail_ibfk_1` FOREIGN KEY (`cart_id`) REFERENCES `Cart` (`cart_id`) ON DELETE CASCADE,
         CONSTRAINT `Cart_Detail_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `Product` (`product_id`) ON DELETE CASCADE,
-        CONSTRAINT `check_quantity` CHECK (`quantity` > 0),
-        CONSTRAINT `check_price` CHECK (`price` >= 0)
+        CONSTRAINT `check_quantity` CHECK (`quantity` > 0)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -189,20 +184,20 @@ CREATE TABLE
 
 -- --------------------------------------------------------
 --
--- Table structure for table `Order_State`
+-- Table structure for table `Order_Status`
 -- (No dependencies)
 --
 CREATE TABLE
-    `Order_State` (
-        `order_state_id` int (11) NOT NULL AUTO_INCREMENT,
+    `Order_Status` (
+        `order_status_id` int (11) NOT NULL AUTO_INCREMENT,
         `descrizione` varchar(100) NOT NULL,
-        PRIMARY KEY (`order_state_id`)
+        PRIMARY KEY (`order_status_id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 --
 -- Table structure for table `Order`
--- (Depends on User, Shipment, Order_State)
+-- (Depends on User, Shipment, Order_Status)
 --
 CREATE TABLE
     `Order` (
@@ -210,16 +205,14 @@ CREATE TABLE
         `order_date` datetime DEFAULT current_timestamp(),
         `total_price` decimal(10, 2) NOT NULL,
         `user_id` int (11) NOT NULL,
-        `order_state_id` int (11) NOT NULL,
+        `order_status_id` int (11) NOT NULL,
         `shipment_id` int (11) DEFAULT NULL,
         PRIMARY KEY (`order_id`),
         KEY `user_id` (`user_id`),
-        KEY `seller_id` (`seller_id`),
-        KEY `order_state_id` (`order_state_id`),
+        KEY `order_status_id` (`order_status_id`),
         KEY `shipment_id` (`shipment_id`),
         CONSTRAINT `Order_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`),
-        CONSTRAINT `Order_ibfk_2` FOREIGN KEY (`seller_id`) REFERENCES `User` (`user_id`),
-        CONSTRAINT `Order_ibfk_3` FOREIGN KEY (`order_state_id`) REFERENCES `Order_State` (`order_state_id`),
+        CONSTRAINT `Order_ibfk_3` FOREIGN KEY (`order_status_id`) REFERENCES `Order_Status` (`order_status_id`),
         CONSTRAINT `Order_ibfk_4` FOREIGN KEY (`shipment_id`) REFERENCES `Shipment` (`shipment_id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
@@ -234,14 +227,12 @@ CREATE TABLE
         `order_id` int (11) NOT NULL,
         `product_id` int (11) NOT NULL,
         `quantity` int (11) NOT NULL,
-        `price` decimal(10, 2) NOT NULL,
         PRIMARY KEY (`order_detail_id`),
         KEY `order_id` (`order_id`),
         KEY `product_id` (`product_id`),
         CONSTRAINT `Order_Detail_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `Order` (`order_id`) ON DELETE CASCADE,
         CONSTRAINT `Order_Detail_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `Product` (`product_id`),
-        CONSTRAINT `check_quantity_od` CHECK (`quantity` > 0),
-        CONSTRAINT `check_price_od` CHECK (`price` >= 0)
+        CONSTRAINT `check_quantity_od` CHECK (`quantity` > 0)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 -- --------------------------------------------------------
