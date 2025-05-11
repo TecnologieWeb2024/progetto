@@ -17,7 +17,8 @@
             <?php foreach ($bestSellingProducts as $product): ?>
                 <div class="col-md-4 mb-3">
                     <div class="card h-100 hover-darken ">
-                        <a data-bs-toggle="modal" data-bs-target="#productModal"
+                        <a  class="mt-4"
+                            data-bs-toggle="modal" data-bs-target="#productModal"
                             data-product-id="<?php echo $product['product_id']; ?>"
                             data-name="<?php echo htmlspecialchars($product['product_name']); ?>"
                             data-price="<?php echo $product['price']; ?>"
@@ -60,7 +61,7 @@
             }
             // Pagination logic
             $totalProducts = count($products);
-            $productsPerPage = 4;
+            $productsPerPage = 6;
             $totalPages = ceil($totalProducts / $productsPerPage);
 
             // Get current page from URL, if not present default to 1
@@ -89,7 +90,7 @@
                                 <div class="card-body d-flex flex-column pt-3 p-5" style="min-height: 10em">
                                     <!-- Titolo e link per il modale -->
                                     <a
-                                        class="h4 card-title btn-link text-decoration-none text-truncate d-block"
+                                        class="h4 card-title btn-link text-decoration-none text-truncate d-block text-center"
                                         style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
                                         data-bs-toggle="modal"
                                         data-bs-target="#productModal"
@@ -107,7 +108,7 @@
                                         <?php if (isUserSeller()): ?>
                                             <p class="card-text text-muted">In magazzino: <?php echo $product['stock']; ?></p>
                                         <?php endif; ?>
-                                        <p class="card-text h3 text-end"><?php echo $product['price']; ?>€</p>
+                                        <p class="card-text h3 text-end me-4"><?php echo $product['price']; ?>€</p>
                                     </div>
                                 </div>
                             </div>
