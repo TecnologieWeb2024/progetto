@@ -96,4 +96,153 @@ $user = $dbh->getUserInfo($_SESSION['seller']['user_id']);
             </div>
         </div>
     </div>
+    <div class="row mb-4">
+        <div class="col-md-12 h-50">
+            <div class="card px-0 mx-0">
+                <div class="card-body px-0 mx-0" style="min-height: 12em;">
+                    <h5 class="card-title">Ricavi, Ricavo medio per ordine e Numero di ordini mensili</h5>
+                    <?php
+                    $result = $dbh->getAverageMonthlyRevenue(
+                        $_SESSION['seller']['user_id'],
+                        $_GET['year'] ?? date("Y")
+                    );
+                    // Abbreviazioni mesi
+                    $shortMonths = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];
+                    $labels = array_map(function ($item) use ($shortMonths) {
+                        return $shortMonths[date('n', strtotime($item['month'])) - 1];
+                    }, $result);
+                    $totalRevenue = array_map(fn($item) => (float)$item['total_revenue'], $result);
+                    $avgPerOrder  = array_map(fn($item) => (float)$item['avg_revenue_per_order'], $result);
+                    $ordersCount  = array_map(fn($item) => (int)$item['orders_count'], $result);
+                    ?>
+                    <canvas id="monthlyRevenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body" style="min-height: 12em;">
+                    <h5 class="card-title">Giorni di stock rimanenti per prodotto</h5>
+                    <table class="table table-sm table-striped caption-top table-responsive">
+                        <caption>Prodotti in magazzino</caption>
+                        <thead class="">
+                            <tr>
+                                <th>Prodotto</th>
+                                <th>Stock</th>
+                                <th>Vendite Giornaliere</th>
+                                <th>Giorni rimanenti</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $stockProducts = $dbh->getStockDays($_SESSION['seller']['user_id'], $_GET['year'] ?? date("Y"));
+                            foreach ($stockProducts as $product) {
+                                echo '<tr>';
+                                echo '<td>' . htmlspecialchars($product['product_name']) . '</td>';
+                                echo '<td>' . htmlspecialchars($product['stock']) . '</td>';
+                                echo '<td>' . htmlspecialchars($product['avg_daily_sold'] ?? 0) . '</td>';
+                                echo '<td>' . htmlspecialchars($product['days_of_stock'] ?? "-") . '</td>';
+                                echo '</tr>';
+                            }
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('monthlyRevenueChart').getContext('2d');
+
+    const labels = <?php echo json_encode($labels); ?>;
+    const totalRevenue = <?php echo json_encode($totalRevenue); ?>;
+    const avgPerOrder = <?php echo json_encode($avgPerOrder); ?>;
+    const ordersCount = <?php echo json_encode($ordersCount); ?>;
+    const data = {
+        labels,
+        datasets: [{
+                type: 'line',
+                label: 'Ricavato (€)',
+                data: totalRevenue,
+                backgroundColor: 'rgba(75,192,192,0.5)',
+                borderColor: 'rgba(75,192,192,1)',
+                borderWidth: 1,
+                yAxisID: 'y' // unico asse Y
+            },
+            {
+                type: 'line',
+                label: 'Ricavo medio per ordine (€)',
+                data: avgPerOrder,
+                backgroundColor: 'rgba(255,159,64,0.2)',
+                borderColor: 'rgba(255,159,64,1)',
+                borderWidth: 2,
+                fill: false,
+                yAxisID: 'y' // lo stesso asse Y del bar
+            },
+            {
+                type: 'line',
+                label: 'Numero di ordini',
+                data: ordersCount,
+                backgroundColor: 'rgba(153,102,255,0.2)',
+                borderColor: 'rgba(153,102,255,1)',
+                borderWidth: 1,
+                yAxisID: 'y1' // lo stesso asse Y del bar
+            }
+        ]
+    };
+
+    const config = {
+        data,
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Mese'
+                    }
+                },
+                y: {
+                    type: 'linear',
+                    position: 'left',
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Valore (€)'
+                    }
+                },
+                y1: {
+                    type: 'linear',
+                    position: 'right',
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Numero di ordini'
+                    },
+                    grid: {
+                        drawOnChartArea: false // only want the grid lines for one axis to show up
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => {
+                            const v = ctx.parsed.y;
+                            return `${ctx.dataset.label}: ${v}`;
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    new Chart(ctx, config);
+</script>
