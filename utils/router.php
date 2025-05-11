@@ -42,6 +42,10 @@ class Router
             'file' => 'template/checkout.php',
             'title' => 'CoffeeBo - Checkout',
         ],
+        'payment' => [
+            'file' => 'template/payment.php',
+            'title' => 'CoffeeBo - Pagamento',
+        ],
     ];
 
     public function getRoute() 
