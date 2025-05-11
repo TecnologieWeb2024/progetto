@@ -4,10 +4,55 @@
     require("productModal.php");
     $products = isUserSeller() ? $dbh->getProductsBySeller($_SESSION['seller']['user_id']) : $dbh->getAllProducts();
     $totalProducts = count($products);
+    $bestSellingProducts = $dbh->getGlobalBestSellingProducts(3);
+    $totalBestSellingProducts = count($bestSellingProducts);
     ?>
     <h2 class="text-center"><?php echo isUserSeller() ? "Prodotti disponibili: $totalProducts" : "I nostri prodotti"  ?> </h2>
 
     <div class="container">
+    <?php if (isUserCustomer() && $totalBestSellingProducts > 0) : ?>
+        <div class="row border rounded my-4 mx-2 p-4 justify-content-center align-items-center bg-info-subtle">
+            <h2 class="text-center">I più venduti</h2>
+
+            <?php foreach ($bestSellingProducts as $product): ?>
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100 hover-darken ">
+                        <a data-bs-toggle="modal" data-bs-target="#productModal"
+                            data-product-id="<?php echo $product['product_id']; ?>"
+                            data-name="<?php echo htmlspecialchars($product['product_name']); ?>"
+                            data-price="<?php echo $product['price']; ?>"
+                            data-image="<?php echo $product['image']; ?>"
+                            data-description="<?php echo htmlspecialchars($product['product_description'] ?? ''); ?>"
+                            data-max="<?php echo $product['stock']; ?>">
+                            <img src="<?php echo $product['image'] ?>" class="card-img-top rounded w-50 mx-auto d-block" alt="<?php echo $product['product_name'] ?>">
+                        </a>
+                        <div class="card-body d-flex flex-column p-3">
+                            <h5 class="card-title text-truncate">
+                                <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#productModal"
+                                    data-product-id="<?php echo $product['product_id']; ?>"
+                                    data-name="<?php echo htmlspecialchars($product['product_name']); ?>"
+                                    data-price="<?php echo $product['price']; ?>"
+                                    data-image="<?php echo $product['image']; ?>"
+                                    data-description="<?php echo htmlspecialchars($product['product_description'] ?? ''); ?>"
+                                    data-max="<?php echo $product['stock']; ?>">
+                                    <?php echo $product['product_name']; ?>
+                                </a>
+                            </h5>
+                            <div class="mt-auto d-flex justify-content-between align-items-center">
+                                <span class="fw-bold"><?php echo $product['price']; ?>€</span>
+                                <?php if (!isUserSeller() && isUserLoggedIn()): ?>
+                                    <a href="#" title="add-to-cart" class="btn btn-sm btn-primary btn-add-to-cart"
+                                        data-product-id="<?php echo $product['product_id']; ?>">
+                                        <em class="fa fa-cart-plus"></em>
+                                    </a>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
         <div class="row">
             <?php
             if (isUserCustomer()) {
@@ -15,7 +60,7 @@
             }
             // Pagination logic
             $totalProducts = count($products);
-            $productsPerPage = 9;
+            $productsPerPage = 4;
             $totalPages = ceil($totalProducts / $productsPerPage);
 
             // Get current page from URL, if not present default to 1
@@ -72,14 +117,14 @@
                                         <?php if (!isUserSeller()) : ?>
                                             <div class="d-flex align-items-center border border-1 rounded ms-2 me-2">
                                                 <button type="button" class="quantity-left-minus btn btn-secondary btn-number rounded rounded-0 rounded-start" data-type="minus" data-field="">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash" viewBox="0 0 16 16">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash" viewBox="0 0 16 16" style="pointer-events: none;">
                                                         <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8"></path>
                                                     </svg>
                                                 </button>
                                                 <label for="quantity-<?php echo $product['product_id']; ?>" class="visually-hidden">Quantità</label>
-                                                <input type="number" id="quantity-<?php echo $product['product_id']; ?>" name="quantity" class="form-control text-center rounded rounded-0" value="1" min="1" max="<?php echo $product['stock']; ?>" style="width:3em">
+                                                <input type="number" id="quantity-<?php echo $product['product_id']; ?>" name="quantity" class="form-control text-center rounded rounded-0 w-auto" value="1" min="1" max="<?php echo $product['stock']; ?>" style="max-width: 4em !important;">
                                                 <button type="button" class="quantity-right-plus btn btn-secondary btn-number rounded rounded-0 rounded-end" data-type="plus" data-field="">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16" style="pointer-events: none;">
                                                         <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
                                                     </svg>
                                                 </button>
