@@ -29,9 +29,10 @@
 
                     <!-- Tabella prodotti nell'ordine -->
                     <div class="row mb-3">
-                        <div class="col-12">
-                            <table class="table table-striped">
-                                <thead>
+                        <div class="col-12 table-responsive">
+                            <table class="table table-sm table-striped caption-top">
+                                <caption>Prodotti ordinati</caption>
+                                <thead class="">
                                     <tr>
                                         <th>Prodotto</th>
                                         <th>Prezzo Unitario</th>
@@ -39,7 +40,7 @@
                                         <th>Subtotale</th>
                                     </tr>
                                 </thead>
-                                <tbody id="modalOrderItems">
+                                <tbody id="modalOrderItems" class="">
                                     <!-- <tr>
                     <td>Nome Prodotto</td>
                     <td>€ 10.99</td>
