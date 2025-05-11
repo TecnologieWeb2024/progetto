@@ -19,7 +19,7 @@
                 <h1 class="text-center">Carrello</h1>
                 <?php if (!empty($cartProducts)): ?>
                     <div class="d-flex justify-content-between align-items-center">
-                        <h2 class="fw-bold mb-0">Totale: <?php echo $totalPrice ?>€</h2>
+                        <h2 class="fw-bold mb-0">Totale: <?php echo number_format($totalPrice, 2, ',', '.') ?>€</h2>
                         <a href="index.php?page=checkout" class="btn btn-success">Procedi al pagamento</a>
                     </div>
                 <?php endif; ?>
@@ -71,8 +71,8 @@
                 </div>
 
                 <!-- Price -->
-                <div class="d-none d-md-block col-md-2 text-center">
-                    <p class="fw-bold h3"><?php echo $product['price'] ?>€</p>
+                <div class="d-none d-md-block col-md-2 text-center ps-md-0 me-md-2 mb-0">
+                    <p class="fw-bold h3 mb-0"><?php echo $product['price'] ?>€</p>
                 </div>
                 <!-- Quantity -->
                 <div class="col-md-2 d-flex justify-content-center align-items-center text-center">
@@ -83,7 +83,7 @@
                             </svg>
                         </button>
                         <label for="quantity-<?php echo $product['product_id']; ?>" class="visually-hidden">Quantità</label>
-                        <input type="number" id="quantity-<?php echo $product['product_id']; ?>" name="quantity" class="form-control text-center rounded rounded-0" value="<?php echo $product['quantity']; ?>" min="1" max="<?php echo $product['stock']; ?>" style="width:3em">
+                        <input type="number" id="quantity-<?php echo $product['product_id']; ?>" name="quantity" class="form-control text-center rounded-0 w-auto" style="max-width: 4em !important;" value="<?php echo $product['quantity']; ?>" min="1" max="<?php echo $product['stock']; ?>">
                         <button type="button" class="quantity-right-plus btn btn-secondary btn-number rounded rounded-0 rounded-end" data-type="plus" data-field="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
                                 <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
