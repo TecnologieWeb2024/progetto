@@ -47,9 +47,12 @@ class AlertGenerator
             }
         }
 
-        // Process cookie alerts (example: password_change)
-        if (isset($_COOKIE['password_change']['message'])) {
+        // Controlla se i cookie sono settati correttamente (example: password_change)
+        if (isset($_COOKIE['password_change']) &&
+            isset($_COOKIE['password_change']['message']) &&
+            isset($_COOKIE['password_change']['success'])) {
             self::processAlert($_COOKIE['password_change']['success'], $_COOKIE['password_change']['message']);
+            // Rimuove i cookie (deve essere fatto prima di qualsiasi output!)
             setcookie('password_change[success]', '', time() - 3600, '/');
             setcookie('password_change[message]', '', time() - 3600, '/');
         }

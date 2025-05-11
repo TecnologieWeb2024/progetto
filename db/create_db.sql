@@ -251,37 +251,5 @@ CREATE TABLE
         PRIMARY KEY (`payment_method_id`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
--- --------------------------------------------------------
---
--- Table structure for table `Payment_Status`
--- (No dependencies)
---
-CREATE TABLE
-    `Payment_Status` (
-        `payment_status_id` int (11) NOT NULL AUTO_INCREMENT,
-        `description` varchar(100) NOT NULL,
-        PRIMARY KEY (`payment_status_id`)
-    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
--- --------------------------------------------------------
---
--- Table structure for table `Payment`
--- (Depends on Order, Payment_Method, Payment_Status)
---
-CREATE TABLE
-    `Payment` (
-        `payment_id` int (11) NOT NULL AUTO_INCREMENT,
-        `order_id` int (11) NOT NULL,
-        `payment_date` datetime DEFAULT current_timestamp(),
-        `payment_method_id` int (11) NOT NULL,
-        `amount` decimal(10, 2) NOT NULL,
-        `status` int (11) NOT NULL,
-        `transaction_reference` varchar(255) DEFAULT NULL,
-        PRIMARY KEY (`payment_id`),
-        KEY `order_id` (`order_id`),
-        KEY `payment_method_id` (`payment_method_id`),
-        KEY `status` (`status`),
-        CONSTRAINT `Payment_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `Order` (`order_id`),
-        CONSTRAINT `Payment_ibfk_2` FOREIGN KEY (`payment_method_id`) REFERENCES `Payment_Method` (`payment_method_id`),
-        CONSTRAINT `Payment_ibfk_3` FOREIGN KEY (`status`) REFERENCES `Payment_Status` (`payment_status_id`)
-    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+

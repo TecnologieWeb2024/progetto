@@ -28,14 +28,10 @@ function renderOrderCards($orders, $dbh)
                             Ordinato il: <?php echo $date->format('d/m/Y'); ?>
                         <?php endif; ?>
                         <br>
-                        <?php $orderStatus = $dbh->getOrderStatus($order['order_id']);
-                        $badgeClass = match (true) {
-                            in_array($orderStatus['order_status_id'], [1, 2, 3]) => 'warning',
-                            in_array($orderStatus['order_status_id'], [4, 5, 6]) => 'success',
-                            default => 'danger',
-                        };
+                        <?php $orderStatus = $dbh->getOrderState($order['order_id']);
+                        $badgeClass = getBadgeClassFromStateId($orderStatus['order_state_id']);
                         ?>
-                        <span class="badge bg-<?php echo $badgeClass; ?>">
+                        <span class="badge <?php echo $badgeClass; ?>">
                             <?php echo $orderStatus['descrizione']; ?>
                         </span>
                     </p>

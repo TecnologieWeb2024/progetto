@@ -15,7 +15,7 @@ setcookie('password_change[success]', $changePasswordResult['success'], time() +
 setcookie('password_change[message]', $changePasswordResult['message'], time() + 3600, '/');
 
 if ($changePasswordResult['success'] === true) {
-    header('Location: /logout.php');
+    header('Location: logout.php');
     exit;
 }
 header('Location: index.php?page=account');

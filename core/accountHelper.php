@@ -16,7 +16,13 @@ class AccountHelper
         if ($new_password != $confirm_password) {
             return ['success' => false, 'message' => 'Le password non corrispondono.'];
         }
-        $updatePasswordResult = $this->dbh->updatePassword($_SESSION['customer']['user_id'], $new_password);
+
+        if (isset($_SESSION['customer'])) {
+            $updatePasswordResult = $this->dbh->updatePassword($_SESSION['customer']['user_id'], $new_password);
+        } elseif (isset($_SESSION['seller'])) {
+            $updatePasswordResult = $this->dbh->updatePassword($_SESSION['seller']['user_id'], $new_password);
+        }
+        // $updatePasswordResult = $this->dbh->updatePassword($_SESSION['customer']['user_id'], $new_password);
         return ['success' => $updatePasswordResult['success'], 'message' => $updatePasswordResult['message']];
     }
 }

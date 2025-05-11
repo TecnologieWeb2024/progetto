@@ -1,11 +1,15 @@
 <?php
 
 require_once('bootstrap.php');
-$user = $dbh->getUserInfo($_SESSION['customer']['user_id']);
+if (isset($_SESSION['customer'])) {
+    $user = $dbh->getUserInfo($_SESSION['customer']['user_id']);
+} elseif (isset($_SESSION['seller'])) {
+    $user = $dbh->getUserInfo($_SESSION['seller']['user_id']);
+}
 ?>
 <h1 class="text-center">Impostazioni Account</h1>
 <div class="container col-md-4 mt-4">
-    <form action="/updateAccount.php" method="post">
+    <form action="updateAccount.php" method="post">
         <div class="form-group">
             <label class="mt-2" for="first_name">Nome:</label>
             <input type="text" class="form-control mt-2" id="first_name" value="<?php echo htmlspecialchars($user['first_name']); ?>" readonly>
@@ -16,7 +20,7 @@ $user = $dbh->getUserInfo($_SESSION['customer']['user_id']);
         </div>
         <div class="form-group">
             <label class="mt-2" for="email">Email:</label>
-            <input type="email" class="form-control mt-2" id="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
+            <input type="email" class="form-control mt-2" id="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" readonly>
         </div>
         <h6 class="mt-4 text-danger text-center">Modifica Password</h6>
         <div class="form-group">

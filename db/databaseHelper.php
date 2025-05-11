@@ -126,7 +126,7 @@ class DatabaseHelper
         }
 
         if ($this->db->commit()) {
-            return ['success' => true, 'message' => 'Password aggiornata con successo.'];
+            return ['success' => true, 'message' => 'Password aggiornata con successo, effettuare nuovamente il login.'];
         }
         $this->db->rollback();
         return ['success' => false, 'message' => 'Errore nel salvataggio della password: rollback eseguito.'];
