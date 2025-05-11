@@ -30,6 +30,6 @@ if (isset($_SESSION['customer'])) {
         <div class="form-group">
             <label for="confirm_password">Conferma Password:</label>
             <input type="password" class="form-control" id="confirm_password" name="confirm_password">
-        <button type="submit" class="btn btn-primary w-100 mt-4">Update</button>
+        <button type="submit" class="btn btn-outline-danger w-100 mt-4">Aggiorna password</button>
     </form>
 </div>
