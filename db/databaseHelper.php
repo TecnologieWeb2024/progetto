@@ -285,7 +285,7 @@ class DatabaseHelper
                 p.product_id,
                 p.product_name,
                 p.product_description,
-                cd.price AS price,
+                p.price AS price,
                 p.stock,
                 p.image,
                 cd.quantity
@@ -338,12 +338,10 @@ class DatabaseHelper
         }
 
         // Controlla se il prodotto esiste nel carrello
-        $query = "
-            SELECT cd.quantity 
-            FROM Cart_Detail cd
-            JOIN Cart c ON cd.cart_id = c.cart_id
-            WHERE c.user_id = ? AND cd.product_id = ?
-        ";
+        $query = "SELECT cd.quantity 
+                    FROM Cart_Detail cd
+                    JOIN Cart c ON cd.cart_id = c.cart_id
+                    WHERE c.user_id = ? AND cd.product_id = ?";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("ii", $user_id, $product_id);
         $stmt->execute();
@@ -371,14 +369,11 @@ class DatabaseHelper
         $product = $result->fetch_assoc();
 
         // Se la quantità richiesta è maggiore della disponibilità, imposta la quantità al massimo disponibile.
-        if ($quantity > $product['stock']) {
-            $quantity = $product['stock'];
-        }
+        $quantity = min($quantity, $product['stock']);
 
         $this->db->begin_transaction();
         // Aggiorna la quantità del prodotto nel carrello
-        $query = "
-            UPDATE Cart_Detail cd
+        $query = "UPDATE Cart_Detail cd
             JOIN Cart c ON cd.cart_id = c.cart_id
             SET cd.quantity = ?
             WHERE c.user_id = ? AND cd.product_id = ?
@@ -407,8 +402,8 @@ class DatabaseHelper
             return ['success' => false, 'message' => 'Prodotto non esistente.'];
         }
 
-        $query = "
-            DELETE cd
+        $this->db->begin_transaction();
+        $query = "DELETE cd
             FROM Cart_Detail cd
             JOIN Cart c ON cd.cart_id = c.cart_id
             WHERE c.user_id = ? AND cd.product_id = ?
@@ -453,6 +448,24 @@ class DatabaseHelper
         return ['success' => true, 'message' => "Prodotto aggiunto al carrello."];
     }
 
+   /**
+    * Svuota il carrello di un utente.
+    * @param int $user_id
+    * @return array ['success' => true|false, 'message' => '...'] in base all'esito dell'operazione.
+    */
+    public function clearCart($user_id)
+    {
+        $query = "DELETE cd
+            FROM Cart_Detail cd
+            JOIN Cart c ON cd.cart_id = c.cart_id
+            WHERE c.user_id = ?
+        ";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        return ['success' => true, 'message' => "Carrello svuotato."];
+    }
+
     /* ********************* funzioni di utility per *********************
        ********************* l'aggiunta al carrello  ********************* */
 
@@ -471,7 +484,7 @@ class DatabaseHelper
         $stmt->close();
 
         if (!$cart_id) {
-            $stmt = $this->db->prepare("INSERT INTO Cart (user_id) VALUES (?)");
+            $stmt = $this->db->prepare("INSERT INTO Cart (user_id) VALUES (?), created_at = NOW(), updated_at = NOW()");
             $stmt->bind_param("i", $user_id);
             $stmt->execute();
             $cart_id = $stmt->insert_id;
@@ -522,7 +535,7 @@ class DatabaseHelper
      */
     private function updateCartItem($cart_id, $product_id, $quantity)
     {
-        $stmt = $this->db->prepare("UPDATE Cart_Detail SET quantity = quantity + ?, updated_at = NOW() WHERE cart_id = ? AND product_id = ?");
+        $stmt = $this->db->prepare("UPDATE Cart_Detail SET quantity = quantity + ? WHERE cart_id = ? AND product_id = ?");
         $stmt->bind_param("iii", $quantity, $cart_id, $product_id);
         $stmt->execute();
         $stmt->close();
@@ -538,8 +551,8 @@ class DatabaseHelper
     {
         $price = $this->getProductPrice($product_id);
 
-        $stmt = $this->db->prepare("INSERT INTO Cart_Detail (cart_id, product_id, quantity, price) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("iiid", $cart_id, $product_id, $quantity, $price);
+        $stmt = $this->db->prepare("INSERT INTO Cart_Detail (cart_id, product_id, quantity) VALUES (?, ?, ?)");
+        $stmt->bind_param("iii", $cart_id, $product_id, $quantity);
         $stmt->execute();
         $stmt->close();
     }
@@ -584,7 +597,7 @@ class DatabaseHelper
      */
     public function getOrders($user_id, $n_orders)
     {
-        $query = "SELECT * FROM `Order` WHERE user_id = ? LIMIT ?";
+        $query = "SELECT * FROM `Order` WHERE user_id = ? ORDER BY order_date DESC LIMIT ?";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("ii", $user_id, $n_orders);
         $stmt->execute();
@@ -631,16 +644,16 @@ class DatabaseHelper
      * @param int $order_id
      * @return array Un array con i campi dell'ordine.
      */
-    public function getOrdersByState($seller_id, $order_state_id)
+    public function getOrdersByStatus($seller_id, $order_status_id)
     {
         $query = "SELECT DISTINCT o.*
                     FROM `Order` o
                     JOIN `Order_Detail` od  ON o.order_id = od.order_id
                     JOIN `Product` p        ON od.product_id = p.product_id
                     WHERE p.seller_id     = ?
-                    AND o.order_state_id = ?";
+                    AND o.order_status_id = ?";
         $stmt = $this->db->prepare($query);
-        $stmt->bind_param("ii", $seller_id, $order_state_id);
+        $stmt->bind_param("ii", $seller_id, $order_status_id);
         $stmt->execute();
         $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC);
@@ -654,9 +667,9 @@ class DatabaseHelper
     public function getWaitingOrders($seller_id)
     {
         return array_merge(
-            $this->getOrdersByState($seller_id, 1),
-            $this->getOrdersByState($seller_id, 2),
-            $this->getOrdersByState($seller_id, 3)
+            $this->getOrdersByStatus($seller_id, 1),
+            $this->getOrdersByStatus($seller_id, 2),
+            $this->getOrdersByStatus($seller_id, 3)
         );
     }
 
@@ -668,9 +681,9 @@ class DatabaseHelper
     public function getAcceptedOrders($seller_id)
     {
         return array_merge(
-            $this->getOrdersByState($seller_id, 4),
-            $this->getOrdersByState($seller_id, 5),
-            $this->getOrdersByState($seller_id, 6)
+            $this->getOrdersByStatus($seller_id, 4),
+            $this->getOrdersByStatus($seller_id, 5),
+            $this->getOrdersByStatus($seller_id, 6)
         );
     }
 
@@ -682,8 +695,8 @@ class DatabaseHelper
     public function getCanceledOrders($seller_id)
     {
         return array_merge(
-            $this->getOrdersByState($seller_id, 7),
-            $this->getOrdersByState($seller_id, 8)
+            $this->getOrdersByStatus($seller_id, 7),
+            $this->getOrdersByStatus($seller_id, 8)
         );
     }
 
@@ -700,11 +713,11 @@ class DatabaseHelper
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    public function getOrderState($order_id)
+    public function getOrderStatus($order_id)
     {
-        $query = "SELECT `Order_State`.`order_state_id`, `Order_State`.`descrizione` 
-                    FROM `Order_State`, `Order` 
-                    WHERE `Order`.order_id = ? AND `Order`.order_state_id = `Order_State`.order_state_id";
+        $query = "SELECT `Order_Status`.`order_status_id`, `Order_Status`.`descrizione` 
+                    FROM `Order_Status`, `Order` 
+                    WHERE `Order`.order_id = ? AND `Order`.order_status_id = `Order_Status`.order_status_id";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("i", $order_id);
         $stmt->execute();
@@ -724,7 +737,7 @@ class DatabaseHelper
             SELECT
                 p.product_id,
                 p.product_name    AS product_name,
-                od.price          AS product_price,
+                p.price          AS product_price,
                 p.image,
                 od.quantity
             FROM
@@ -761,11 +774,11 @@ class DatabaseHelper
      * Inserisce un ordine nel database.
      * @param int   $user_id        L'id dell'utente
      * @param array $products       Un array di prodotti e quantità
-     * @param int   $order_state_id L'id dello stato iniziale dell'ordine
+     * @param int   $order_status_id L'id dello stato iniziale dell'ordine
      * @param int   $shipment_id    L'id della spedizione
      * @return array ['success' => true|false, 'message' => '...']
      */
-    public function insertOrder(int $user_id, array $products, int $order_state_id, int $shipment_id): array
+    public function insertOrder(int $user_id, array $products, int $order_status_id, int $shipment_id): array
     {
         $this->db->begin_transaction();
 
@@ -775,8 +788,8 @@ class DatabaseHelper
             return ['success' => false, 'message' => 'Errore nella creazione dell\'ordine: dati prodotto mancanti.'];
         }
 
-        // PASSIAMO ORA $order_state_id invece di $payment_id
-        $order_id = $this->insertOrderIntoDatabase($user_id, $total_price, $order_state_id, $shipment_id);
+        // PASSIAMO ORA $order_status_id invece di $payment_id
+        $order_id = $this->insertOrderIntoDatabase($user_id, $total_price, $order_status_id, $shipment_id);
         if ($order_id === false) {
             $this->db->rollback();
             return ['success' => false, 'message' => 'Errore nella creazione dell\'ordine. Impossibile inserire l\'ordine.'];
@@ -788,7 +801,47 @@ class DatabaseHelper
         }
 
         $this->db->commit();
-        return ['success' => true, 'message' => 'Ordine #' . $order_id . ' creato con successo.'];
+        return ['success' => true, 'message' => 'Ordine #' . $order_id . ' creato con successo.', 'data' => $order_id];
+    }
+
+    public function updateOrderStatus(int $order_id, int $new_status): array
+    {
+        $this->db->begin_transaction();
+        $query = "UPDATE `Order` SET order_status_id = ? WHERE order_id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ii", $new_status, $order_id);
+
+        if (!$stmt->execute()) {
+            $this->db->rollback();
+            return ['success' => false, 'message' => 'Errore nell\'aggiornamento dello stato dell\'ordine.'];
+        }
+
+        if ($this->db->commit()) {
+            return ['success' => true, 'message' => 'Stato dell\'ordine aggiornato con successo.'];
+        }
+        $this->db->rollback();
+        return ['success' => false, 'message' => 'Errore nel salvataggio dello stato dell\'ordine: rollback eseguito.'];
+    }
+
+
+
+    public function insertShipping(int $order_id, int $shipment_id): array
+    {
+        $this->db->begin_transaction();
+        $query = "UPDATE `Order` SET shipment_id = ? WHERE order_id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ii", $shipment_id, $order_id);
+
+        if (!$stmt->execute()) {
+            $this->db->rollback();
+            return ['success' => false, 'message' => 'Errore nell\'inserimento della spedizione.'];
+        }
+
+        if ($this->db->commit()) {
+            return ['success' => true, 'message' => 'Spedizione inserita con successo.', 'data' => $shipment_id];
+        }
+        $this->db->rollback();
+        return ['success' => false, 'message' => 'Errore nel salvataggio della spedizione: rollback eseguito.'];
     }
 
     /* ********************* funzioni di utility per *********************
@@ -817,18 +870,18 @@ class DatabaseHelper
      * Esegue l'inserimento effettivo dell'ordine nel database.
      * @param int   $user_id        L'id dell'utente
      * @param float $total_price    Il prezzo totale dell'ordine
-     * @param int   $order_state_id L'id dello stato iniziale dell'ordine
+     * @param int   $order_status_id L'id dello stato iniziale dell'ordine
      * @param int   $shipment_id    L'id della spedizione
      * @return int|bool             L'id dell'ordine appena creato, false in caso di errore
      */
-    private function insertOrderIntoDatabase(int $user_id, float $total_price, int $order_state_id, int $shipment_id)
+    private function insertOrderIntoDatabase(int $user_id, float $total_price, int $order_status_id, $shipment_id = null)
     {
         $query = "
         INSERT INTO `Order` (
             order_date,
             total_price,
             user_id,
-            order_state_id,
+            order_status_id,
             shipment_id
         ) VALUES (
             NOW(),
@@ -842,7 +895,7 @@ class DatabaseHelper
         try {
             $stmt = $this->db->prepare($query);
             // d = double (per decimal), i = integer
-            $stmt->bind_param("diii", $total_price, $user_id, $order_state_id, $shipment_id);
+            $stmt->bind_param("diii", $total_price, $user_id, $order_status_id,$shipment_id);
             if ($stmt->execute() === false) {
                 return false;
             }
@@ -862,12 +915,12 @@ class DatabaseHelper
      */
     private function insertOrderDetails($order_id, array $products)
     {
-        $query = "INSERT INTO Order_Detail (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)";
+        $query = "INSERT INTO Order_Detail (order_id, product_id, quantity) VALUES (?, ?, ?)";
         try {
             $stmt = $this->db->prepare($query);
 
             foreach ($products as $product) {
-                $stmt->bind_param("iiid", $order_id, $product['product_id'], $product['quantity'], $product['price']);
+                $stmt->bind_param("iii", $order_id, $product['product_id'], $product['quantity']);
                 if ($stmt->execute() === false) {
                     return false;
                 }
@@ -891,8 +944,7 @@ class DatabaseHelper
     public function insertPayment(int $order_id, int $payment_method_id, float $amount, int $status, string $transaction_reference): array
     {
         $this->db->begin_transaction();
-        $query = "
-        INSERT INTO `Payment` (
+        $query = "INSERT INTO `Payment` (
             order_id,
             payment_date,
             payment_method_id,
@@ -905,7 +957,7 @@ class DatabaseHelper
     ";
         try {
             $stmt = $this->db->prepare($query);
-            $stmt->bind_param("iiids", $order_id, $payment_method_id, $amount, $status, $transaction_reference);
+            $stmt->bind_param("iidds", $order_id, $payment_method_id, $amount, $status, $transaction_reference);
             if (!$stmt->execute()) {
                 $this->db->rollback();
                 return ['success' => false, 'data' => null, 'message' => 'Errore inserimento pagamento.'];
@@ -975,23 +1027,22 @@ class DatabaseHelper
      * @param string $shipping_method
      * @return array ['success' => true|false, 'data' => int|null, 'message' => '...']
      */
-    public function createShipment(string $address, ?string $tracking_number, string $shipping_method): array
+    public function createShipment(string $address, ?string $tracking_number, int $shipping_method, int $shipping_status): array
     {
         $this->db->begin_transaction();
-        $query = "
-        INSERT INTO `Shipment` (
+        $query = "INSERT INTO `Shipment` (
             shipment_date,
             address,
             tracking_number,
             shipping_method,
             status
         ) VALUES (
-            NOW(), ?, ?, ?, 'processing'
+            NOW(), ?, ?, ?, ?
         )
     ";
         try {
             $stmt = $this->db->prepare($query);
-            $stmt->bind_param("sss", $address, $tracking_number, $shipping_method);
+            $stmt->bind_param("ssii", $address, $tracking_number, $shipping_method, $shipping_status);
             if (!$stmt->execute()) {
                 $this->db->rollback();
                 return ['success' => false, 'data' => null, 'message' => 'Errore creazione spedizione.'];
@@ -1049,27 +1100,6 @@ class DatabaseHelper
     }
 
     /**
-     * Aggiorna lo stato di un ordine.
-     * @param int $order_id
-     * @param int $order_state_id
-     * @return array ['success' => true|false, 'message' => '...']
-     */
-    public function updateOrderState(int $order_id, int $order_state_id): array
-    {
-        $query = "
-        UPDATE `Order`
-        SET order_state_id = ?
-        WHERE order_id = ?
-    ";
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("ii", $order_state_id, $order_id);
-        if ($stmt->execute() && $stmt->affected_rows > 0) {
-            return ['success' => true, 'message' => 'Stato ordine aggiornato.'];
-        }
-        return ['success' => false, 'message' => 'Nessuno stato ordine aggiornato o ID non valido.'];
-    }
-
-    /**
      * Recupera i dettagli di un ordine (solo i prodotti di questo seller).
      * @param int $order_id
      * @param int $seller_id
@@ -1083,8 +1113,7 @@ class DatabaseHelper
                     p.product_name,
                     p.image,
                     p.price,
-                    od.quantity,
-                    od.price
+                    od.quantity                
                 FROM `Order_Detail` od
                 JOIN `Product` p
                     ON od.product_id = p.product_id
@@ -1115,7 +1144,7 @@ class DatabaseHelper
             o.total_price,
             o.user_id,
 
-            os.descrizione       AS order_state,
+            os.descrizione       AS order_status,
 
             pmt.payment_id,
             pmt.payment_date,
@@ -1131,7 +1160,7 @@ class DatabaseHelper
             sm.name         AS shipping_method
 
         FROM `Order` o
-        LEFT JOIN `Order_State`       os  ON o.order_state_id       = os.order_state_id
+        LEFT JOIN `Order_Status`       os  ON o.order_status_id       = os.order_status_id
         LEFT JOIN `Payment`           pmt ON pmt.order_id           = o.order_id
         LEFT JOIN `Payment_Method`    pm  ON pmt.payment_method_id  = pm.payment_method_id
         LEFT JOIN `Payment_Status`    pms ON pmt.status             = pms.payment_status_id
@@ -1158,9 +1187,9 @@ class DatabaseHelper
      */
     public function getTotalSales(int $seller_id, int $year): float
     {
-        $query = "SELECT SUM(od.price * od.quantity) AS total_sales
+        $query = "SELECT SUM(p.price * od.quantity) AS total_sales
             FROM `Order_Detail` od
-            JOIN `Order` o ON od.order_id = o.order_id AND o.order_state_id > 2 AND o.order_state_id < 7-- Solo ordini pagati.
+            JOIN `Order` o ON od.order_id = o.order_id AND o.order_status_id > 2 AND o.order_status_id < 7-- Solo ordini pagati.
             JOIN `Product` p ON od.product_id = p.product_id
             WHERE p.seller_id = ? AND YEAR(o.order_date) = ?";
         $stmt = $this->db->prepare($query);
@@ -1182,7 +1211,7 @@ class DatabaseHelper
             FROM `Order` o
             JOIN `Order_Detail` od ON o.order_id = od.order_id
             JOIN `Product` p ON od.product_id = p.product_id
-            WHERE p.seller_id = ? AND YEAR(o.order_date) = ? AND o.order_state_id > 2 AND o.order_state_id < 7 -- Solo ordini";
+            WHERE p.seller_id = ? AND YEAR(o.order_date) = ? AND o.order_status_id > 2 AND o.order_status_id < 7 -- Solo ordini";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("ii", $seller_id, $year);
         $stmt->execute();
@@ -1201,7 +1230,7 @@ class DatabaseHelper
     {
         $query = "SELECT p.product_id, p.product_name, SUM(od.quantity) AS total_sold
             FROM `Order_Detail` od
-            JOIN `Order` o ON od.order_id = o.order_id AND o.order_state_id > 2 AND o.order_state_id < 7 -- Solo ordini pagati.
+            JOIN `Order` o ON od.order_id = o.order_id AND o.order_status_id > 2 AND o.order_status_id < 7 -- Solo ordini pagati.
             JOIN `Product` p ON od.product_id = p.product_id
             WHERE p.seller_id = ? AND YEAR(o.order_date) = ?
             GROUP BY p.product_id
@@ -1216,12 +1245,12 @@ class DatabaseHelper
 
     public function getBestCustomers(int $seller_id, int $year, int $limit = 5): array
     {
-        $query = "SELECT u.user_id, u.email, SUM(od.quantity * od.price) AS total_spent
+        $query = "SELECT u.user_id, u.email, SUM(od.quantity * p.price) AS total_spent
             FROM `Order` o
             JOIN `User` u ON o.user_id = u.user_id
             JOIN `Order_Detail` od ON o.order_id = od.order_id
             JOIN `Product` p ON od.product_id = p.product_id
-            WHERE p.seller_id = ? AND YEAR(o.order_date) = ? AND o.order_state_id > 2 AND o.order_state_id < 7 -- Solo ordini pagati.
+            WHERE p.seller_id = ? AND YEAR(o.order_date) = ? AND o.order_status_id > 2 AND o.order_status_id < 7 -- Solo ordini pagati.
             GROUP BY u.user_id
             ORDER BY total_spent DESC
             LIMIT ?
