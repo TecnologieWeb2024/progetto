@@ -3,7 +3,12 @@ document.addEventListener("DOMContentLoaded", function () {
   document.querySelectorAll(".quantity-right-plus").forEach(function (button) {
     button.addEventListener("click", function () {
       var input = button.parentElement.querySelector("input");
-      updateQuantity(input, parseInt(input.value) + 1);
+      var currentQuantity = parseInt(input.value);
+      var maxQuantity = parseInt(input.max);
+
+      if (currentQuantity < maxQuantity) {
+        updateQuantity(input, currentQuantity + 1);
+      }
     });
   });
 
@@ -11,14 +16,29 @@ document.addEventListener("DOMContentLoaded", function () {
   document.querySelectorAll(".quantity-left-minus").forEach(function (button) {
     button.addEventListener("click", function () {
       var input = button.parentElement.querySelector("input");
-      updateQuantity(input, parseInt(input.value) - 1);
+      var currentQuantity = parseInt(input.value);
+      var minQuantity = parseInt(input.min);
+
+      if (currentQuantity > minQuantity) {
+        updateQuantity(input, currentQuantity - 1);
+      }
     });
   });
 
   // Cambio manuale della quantità
   document.querySelectorAll("input[type='number']").forEach(function (input) {
     input.addEventListener("change", function () {
-      updateQuantity(input, parseInt(input.value));
+      var quantity = parseInt(this.value);
+      var maxQuantity = parseInt(this.max);
+      var minQuantity = parseInt(this.min);
+
+      if (quantity > maxQuantity) {
+        this.value = maxQuantity;
+      } else if (quantity < minQuantity) {
+        this.value = minQuantity;
+      } else {
+        updateQuantity(this, quantity);
+      }
     });
   });
 

@@ -46,9 +46,14 @@ document.addEventListener("DOMContentLoaded", function () {
       maxQuantity.max = productMax;
     }
 
-    document.getElementById("modalProductStock").textContent =
-      productMax + " in stock";
-    document.getElementById("modalProductId").textContent = productId;
+    const stock = document.getElementById("modalProductStock")
+    if (stock) {
+      stock.textContent = productMax;
+    }
+    const id = document.getElementById("modalProductId")
+    if (id) {
+      id.textContent = productId;
+    }
     document
       .querySelector(".btn-add-to-cart")
       .setAttribute("data-product-id", productId);
