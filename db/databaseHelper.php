@@ -1225,6 +1225,10 @@ class DatabaseHelper
         return ['success' => true, 'data' => $data, 'message' => 'Dettagli ordine completi recuperati.'];
     }
 
+    /*
+    ####################### QUERIES PER STATISTICHE VENDITORE #######################
+    */
+
     /**
      * Recupera il totale delle vendite per un venditore in un anno specifico.
      * @param int $seller_id
@@ -1303,6 +1307,78 @@ class DatabaseHelper
         ";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("iii", $seller_id, $year, $limit);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC) ?? [];
+    }
+
+    /** Ricavo medio mensile */
+    public function getAverageMonthlyRevenue(int $seller_id, int $year = 2025)
+    {
+        $query = "SELECT
+                    m.month,
+                    ROUND(m.total_revenue, 2)     AS total_revenue,
+                    m.orders_count,
+                    ROUND(m.total_revenue / m.orders_count, 2) AS avg_revenue_per_order
+                    FROM (
+                    SELECT
+                        DATE_FORMAT(o.order_date, '%Y-%m') AS month,
+                        COUNT(DISTINCT o.order_id)         AS orders_count,
+                        SUM(od.quantity * p.price)         AS total_revenue
+                    FROM `Order` o
+                    JOIN Order_Detail od ON od.order_id = o.order_id
+                    JOIN Product p      ON p.product_id = od.product_id
+                    WHERE
+                        YEAR(o.order_date)    = ?       -- l'anno di interesse
+                        AND p.seller_id       = ?  -- l’ID del venditore
+                        AND o.order_status_id BETWEEN 3 AND 6  -- solo ordini pagati
+                    GROUP BY month
+                    ) AS m
+                    ORDER BY m.month";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ii", $year, $seller_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC) ?? [];
+    }
+
+    public function getStockDays(int $seller_id, int $year = 2025)
+    {
+        $query = "SELECT
+            p.product_id,
+            p.product_name,
+            p.stock,
+            ad.avg_daily_sold,
+            CASE
+                WHEN ad.avg_daily_sold > 0
+                THEN FLOOR(p.stock / ad.avg_daily_sold)
+                ELSE NULL
+            END AS days_of_stock
+            FROM Product p
+            LEFT JOIN (
+                /* Media giornaliera delle vendite per prodotto */
+                    SELECT
+                    t.product_id,
+                    ROUND(AVG(t.qty_sold), 2) AS avg_daily_sold
+                    FROM (
+                        /* Vendite aggregate per giorno e prodotto */
+                        SELECT
+                        od.product_id,
+                        DATE(o.order_date) AS sale_date,
+                        SUM(od.quantity)   AS qty_sold
+                        FROM Order_Detail od
+                        JOIN `Order` o
+                        ON o.order_id = od.order_id AND o.order_status_id BETWEEN 3 AND 6 AND YEAR(o.order_date) = ?
+                        GROUP BY od.product_id, sale_date
+                    ) AS t
+                    GROUP BY t.product_id
+                ) AS ad
+                ON ad.product_id = p.product_id
+                WHERE p.seller_id = ?
+                ORDER BY days_of_stock ASC
+                LIMIT 10;";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ii", $year, $seller_id);
         $stmt->execute();
         $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC) ?? [];
