@@ -14,9 +14,6 @@ if (empty($cartItems['products'])) {
 $cartTotal = $cartItems['total_price'];
 $paymentMethods = $dbh->getPaymentMethods();
 $shippingMethods = $dbh->getShippingMethods();
-$test = $dbh->getOrder(17);
-
-print_r($test);
 ?>
 <div class="container my-4">
     <!-- Pagamento -->

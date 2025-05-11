@@ -11,7 +11,6 @@ $_SESSION['auth'] = [
     'alert_id' => uniqid()
 ];
 
-// print_r($_SESSION);
 if (isUserCustomer()) {
     header('Location: index.php');
 } else if (isUserSeller()) {
