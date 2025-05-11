@@ -1,6 +1,7 @@
 <div class="container">
     <?php if (isUserLoggedIn()): ?>
-<!-- g -->        <h1 class="text-center">Bentornato, <?php echo $_SESSION['customer']['first_name'] ?></h1>
+        <!-- g -->
+        <h1 class="text-center">Bentornato, <?php echo $_SESSION['customer']['first_name'] ?></h1>
         <section>
             <div class="container d-flex justify-content-center">
                 <?php
@@ -30,8 +31,8 @@
                                                 ?>
                                                 <br>
                                                 <?php
-                                                $orderStatus = $dbh->getOrderState($order['order_id']);
-                                                $badgeClass = getBadgeClassFromStateId($orderStatus['order_state_id']);
+                                                $orderStatus = $dbh->getOrderstatus($order['order_id']);
+                                                $badgeClass = getBadgeClassFromstatusId($orderStatus['order_status_id']);
                                                 ?>
                                                 <span class="badge <?php echo $badgeClass; ?>">
                                                     <?php echo $orderStatus['descrizione']; ?>

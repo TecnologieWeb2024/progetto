@@ -142,7 +142,7 @@ try {
         let isValid = true;
         let errorMessages = [];
 
-        // Reset validation states
+        // Reset validation statuss
         document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
 
         // Validate credit card number - 16 digits
@@ -188,7 +188,7 @@ try {
         let isValid = true;
         let errorMessages = [];
 
-        // Reset validation states
+        // Reset validation statuss
         document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
 
         // Validate email with regex
