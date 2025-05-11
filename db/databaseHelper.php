@@ -244,6 +244,27 @@ class DatabaseHelper
         return ['success' => false, 'message' => 'Errore nel salvataggio della disponibilità: rollback eseguito.'];
     }
 
+    private function getProductStock(int $product_id)
+    {
+        $query = "SELECT stock FROM `Product` WHERE product_id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $product_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc()['stock'];
+    }
+
+    private function reduceStock(int $product_id, int $quantity)
+    {
+        $quantity = min($quantity, $this->getProductStock($product_id));
+        $query = "UPDATE `Product` SET stock = stock - ? WHERE product_id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ii", $quantity, $product_id);
+        if (!$stmt->execute()) {
+            return ['success' => false, 'message' => 'Errore nell\'aggiornamento dello stock.'];
+        }
+    }
+
     /* ############################### Query Carrello ############################### */
 
     /**
@@ -612,7 +633,7 @@ class DatabaseHelper
      */
     public function getAllUserOrders($user_id)
     {
-        $query = "SELECT * FROM `Order` WHERE user_id = ?";
+        $query = "SELECT * FROM `Order` WHERE user_id = ? ORDER BY order_date DESC";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("i", $user_id);
         $stmt->execute();
@@ -920,10 +941,13 @@ class DatabaseHelper
             $stmt = $this->db->prepare($query);
 
             foreach ($products as $product) {
+                // Insert order detail
                 $stmt->bind_param("iii", $order_id, $product['product_id'], $product['quantity']);
                 if ($stmt->execute() === false) {
                     return false;
                 }
+                // Update product stock
+                $this->reduceStock($product['product_id'], $product['quantity']);
             }
         } catch (mysqli_sql_exception $e) {
             return false;
