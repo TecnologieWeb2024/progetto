@@ -29,13 +29,9 @@ function renderOrderCards($orders, $dbh)
                         <?php endif; ?>
                         <br>
                         <?php $orderStatus = $dbh->getOrderState($order['order_id']);
-                        $badgeClass = match (true) {
-                            in_array($orderStatus['order_state_id'], [1, 2, 3]) => 'warning',
-                            in_array($orderStatus['order_state_id'], [4, 5, 6]) => 'success',
-                            default => 'danger',
-                        };
+                        $badgeClass = getBadgeClassFromStateId($orderStatus['order_state_id']);
                         ?>
-                        <span class="badge bg-<?php echo $badgeClass; ?>">
+                        <span class="badge <?php echo $badgeClass; ?>">
                             <?php echo $orderStatus['descrizione']; ?>
                         </span>
                     </p>
