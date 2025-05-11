@@ -265,6 +265,28 @@ class DatabaseHelper
         }
     }
 
+    /** 
+     * Recupera i prodotti più venduti (inseriti in un Order_Detail il cui Ordine e' in stato Pagato o successivo) dal database.
+     * @param int $limit
+     * @return array Un array di prodotti.
+     */
+    public function getGlobalBestSellingProducts($limit)
+    {
+        $query = "SELECT p.*, SUM(od.quantity) AS total_sold
+            FROM `Order_Detail` od
+            JOIN `Order` o ON od.order_id = o.order_id AND o.order_status_id > 2 AND o.order_status_id < 7 -- Solo ordini pagati.
+            JOIN `Product` p ON od.product_id = p.product_id
+            WHERE YEAR(o.order_date) = YEAR(CURDATE()) -- Solo ordini dell'anno corrente.
+            GROUP BY p.product_id
+            ORDER BY total_sold DESC
+            LIMIT ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $limit);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
     /* ############################### Query Carrello ############################### */
 
     /**
