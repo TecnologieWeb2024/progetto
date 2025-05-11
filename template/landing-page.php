@@ -1,6 +1,6 @@
 <div class="container">
     <?php if (isUserLoggedIn()): ?>
-        <h1 class="text-center">Bentornato, <?php echo $_SESSION['customer']['first_name'] ?></h1>
+<!-- g -->        <h1 class="text-center">Bentornato, <?php echo $_SESSION['customer']['first_name'] ?></h1>
         <section>
             <div class="container d-flex justify-content-center">
                 <?php
@@ -29,10 +29,10 @@
                                                 echo $date->format('d/m/Y');
                                                 ?>
                                                 <br>
-                                                <?php $orderStatus = $dbh->getOrderState($order['order_id']);
+                                                <?php $orderStatus = $dbh->getOrderStatus($order['order_id']);
                                                 $badgeClass = match (true) {
-                                                    in_array($orderStatus['order_state_id'], [1, 2, 3]) => 'warning',
-                                                    in_array($orderStatus['order_state_id'], [4, 5, 6]) => 'success',
+                                                    in_array($orderStatus['order_status_id'], [1, 2, 3]) => 'warning',
+                                                    in_array($orderStatus['order_status_id'], [4, 5, 6]) => 'success',
                                                     default => 'danger',
                                                 };
                                                 ?>
