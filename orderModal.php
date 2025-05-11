@@ -16,8 +16,8 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <p><strong>Data:</strong> <span id="modalOrderDate">–</span></p>
-                            <p><strong>Totale:</strong> € <span id="modalOrderTotal">–</span></p>
-                            <p><strong>Stato:</strong> <span id="modalOrderState">–</span></p>
+                            <p><strong>Totale:</strong> <span id="modalOrderTotal">–</span></p>
+                            <p><strong>Stato:</strong> <span id="modalOrderStatus">–</span></p>
                         </div>
                         <div class="col-md-6 text-md-end">
                             <p><strong>Pagamento:</strong> <span id="modalPaymentStatus">–</span></p>
