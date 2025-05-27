@@ -10,7 +10,7 @@ if (!$baseResp['success']) {
     exit;
 }
 $data = $baseResp['data'];
-
+$_SESSION['order_status_id'] = $data['order_status_id'];
 $items = isUserSeller() ? $dbh->getSellerOrderDetails($orderId, $_SESSION['seller']['user_id']) : $dbh->getOrderProducts($orderId);
 
 $data['items'] = $items;
