@@ -222,6 +222,15 @@ CREATE TABLE
         `role` int (11) NOT NULL
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
+
+CREATE TABLE Notification (
+    notification_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    message TEXT NOT NULL,
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE
+);
 --
 -- Indexes for dumped tables
 --
@@ -441,12 +450,6 @@ ADD CONSTRAINT `Shipment_ibfk_2` FOREIGN KEY (`shipping_method`) REFERENCES `Shi
 ALTER TABLE `User` ADD CONSTRAINT `User_ibfk_1` FOREIGN KEY (`role`) REFERENCES `Roles` (`role_id`);
 
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
 -- Optimize seller-specific queries
 ALTER TABLE `Product` ADD INDEX `idx_product_seller_stock` (`seller_id`, `stock`),

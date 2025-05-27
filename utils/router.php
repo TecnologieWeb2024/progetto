@@ -46,6 +46,10 @@ class Router
             'file' => 'template/payment.php',
             'title' => 'CoffeeBo - Pagamento',
         ],
+        'notifications' => [
+            'file' => 'template/notifications.php',
+            'title' => 'CoffeeBo - Notifiche',
+        ],
     ];
 
     public function getRoute() 
