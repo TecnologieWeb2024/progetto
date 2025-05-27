@@ -19,10 +19,10 @@ function fermaTimer() {
     }
 }
 
-// Esempio d'uso
-avviaTimer(5);
+// // Esempio d'uso
+// avviaTimer(5);
 
-// Ferma manualmente dopo 5 secondi
-setTimeout(() => {
-    fermaTimer();
-}, 15000);
+// // Ferma manualmente dopo 5 secondi
+// setTimeout(() => {
+//     fermaTimer();
+// }, 15000);

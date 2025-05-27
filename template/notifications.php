@@ -36,6 +36,7 @@ $fake_notifications = [
     'created_at' => '2023-10-05 16:20:00']
 ];
 ?>
+<script src="js/timer.js"></script>
 <h1 class="text-center">Le tue notifiche</h1>
 <div class="container mt-4">
     <div class="list-group">
@@ -51,5 +52,9 @@ $fake_notifications = [
     </div>
     <div class="mt-4 text-center align-items-center justify-content-center">
         <button class="btn btn-primary" onclick="markAllAsRead()">Segna tutte come lette</button>
+    </div>
+    <div class="mt-4 text-center align-items-center justify-content-center">
+        <button class="btn btn-success" onclick="avviaTimer(5)">Avvia TIMER</button>
+        <button class="btn btn-danger" onclick="fermaTimer()">Ferma TIMER</button>
     </div>
 </div>
