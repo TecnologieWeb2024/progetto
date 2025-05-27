@@ -17,7 +17,7 @@ $user = $dbh->getUserInfo($_SESSION['seller']['user_id']);
 
         <div class="d-flex align-items-center justify-content-center">
             <label for="yearSelector" class="form-label me-2 mb-0">
-                <h3 class="mb-0">Statistiche</h3>
+                <span class="h3 mb-0">Statistiche</span>
             </label>
             <select id="yearSelector" name="year" class="form-select w-auto" onchange="this.form.submit()">
                 <?php

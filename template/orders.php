@@ -77,22 +77,20 @@ function renderOrderSection($title, $orders, $dbh)
 }
 ?>
 
-<section>
-    <div class="container">
-        <div class="row"></div>
-        <?php if (isUserSeller()): ?>
-            <?php
-            renderOrderSection("Ordini in attesa", $dbh->getWaitingOrders($_SESSION['seller']['user_id']), $dbh);
-            renderOrderSection("Ordini accettati", $dbh->getAcceptedOrders($_SESSION['seller']['user_id']), $dbh);
-            renderOrderSection("Ordini cancellati", $dbh->getCanceledOrders($_SESSION['seller']['user_id']), $dbh);
-            ?>
-        <?php else: ?>
-            <div class="row">
-                <?php renderOrderCards($orders, $dbh); ?>
-            </div>
-        <?php endif; ?>
-    </div>
-</section>
+<div class="container">
+    <div class="row"></div>
+    <?php if (isUserSeller()): ?>
+        <?php
+        renderOrderSection("Ordini in attesa", $dbh->getWaitingOrders($_SESSION['seller']['user_id']), $dbh);
+        renderOrderSection("Ordini accettati", $dbh->getAcceptedOrders($_SESSION['seller']['user_id']), $dbh);
+        renderOrderSection("Ordini cancellati", $dbh->getCanceledOrders($_SESSION['seller']['user_id']), $dbh);
+        ?>
+    <?php else: ?>
+        <div class="row">
+            <?php renderOrderCards($orders, $dbh); ?>
+        </div>
+    <?php endif; ?>
+</div>
 
 <?php require("orderModal.php"); ?>
 

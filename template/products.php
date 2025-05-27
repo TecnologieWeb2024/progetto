@@ -10,55 +10,55 @@
     <h2 class="text-center"><?php echo isUserSeller() ? "Prodotti disponibili: $totalProducts" : "I nostri prodotti"  ?> </h2>
 
     <div class="container">
-    <?php if (isUserCustomer() && $totalBestSellingProducts > 0) : ?>
-        <div class="row border rounded my-4 mx-2 p-4 justify-content-center align-items-center bg-info-subtle">
-            <h2 class="text-center">I più venduti</h2>
+        <?php if (isUserCustomer() && $totalBestSellingProducts > 0) : ?>
+            <div class="row border rounded my-4 mx-2 p-4 justify-content-center align-items-center bg-info-subtle">
+                <h2 class="text-center">I più venduti</h2>
 
-            <?php foreach ($bestSellingProducts as $product): ?>
-                <div class="col-md-4 mb-3">
-                    <div class="card h-100 hover-darken ">
-                        <a  class="mt-4"
-                            data-bs-toggle="modal" data-bs-target="#productModal"
-                            data-product-id="<?php echo $product['product_id']; ?>"
-                            data-name="<?php echo htmlspecialchars($product['product_name']); ?>"
-                            data-price="<?php echo $product['price']; ?>"
-                            data-image="<?php echo $product['image']; ?>"
-                            data-description="<?php echo htmlspecialchars($product['product_description'] ?? ''); ?>"
-                            data-max="<?php echo $product['stock']; ?>">
-                            <img src="<?php echo $product['image'] ?>" class="card-img-top rounded w-50 mx-auto d-block" alt="<?php echo $product['product_name'] ?>">
-                        </a>
-                        <div class="card-body d-flex flex-column p-3">
-                            <h5 class="card-title text-truncate">
-                                <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#productModal"
-                                    data-product-id="<?php echo $product['product_id']; ?>"
-                                    data-name="<?php echo htmlspecialchars($product['product_name']); ?>"
-                                    data-price="<?php echo $product['price']; ?>"
-                                    data-image="<?php echo $product['image']; ?>"
-                                    data-description="<?php echo htmlspecialchars($product['product_description'] ?? ''); ?>"
-                                    data-max="<?php echo $product['stock']; ?>">
-                                    <?php echo $product['product_name']; ?>
-                                </a>
-                            </h5>
-                            <div class="mt-auto d-flex justify-content-between align-items-center">
-                                <span class="fw-bold"><?php echo $product['price']; ?>€</span>
-                                <?php if (!isUserSeller() && isUserLoggedIn()): ?>
-                                    <a href="#" title="add-to-cart" class="btn btn-sm btn-primary btn-add-to-cart"
-                                        data-product-id="<?php echo $product['product_id']; ?>">
-                                        <em class="fa fa-cart-plus"></em>
+                <?php foreach ($bestSellingProducts as $product): ?>
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100 hover-darken ">
+                            <a class="mt-4"
+                                data-bs-toggle="modal" data-bs-target="#productModal"
+                                data-product-id="<?php echo $product['product_id']; ?>"
+                                data-name="<?php echo htmlspecialchars($product['product_name']); ?>"
+                                data-price="<?php echo $product['price']; ?>"
+                                data-image="<?php echo $product['image']; ?>"
+                                data-description="<?php echo htmlspecialchars($product['product_description'] ?? ''); ?>"
+                                data-max="<?php echo $product['stock']; ?>">
+                                <img src="<?php echo $product['image'] ?>" class="card-img-top rounded w-50 mx-auto d-block" alt="<?php echo $product['product_name'] ?>">
+                            </a>
+                            <div class="card-body d-flex flex-column p-3">
+                                <h5 class="card-title text-truncate">
+                                    <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#productModal"
+                                        data-product-id="<?php echo $product['product_id']; ?>"
+                                        data-name="<?php echo htmlspecialchars($product['product_name']); ?>"
+                                        data-price="<?php echo $product['price']; ?>"
+                                        data-image="<?php echo $product['image']; ?>"
+                                        data-description="<?php echo htmlspecialchars($product['product_description'] ?? ''); ?>"
+                                        data-max="<?php echo $product['stock']; ?>">
+                                        <?php echo $product['product_name']; ?>
                                     </a>
-                                <?php endif; ?>
+                                </h5>
+                                <div class="mt-auto d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold"><?php echo $product['price']; ?>€</span>
+                                    <?php if (!isUserSeller() && isUserLoggedIn()): ?>
+                                        <a href="#" title="add-to-cart" class="btn btn-sm btn-primary btn-add-to-cart"
+                                            data-product-id="<?php echo $product['product_id']; ?>">
+                                            <em class="fa fa-cart-plus"></em>
+                                        </a>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
-    <?php endif; ?>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
         <div class="row">
             <?php
-            if (isUserCustomer()) {
-                $products = array_filter($products, fn($p) => $p["available"] == 1 && $p["stock"] > 0);
-            }
+
+            $products = array_filter($products, fn($p) => $p["available"] == 1 && $p["stock"] > 0);
+
             // Pagination logic
             $totalProducts = count($products);
             $productsPerPage = 6;
@@ -145,10 +145,10 @@
                                                     <input type="hidden" name="product_id" value="<?php echo $product['product_id']; ?>">
                                                     <!-- <input type="hidden" name="product_id" value="10000"> -->
                                                     <?php if ($product['available'] == 1): ?>
-                                                        <button type="submit" name="runQuery" id="nascondiBtn" class="btn btn-danger">Nascondi</button>
+                                                        <button type="submit" name="runQuery" id="nascondiBtn-<?php echo $product['product_id'] ?>" class="btn btn-danger">Nascondi</button>
                                                         <!-- <button type="button" id="nascondiBtn" class="btn btn-danger"  data-id="<?php echo $product['product_id'] ?>">Nascondi</button> -->
                                                     <?php else: ?>
-                                                        <button type="submit" name="runQuery" id="mostraBtn" class="btn btn-success">Mostra</button>
+                                                        <button type="submit" name="runQuery" id="mostraBtn-<?php echo $product['product_id'] ?>" class="btn btn-success">Mostra</button>
                                                     <?php endif; ?>
                                                 </form>
                                             </div>
