@@ -274,7 +274,7 @@ class DatabaseHelper
     {
         $query = "SELECT p.*, SUM(od.quantity) AS total_sold
             FROM `Order_Detail` od
-            JOIN `Order` o ON od.order_id = o.order_id AND o.order_status_id > 2 AND o.order_status_id < 7 -- Solo ordini pagati.
+            JOIN `Order` o ON od.order_id = o.order_id AND o.order_status_id BETWEEN 3 AND 6 -- Solo ordini pagati.
             JOIN `Product` p ON od.product_id = p.product_id
             WHERE YEAR(o.order_date) = YEAR(CURDATE()) -- Solo ordini dell'anno corrente.
             GROUP BY p.product_id
@@ -670,11 +670,15 @@ class DatabaseHelper
      */
     public function getAllSellerOrders($seller_id)
     {
-        $query = "SELECT DISTINCT o.*
+        $query = "SELECT o.*
                     FROM `Order` o
-                    JOIN `Order_Detail` od  ON o.order_id = od.order_id
-                    JOIN `Product` p        ON od.product_id = p.product_id
-                    WHERE p.seller_id = ?";
+                    WHERE EXISTS (
+                        SELECT 1 
+                        FROM Order_Detail od
+                        JOIN Product p ON od.product_id = p.product_id
+                        WHERE od.order_id = o.order_id
+                        AND p.seller_id = ?
+                    );";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("i", $seller_id);
         $stmt->execute();
@@ -1183,13 +1187,12 @@ class DatabaseHelper
      */
     public function getFullOrderDetails(int $order_id): array
     {
-        $query = "
-        SELECT
+        $query = "SELECT
             o.order_id,
             o.order_date,
             o.total_price,
             o.user_id,
-
+            os.order_status_id,
             os.descrizione       AS order_status,
 
             pmt.payment_id,
@@ -1239,7 +1242,7 @@ class DatabaseHelper
     {
         $query = "SELECT SUM(p.price * od.quantity) AS total_sales
             FROM `Order_Detail` od
-            JOIN `Order` o ON od.order_id = o.order_id AND o.order_status_id > 2 AND o.order_status_id < 7-- Solo ordini pagati.
+            JOIN `Order` o ON od.order_id = o.order_id AND o.order_status_id BETWEEN 3 AND 6-- Solo ordini pagati.
             JOIN `Product` p ON od.product_id = p.product_id
             WHERE p.seller_id = ? AND YEAR(o.order_date) = ?";
         $stmt = $this->db->prepare($query);
@@ -1261,7 +1264,7 @@ class DatabaseHelper
             FROM `Order` o
             JOIN `Order_Detail` od ON o.order_id = od.order_id
             JOIN `Product` p ON od.product_id = p.product_id
-            WHERE p.seller_id = ? AND YEAR(o.order_date) = ? AND o.order_status_id > 2 AND o.order_status_id < 7 -- Solo ordini";
+            WHERE p.seller_id = ? AND YEAR(o.order_date) = ? AND o.order_status_id BETWEEN 2 AND 7 -- Solo ordini";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("ii", $seller_id, $year);
         $stmt->execute();
@@ -1280,7 +1283,7 @@ class DatabaseHelper
     {
         $query = "SELECT p.product_id, p.product_name, SUM(od.quantity) AS total_sold
             FROM `Order_Detail` od
-            JOIN `Order` o ON od.order_id = o.order_id AND o.order_status_id > 2 AND o.order_status_id < 7 -- Solo ordini pagati.
+            JOIN `Order` o ON od.order_id = o.order_id AND o.order_status_id BETWEEN 3 AND 6 -- Solo ordini pagati.
             JOIN `Product` p ON od.product_id = p.product_id
             WHERE p.seller_id = ? AND YEAR(o.order_date) = ?
             GROUP BY p.product_id
@@ -1300,7 +1303,7 @@ class DatabaseHelper
             JOIN `User` u ON o.user_id = u.user_id
             JOIN `Order_Detail` od ON o.order_id = od.order_id
             JOIN `Product` p ON od.product_id = p.product_id
-            WHERE p.seller_id = ? AND YEAR(o.order_date) = ? AND o.order_status_id > 2 AND o.order_status_id < 7 -- Solo ordini pagati.
+            WHERE p.seller_id = ? AND YEAR(o.order_date) = ? AND o.order_status_id BETWEEN 3 AND 6 -- Solo ordini pagati.
             GROUP BY u.user_id
             ORDER BY total_spent DESC
             LIMIT ?
@@ -1341,6 +1344,7 @@ class DatabaseHelper
         $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC) ?? [];
     }
+
 
     public function getStockDays(int $seller_id, int $year = 2025)
     {

@@ -71,9 +71,19 @@
 
             <!-- Footer -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                <?php if (isUserCustomer()): ?>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                <?php else: ?>
+                    <?php if (isset($_SESSION['order_status_id'])):
+                        if ($_SESSION['order_status_id'] >= 3 && $_SESSION['order_status_id'] <= 6): ?>
+                            <button type="button" class="btn btn-primary" id="btnChangeOrderStatus">Accetta</button>
+                            <button type="button" class="btn btn-danger" id="btnCancelOrder">Annulla</button>
+                    <?php
+                            unset($_SESSION['order_status_id']);
+                        endif;
+                    endif; ?>
+                <?php endif; ?>
             </div>
-
         </div>
     </div>
 </div>

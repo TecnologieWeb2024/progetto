@@ -27,7 +27,6 @@ document.addEventListener("DOMContentLoaded", function () {
           return;
         }
         var d = resp.data;
-        console.log("Dettagli ordine:", d);
         // Riepilogo
         document.getElementById("modalOrderId").textContent = d.order_id;
         document.getElementById("modalOrderDate").textContent = new Date(
