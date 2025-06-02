@@ -42,6 +42,7 @@ foreach ($real_notifications as $row) {
     </div>
     <div class="mt-4 text-center align-items-center justify-content-center">
         <button class="btn btn-primary" onclick="markAllAsRead()">Segna tutte come lette</button>
+        <button class="btn btn-warning" onclick="markAllAsNotRead()">Segna tutte come non lette</button>
     </div>
     <div class="mt-4 text-center align-items-center justify-content-center">
         <button class="btn btn-success" onclick="avviaTimer(5)">Avvia TIMER</button>

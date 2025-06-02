@@ -1,4 +1,7 @@
 <?php
+//? Copiaincolla per resettare le notifiche in fase di development
+
+
 require_once '../bootstrap.php';
 
 // Check if the request is a POST request with JSON content
@@ -23,7 +26,7 @@ if (
             $notification_id = filter_var($notification_id, FILTER_VALIDATE_INT);
             if ($notification_id) {
                 try {
-                    $dbh->markNotificationAsRead($notification_id);
+                    $dbh->markNotificationAsNotRead($notification_id);
                 } catch (Exception $e) {
                     $success = false;
                     error_log("Error updating notification ID $notification_id: " . $e->getMessage());

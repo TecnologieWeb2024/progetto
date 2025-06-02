@@ -1434,4 +1434,19 @@ class DatabaseHelper
         return $result->fetch_all(MYSQLI_ASSOC);
     }
     
+    public function markNotificationAsRead($notification_id) {
+        $query = "UPDATE notification SET is_read = 1 WHERE notification_id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $notification_id);
+        $stmt->execute();
+    }
+
+    public function markNotificationAsNotRead($notification_id) {
+        $query = "UPDATE notification SET is_read = 0 WHERE notification_id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $notification_id);
+        $stmt->execute();
+    }
+
+
 }
