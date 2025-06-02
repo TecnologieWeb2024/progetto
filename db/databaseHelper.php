@@ -1448,5 +1448,16 @@ class DatabaseHelper
         $stmt->execute();
     }
 
+    public function insertNotificationNow($user_id, $message)
+    {
+        $isRead = false;
+        $createdAt = date('Y-m-d H:i:s'); // Timestamp corrente
+
+        $query = "INSERT INTO notification (user_id, message, is_read, created_at) VALUES (?, ?, ?, ?)";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("isis", $user_id, $message, $isRead, $createdAt);
+
+        return $stmt->execute();
+    }
 
 }

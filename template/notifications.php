@@ -45,6 +45,9 @@ foreach ($real_notifications as $row) {
         <button class="btn btn-warning" onclick="markAllAsNotRead()">Segna tutte come non lette</button>
     </div>
     <div class="mt-4 text-center align-items-center justify-content-center">
+        <button class="btn btn-success" onclick="sendNotification(<?php echo $_SESSION['customer']['user_id'] ?? $_SESSION['seller']['user_id'];?>, 'TEST');">Inserisci notifica</button>
+    </div>
+    <div class="mt-4 text-center align-items-center justify-content-center">
         <button class="btn btn-success" onclick="avviaTimer(5)">Avvia TIMER</button>
         <button class="btn btn-danger" onclick="fermaTimer()">Ferma TIMER</button>
     </div>

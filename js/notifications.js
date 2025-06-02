@@ -136,4 +136,37 @@ function markAsRead(notificationId) {
         }
     }
 
+
+
+    function sendNotification(userId, message) {
+        console.log(userId);
+        console.log(message);
+
+
+        fetch('utils/insert_notification.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user_id: userId,
+                message: message
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if (data.success) {
+                alert('Notifica inviata con successo!');
+                location.reload(); 
+            } else {
+                alert('Errore: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Errore nella richiesta:', error);
+            alert('Errore durante l\'invio della notifica.');
+        });
+}
+
     
