@@ -1,4 +1,20 @@
 <?php
+require_once('bootstrap.php');
+
+
+if (isset($_SESSION['customer'])) {
+    $real_notifications = $dbh->getAllUserNotifications($_SESSION['customer']['user_id']);
+} elseif (isset($_SESSION['seller'])) {
+    $real_notifications = $dbh->getAllUserNotifications($_SESSION['seller']['user_id']);
+}
+
+if (empty($real_notifications)) {
+    echo "Nessuna notifica disponibile.";
+} else {
+    foreach ($real_notifications as $notifica) {
+        echo $notifica['message'];
+    }
+}
 
 //$notifications = $dbh->getNotifications($_SESSION['customer']['user_id'] ?? $_SESSION['seller']['user_id']);
 $fake_notifications = [

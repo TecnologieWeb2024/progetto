@@ -476,3 +476,12 @@ VALUES
         2,
         'PP-2025050505'
     );
+
+
+    
+INSERT INTO notification (user_id, message, is_read, created_at) VALUES
+(1, 'Benvenuto su CoffeeBo! Scopri i nostri prodotti e le offerte speciali.', FALSE, '2023-10-01 12:00:00'),
+(1, 'Il tuo ordine #12345 è stato spedito e arriverà presto.', FALSE, '2023-10-02 14:30:00'),
+(1, 'Hai ricevuto un nuovo messaggio dal supporto clienti.', TRUE, '2023-10-03 09:15:00'),
+(1, 'Il tuo profilo è stato aggiornato con successo.', TRUE, '2023-10-04 11:45:00'),
+(1, 'Non perdere le nostre offerte speciali! Visita il nostro sito per maggiori dettagli.', FALSE, '2023-10-05 16:20:00');

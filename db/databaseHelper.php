@@ -1411,4 +1411,27 @@ class DatabaseHelper
         $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC);
     }
+    
+    
+    /** 
+     * ***********************************************************************
+     * QUERY NOTIFICHE
+     * ***********************************************************************
+     */
+    
+    /**
+     * Recupera tutte le query di un utente dal database.
+     * @param int $user_id L'id dell'utente
+     * @return array Un array di ordini.
+     */
+    public function getAllUserNotifications($user_id)
+    {
+        $query = "SELECT * FROM `notification` WHERE user_id = ? ORDER BY created_at DESC";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+    
 }
