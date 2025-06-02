@@ -1,0 +1,83 @@
+function markAsRead(notificationId) {
+        // Simula la marcatura di una notifica come letta
+        const notification = document.querySelector(`.list-group-item[data-notification-id="${notificationId}"]`);
+        if (notification) {
+            notification.classList.remove('active', 'bg-primary-subtle');
+            notification.classList.add('bg-secondary-subtle');
+
+            // Call PHP function via AJAX
+            fetch('utils/update_notifications.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        notificationIds: [notificationId]
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    if (data.success) {
+                        alert('Notifica segnata come letta.');
+                    } else {
+                        alert('Si è verificato un errore durante l\'aggiornamento della notifica.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Si è verificato un errore durante l\'aggiornamento della notifica.');
+                });
+        } else {
+            alert('Notifica non trovata.');
+        }
+    }
+
+    function markAllAsRead() {
+        console.log("markAllAsRead")
+        // Simula la marcatura di tutte le notifiche come lette
+        const notifications = document.querySelectorAll('.list-group-item');
+        const notificationIds = [];
+
+        notifications.forEach(notification => {
+            // Only process unread notifications
+            if (notification.classList.contains('bg-primary-subtle')) {
+                // Extract notification ID from the p element
+                const idText = notification.querySelector('p.mb-1').textContent;
+                const notificationId = parseInt(idText.replace('ID Notifica: ', ''));
+                notificationIds.push(notificationId);
+
+                // Update UI
+                notification.classList.remove('active', 'bg-primary-subtle');
+                notification.classList.add('bg-secondary-subtle');
+            }
+        });
+
+        // Call PHP function for each notification via AJAX
+        if (notificationIds.length > 0) {
+            fetch('utils/update_notifications.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        notificationIds: notificationIds
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    if (data.success) {
+                        alert('Tutte le notifiche sono state segnate come lette.');
+                    } else {
+                        alert('Si è verificato un errore durante l\'aggiornamento delle notifiche.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Si è verificato un errore durante l\'aggiornamento delle notifiche.');
+                });
+        } else {
+            alert('Tutte le notifiche sono già state lette.');
+        }
+    }
