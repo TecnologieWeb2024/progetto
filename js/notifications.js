@@ -1,7 +1,7 @@
 function markAsRead(notificationId) {
         // Simula la marcatura di una notifica come letta
         const notification = document.querySelector(`.list-group-item[data-notification-id="${notificationId}"]`);
-        if (notification) {
+        if (notification && notification.classList.contains('bg-primary-subtle')) {
             notification.classList.remove('active', 'bg-primary-subtle');
             notification.classList.add('bg-secondary-subtle');
 
@@ -28,7 +28,9 @@ function markAsRead(notificationId) {
                     console.error('Error:', error);
                     alert('Si è verificato un errore durante l\'aggiornamento della notifica.');
                 });
-        } else {
+            } else if (notification && notification.classList.contains('bg-secondary-subtle')) {
+                alert('Notifica già letta');
+            } else {
             alert('Notifica non trovata.');
         }
     }
@@ -40,11 +42,9 @@ function markAsRead(notificationId) {
         const notificationIds = [];
 
         notifications.forEach(notification => {
-            // Only process unread notifications
+            // Solo se la notifica non è letta
             if (notification.classList.contains('bg-primary-subtle')) {
-                // Extract notification ID from the p element
-                const idText = notification.querySelector('p.mb-1').textContent;
-                const notificationId = parseInt(idText.replace('ID Notifica: ', ''));
+                const notificationId = parseInt(notification.getAttribute('data-notification-id'));
                 notificationIds.push(notificationId);
 
                 // Update UI
