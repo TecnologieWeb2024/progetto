@@ -12,7 +12,6 @@ $order_id = isset($_GET['order_id']) ? intval($_GET['order_id']) : 0;
 $order = $dbh->getOrder($order_id);
 $order_products = $dbh->getOrderProducts($order_id);
 
-print_r($order_products);
 // Verify the order belongs to current user
 if (!$order || $order['user_id'] != $_SESSION['customer']['user_id']) {
     $_SESSION['error_message'] = 'Ordine non trovato';

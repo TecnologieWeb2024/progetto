@@ -99,7 +99,7 @@ function markAllAsRead() {
 }
 
 function markAllAsNotRead() {
-  console.log("markAllAsRead");
+  console.log("markAllAsNotRead");
   // Simula la marcatura di tutte le notifiche come lette
   const notifications = document.querySelectorAll(".list-group-item");
   const notificationIds = [];
@@ -180,4 +180,51 @@ function sendNotification(userId, message) {
       console.error("Errore nella richiesta:", error);
       alert("Errore durante l'invio della notifica.");
     });
+}
+
+function deleteAllNotifications() {
+  console.log("deleteAllNotifications");
+
+  const notifications = document.querySelectorAll(".list-group-item");
+  const notificationIds = [];
+
+  notifications.forEach((notification) => {
+    const notificationId = parseInt(
+      notification.getAttribute("data-notification-id")
+    );
+    if (!isNaN(notificationId)) {
+      notificationIds.push(notificationId);
+    }
+  });
+
+  if (notificationIds.length > 0) {
+    fetch("utils/deleteNotifications.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        notificationIds: notificationIds,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        if (data.success) {
+          alert("Tutte le notifiche sono state eliminate.");
+          location.reload();
+        } else {
+          alert(
+            "Errore durante l'eliminazione delle notifiche: " +
+              (data.error || "Errore sconosciuto.")
+          );
+        }
+      })
+      .catch((error) => {
+        console.error("Errore durante l'eliminazione:", error);
+        alert("Si è verificato un errore di rete.");
+      });
+  } else {
+    alert("Nessuna notifica da eliminare.");
+  }
 }
