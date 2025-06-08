@@ -2,6 +2,12 @@
 
 require_once('bootstrap.php');
 $user = $dbh->getUserInfo($_SESSION['seller']['user_id']);
+$sellerProducts = $dbh->getProductsBySeller($_SESSION['seller']['user_id']);
+foreach ($sellerProducts as $product) {
+    if ($product['stock'] <= 0) {
+        $dbh->insertNotificationNow($_SESSION['seller']['user_id'], 'Il prodotto "' . $product['product_name'] . '" è esaurito.');
+    }
+}
 // $user = $dbh->getUserInfo($_SESSION['customer']['user_id']);
 ?>
 <h1 class="text-center">Benvenuto, <?php echo $user['first_name'] ?> </h1>
