@@ -40,14 +40,7 @@
                                         <th>Subtotale</th>
                                     </tr>
                                 </thead>
-                                <tbody id="modalOrderItems" class="">
-                                    <!-- <tr>
-                    <td>Nome Prodotto</td>
-                    <td>€ 10.99</td>
-                    <td>2</td>
-                    <td>€ 21.98</td>
-                  </tr> -->
-                                </tbody>
+                                <tbody id="modalOrderItems" class=""></tbody>
                             </table>
                         </div>
                     </div>
@@ -74,16 +67,11 @@
                 <?php if (isUserCustomer()): ?>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
                 <?php else: ?>
-                    <?php if (isset($_SESSION['order_status_id'])):
-                        if ($_SESSION['order_status_id'] >= 3 && $_SESSION['order_status_id'] <= 6): ?>
-                            <button type="button" class="btn btn-primary" id="btnChangeOrderStatus">Accetta</button>
-                            <button type="button" class="btn btn-danger" id="btnCancelOrder">Annulla</button>
-                    <?php
-                            unset($_SESSION['order_status_id']);
-                        endif;
-                    endif; ?>
+                    <button type="button" class="btn btn-primary" id="btnChangeOrderStatus">Accetta</button>
+                    <button type="button" class="btn btn-danger" id="btnCancelOrder">Annulla</button>
                 <?php endif; ?>
             </div>
         </div>
     </div>
 </div>
+<script src="js/orderModal.js"></script>
