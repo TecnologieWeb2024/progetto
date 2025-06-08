@@ -57,10 +57,6 @@ function markAllAsRead() {
         notification.getAttribute("data-notification-id")
       );
       notificationIds.push(notificationId);
-
-      // Update UI
-      // notification.classList.remove('active', 'bg-primary-subtle');
-      // notification.classList.add('bg-secondary-subtle');
     }
   });
 

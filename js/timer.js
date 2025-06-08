@@ -18,11 +18,3 @@ function fermaTimer() {
         conteggio = 0;
     }
 }
-
-// // Esempio d'uso
-// avviaTimer(5);
-
-// // Ferma manualmente dopo 5 secondi
-// setTimeout(() => {
-//     fermaTimer();
-// }, 15000);

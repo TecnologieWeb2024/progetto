@@ -82,21 +82,6 @@
     </div>
 </div>
 
-<!-- <script>
-    function logFormValues(formId="myForm") {
-    const form = document.getElementById(formId);
-    if (!form) {
-        console.error("Form not found!");
-        return;
-    }
-    
-    const formData = new FormData(form);
-    
-    formData.forEach((value, key) => {
-        console.log(`${key}: ${value}`);
-    });
-}
-</script> -->
 <script>
 
    // Example starter JavaScript for disabling form submissions if there are invalid fields
