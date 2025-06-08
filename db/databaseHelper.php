@@ -491,11 +491,11 @@ class DatabaseHelper
         return ['success' => true, 'message' => "Prodotto aggiunto al carrello."];
     }
 
-   /**
-    * Svuota il carrello di un utente.
-    * @param int $user_id
-    * @return array ['success' => true|false, 'message' => '...'] in base all'esito dell'operazione.
-    */
+    /**
+     * Svuota il carrello di un utente.
+     * @param int $user_id
+     * @return array ['success' => true|false, 'message' => '...'] in base all'esito dell'operazione.
+     */
     public function clearCart($user_id)
     {
         $query = "DELETE cd
@@ -783,8 +783,9 @@ class DatabaseHelper
         $query = "
             SELECT
                 p.product_id,
-                p.product_name    AS product_name,
-                p.price          AS product_price,
+                p.product_name      AS product_name,
+                p.price             AS product_price,
+                p.seller_id         AS seller_id,
                 p.image,
                 od.quantity
             FROM
@@ -811,6 +812,7 @@ class DatabaseHelper
                 'product_name'  => $row['product_name'],
                 'price'         => $row['product_price'],
                 'image'         => $row['image'],
+                'seller_id'     => $row['seller_id'],
                 'quantity'      => $row['quantity']
             ];
         }
@@ -942,7 +944,7 @@ class DatabaseHelper
         try {
             $stmt = $this->db->prepare($query);
             // d = double (per decimal), i = integer
-            $stmt->bind_param("diii", $total_price, $user_id, $order_status_id,$shipment_id);
+            $stmt->bind_param("diii", $total_price, $user_id, $order_status_id, $shipment_id);
             if ($stmt->execute() === false) {
                 return false;
             }
@@ -980,6 +982,39 @@ class DatabaseHelper
         }
 
         return true;
+    }
+
+    /**
+     * Recupera i prodotti e le quantità di un ordine.
+     * @param int $order_id L'id dell'ordine
+     * @return array Un array di prodotti e quantità.
+     */
+    public function getOrderProductsAndQuantities(int $order_id): array
+    {
+        $query = "
+        SELECT
+            od.product_id,
+            p.product_name,
+            od.quantity,
+            p.price,
+            p.image
+        FROM
+            `Order_Detail` od
+        JOIN
+            `Product` p ON od.product_id = p.product_id
+        WHERE
+            od.order_id = ?
+    ";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $order_id);
+        if (!$stmt->execute()) {
+            return ['success' => false, 'data' => null, 'message' => 'Impossibile recuperare i prodotti dell\'ordine.'];
+        }
+        $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        if (empty($result)) {
+            return ['success' => false, 'data' => null, 'message' => 'Nessun prodotto trovato per questo ordine.'];
+        }
+        return ['success' => true, 'data' => $result, 'message' => 'Prodotti dell\'ordine recuperati con successo.'];
     }
 
     /**
@@ -1411,14 +1446,14 @@ class DatabaseHelper
         $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC);
     }
-    
-    
+
+
     /** 
      * ***********************************************************************
      * QUERY NOTIFICHE
      * ***********************************************************************
      */
-    
+
     /**
      * Recupera tutte le query di un utente dal database.
      * @param int $user_id L'id dell'utente
@@ -1426,23 +1461,25 @@ class DatabaseHelper
      */
     public function getAllUserNotifications($user_id)
     {
-        $query = "SELECT * FROM `notification` WHERE user_id = ? ORDER BY created_at DESC";
+        $query = "SELECT * FROM `Notification` WHERE user_id = ? ORDER BY created_at DESC";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("i", $user_id);
         $stmt->execute();
         $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC);
     }
-    
-    public function markNotificationAsRead($notification_id) {
-        $query = "UPDATE notification SET is_read = 1 WHERE notification_id = ?";
+
+    public function markNotificationAsRead($notification_id)
+    {
+        $query = "UPDATE Notification SET is_read = 1 WHERE notification_id = ?";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("i", $notification_id);
         $stmt->execute();
     }
 
-    public function markNotificationAsNotRead($notification_id) {
-        $query = "UPDATE notification SET is_read = 0 WHERE notification_id = ?";
+    public function markNotificationAsNotRead($notification_id)
+    {
+        $query = "UPDATE Notification SET is_read = 0 WHERE notification_id = ?";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("i", $notification_id);
         $stmt->execute();
@@ -1453,11 +1490,10 @@ class DatabaseHelper
         $isRead = false;
         $createdAt = date('Y-m-d H:i:s'); // Timestamp corrente
 
-        $query = "INSERT INTO notification (user_id, message, is_read, created_at) VALUES (?, ?, ?, ?)";
+        $query = "INSERT INTO Notification (user_id, message, is_read, created_at) VALUES (?, ?, ?, ?)";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("isis", $user_id, $message, $isRead, $createdAt);
 
         return $stmt->execute();
     }
-
 }
