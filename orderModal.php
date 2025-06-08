@@ -67,7 +67,7 @@
                 <?php if (isUserCustomer()): ?>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
                 <?php else: ?>
-                    <button type="button" class="btn btn-primary" onclick="changeOrderStatus()">Accetta</button>
+                    <button type="button" class="btn btn-primary" id="btnAcceptOrder" onclick="changeOrderStatus()">Accetta</button>
                     <button type="button" class="btn btn-danger" id="btnCancelOrder">Annulla</button>
                 <?php endif; ?>
             </div>

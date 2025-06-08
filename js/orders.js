@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
+  console.log("ORDER MODAL")
   var orderModal = document.getElementById("orderModal");
   if (!orderModal) return;
 
@@ -29,6 +30,25 @@ document.addEventListener("DOMContentLoaded", function () {
         var d = resp.data;
         // Riepilogo
         document.getElementById("modalOrderId").textContent = d.order_id;
+
+        // Tasti abilitati disabilitati in base allo status
+        // var acceptBtn = document.getElementById("btnAcceptOrder");
+        // var cancelBtn = document.getElementById("btnCancelOrder");
+        const modalFooter = document.querySelector(".modal-footer");
+        var orderStatus = d.order_status_id;
+        console.log("status = " +  orderStatus )
+        if ([3, 7].includes(orderStatus)) { // TODO rivedere i valori
+          // if (acceptBtn) acceptBtn.disabled = true;
+          // if (cancelBtn) cancelBtn.disabled = true;
+          // uno o l'altro
+          if (modalFooter) modalFooter.style.display = "none"; 
+        } else {
+          // if (acceptBtn) acceptBtn.disabled = false;
+          // if (cancelBtn) cancelBtn.disabled = false;
+          if (modalFooter) modalFooter.style.display = "flex"; // o "block" 
+        }
+
+
         document.getElementById("modalOrderDate").textContent = new Date(
           d.order_date
         ).toLocaleDateString();
