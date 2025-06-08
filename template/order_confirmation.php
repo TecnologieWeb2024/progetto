@@ -1,6 +1,8 @@
 <?php
 require_once('bootstrap.php');
-
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 if (!isUserLoggedIn() || !isUserCustomer()) {
     header('Location: index.php');
     exit;
@@ -8,12 +10,19 @@ if (!isUserLoggedIn() || !isUserCustomer()) {
 
 $order_id = isset($_GET['order_id']) ? intval($_GET['order_id']) : 0;
 $order = $dbh->getOrder($order_id);
+$order_products = $dbh->getOrderProducts($order_id);
 
+print_r($order_products);
 // Verify the order belongs to current user
 if (!$order || $order['user_id'] != $_SESSION['customer']['user_id']) {
     $_SESSION['error_message'] = 'Ordine non trovato';
     header('Location: index.php');
     exit;
+}
+
+$dbh->insertNotificationNow($_SESSION['customer']['user_id'], 'Il tuo ordine #' . $order_id . ' è stato inserito.');
+foreach ($order_products as $product) {
+    $dbh->insertNotificationNow($product['seller_id'], 'Inserito ordine per ' . $product['product_name'] . ' × ' . $product['quantity']);
 }
 ?>
 
