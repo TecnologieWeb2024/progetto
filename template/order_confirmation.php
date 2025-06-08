@@ -36,7 +36,6 @@ foreach ($order_products as $product) {
                     </div>
                     <h1 class="mb-4">Grazie per il tuo ordine!</h1>
                     <p class="lead mb-4">Il tuo ordine #<?php echo $order_id; ?> è stato confermato.</p>
-                    <p>Riceverai un'email di conferma con tutti i dettagli dell'ordine.</p>
 
                     <div class="mt-4 p-3 bg-light rounded">
                         <h4>Riepilogo Ordine</h4>
