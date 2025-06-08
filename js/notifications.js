@@ -108,7 +108,7 @@ function markAsRead(notificationId) {
 
         // Call PHP function for each notification via AJAX
         if (notificationIds.length > 0) {
-            fetch('utils/reset_update_notifications.php', {
+            fetch('utils/resetUpdateNotifications.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -143,7 +143,7 @@ function markAsRead(notificationId) {
         console.log(message);
 
 
-        fetch('utils/insert_notification.php', {
+        fetch('utils/insertNotification.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

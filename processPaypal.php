@@ -1,7 +1,7 @@
 <?php
 require_once('bootstrap.php');
-require_once('core/PaymentController.php');
-require_once('utils/payment_processor.php');
+require_once('core/paymentController.php');
+require_once('utils/paymentProcessor.php');
 
 if (!isUserLoggedIn() || !isUserCustomer()) {
     header('Location: index.php');

@@ -1,6 +1,6 @@
 <?php
 require_once('bootstrap.php');
-require_once('core/PaymentController.php');
+require_once('core/paymentController.php');
 
 $controller = new PaymentController($dbh);
 
@@ -53,7 +53,7 @@ try {
                             <img src="assets/img/icons/credit-card.png" alt="Carta di Credito" style="height:48px;">
                         </div>
                         <div id="payment-alerts"></div>
-                        <form method="post" action="process_credit_card.php" id="credit-card-form">
+                        <form method="post" action="processCreditCard.php" id="credit-card-form">
                             <div class="mb-3">
                                 <label for="cc_number" class="form-label">Numero Carta</label>
                                 <input type="text" class="form-control" id="cc_number" name="cc_number" placeholder="1234 5678 9012 3456" required>
@@ -79,7 +79,7 @@ try {
                             <img src="assets/img/icons/paypal.png" alt="PayPal" style="height:48px;">
                         </div>
                         <div id="paypal-alerts"></div>
-                        <form method="post" action="process_paypal.php" id="paypal-form">
+                        <form method="post" action="processPaypal.php" id="paypal-form">
                             <div class="mb-3">
                                 <label for="paypal_email" class="form-label">Email PayPal</label>
                                 <input type="email" class="form-control" id="paypal_email" name="paypal_email" placeholder="email@example.com" required>
@@ -117,7 +117,7 @@ try {
                             <strong>1FakeBitcoinAddress1234567890ABCDEF</strong><br>
                             <span class="d-block mt-2"><strong>Nota:</strong> Il pagamento sarà considerato valido solo dopo la conferma della transazione sulla blockchain.</span>
                         </div>
-                        <form method="post" action="process_bitcoin.php" class="text-center">
+                        <form method="post" action="processBitcoin.php" class="text-center">
                             <button type="submit" class="btn btn-dark">Ho effettuato il pagamento</button>
                         </form>
                     <?php else:

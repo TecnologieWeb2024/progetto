@@ -51,7 +51,7 @@ class Router
             'title' => 'CoffeeBo - Notifiche',
         ],
         'order_confirmation' => [
-            'file' => 'template/order_confirmation.php',
+            'file' => 'template/orderConfirmation.php',
             'title' => 'CoffeeBo - Conferma Ordine',
         ],
     ];
