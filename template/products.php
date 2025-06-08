@@ -1,7 +1,7 @@
 <section>
     <?php
     require_once('bootstrap.php');
-    require("productModal.php");
+    require('productModal.php');
     $products = isUserSeller() ? $dbh->getProductsBySeller($_SESSION['seller']['user_id']) : $dbh->getAllProducts();
     $totalProducts = count($products);
     $bestSellingProducts = $dbh->getGlobalBestSellingProducts(3);
@@ -56,9 +56,9 @@
         <?php endif; ?>
         <div class="row">
             <?php
-
-            $products = array_filter($products, fn($p) => $p["available"] == 1 && $p["stock"] > 0);
-
+            if (isUserCustomer()) {
+                $products = array_filter($products, fn($p) => $p["available"] == 1 && $p["stock"] > 0);
+            }
             // Pagination logic
             $totalProducts = count($products);
             $productsPerPage = 6;
