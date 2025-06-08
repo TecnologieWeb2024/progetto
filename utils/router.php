@@ -50,6 +50,10 @@ class Router
             'file' => 'template/notifications.php',
             'title' => 'CoffeeBo - Notifiche',
         ],
+        'order_confirmation' => [
+            'file' => 'template/order_confirmation.php',
+            'title' => 'CoffeeBo - Conferma Ordine',
+        ],
     ];
 
     public function getRoute() 
