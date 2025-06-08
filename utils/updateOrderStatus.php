@@ -36,7 +36,7 @@ try {
         $newStatus = intval($data['new_status']);
 
         $result = $dbh->updateOrderStatus($orderId, $newStatus);
-
+        $dbh->insertNotificationNow($dbh->getOrder($orderId)['user_id'], 'Il tuo ordine #' . $orderId . ' è ' . $dbh->getOrderStatus($orderId)['descrizione']);
         if (!is_array($result) || !isset($result['success'])) {
             throw new Exception("Risultato inatteso da updateOrderStatus()");
         }
