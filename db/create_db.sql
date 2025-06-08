@@ -222,15 +222,6 @@ CREATE TABLE
         `role` int (11) NOT NULL
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
-
-CREATE TABLE Notification (
-    notification_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    message TEXT NOT NULL,
-    is_read BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE
-);
 --
 -- Indexes for dumped tables
 --
@@ -481,3 +472,12 @@ ALTER TABLE `Cart_Detail` ADD INDEX `idx_cart_product_quantity` (`product_id`, `
 ALTER TABLE `Product` ADD INDEX `idx_product_price_stock` (`price`, `stock`),
 ADD INDEX `idx_product_sku` (`SKU`),
 ADD INDEX `idx_product_availability` (`available`, `category_id`);
+
+CREATE TABLE `Notification` (
+    `notification_id` INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT NOT NULL,
+    `message` TEXT NOT NULL,
+    `is_read` BOOLEAN DEFAULT FALSE,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE
+);
