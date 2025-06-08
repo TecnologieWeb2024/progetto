@@ -15,7 +15,7 @@ function changeOrderStatus () {
     .then((data) => {
       if (data.success) {
         alert("Ordine aggiornato con successo");
-        // reload the page to reflect changes
+        // ricarica la pagina
         location.reload();
       } else {
         alert("Errore: " + data.message);
