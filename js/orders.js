@@ -32,22 +32,26 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("modalOrderId").textContent = d.order_id;
 
         // Tasti abilitati disabilitati in base allo status
-        // var acceptBtn = document.getElementById("btnAcceptOrder");
-        // var cancelBtn = document.getElementById("btnCancelOrder");
-        const modalFooter = document.querySelector(".modal-footer");
+        var acceptBtn = document.getElementById("btnAcceptOrder");
+        var cancelBtn = document.getElementById("btnCancelOrder");
+        var advanceBtn = document.getElementById("btnAdvanceStatus");
         var orderStatus = d.order_status_id;
         console.log("status = " +  orderStatus )
-        if ([3, 7].includes(orderStatus)) { // TODO rivedere i valori
-          // if (acceptBtn) acceptBtn.disabled = true;
-          // if (cancelBtn) cancelBtn.disabled = true;
-          // uno o l'altro
-          if (modalFooter) modalFooter.style.display = "none"; 
+        if ([4, 5].includes(orderStatus)) {
+          if (acceptBtn) acceptBtn.style.display = "none";
+          if (cancelBtn) cancelBtn.style.display = "none";
+          if (advanceBtn) advanceBtn.style.display = "";
         } else {
-          // if (acceptBtn) acceptBtn.disabled = false;
-          // if (cancelBtn) cancelBtn.disabled = false;
-          if (modalFooter) modalFooter.style.display = "flex"; // o "block" 
+          if (acceptBtn) acceptBtn.style.display = "";
+          if (cancelBtn) cancelBtn.style.display = "";
+          if (advanceBtn) advanceBtn.style.display = "none";
         }
-
+        var modalFooter = document.querySelector(".modal-footer");
+        if ([6, 7, 8].includes(orderStatus)) {
+          if (modalFooter) modalFooter.style.display = "none";
+        } else {
+          if (modalFooter) modalFooter.style.display = "";
+        }
 
         document.getElementById("modalOrderDate").textContent = new Date(
           d.order_date
