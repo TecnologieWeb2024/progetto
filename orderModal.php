@@ -4,7 +4,7 @@
 
             <!-- Header -->
             <div class="modal-header">
-                <h5 class="modal-title">Dettagli Ordine #<span id="modalOrderId">–</span></h5>
+                <h3 class="h5 modal-title">Dettagli Ordine #<span id="modalOrderId">–</span></h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
             </div>
 
@@ -67,8 +67,9 @@
                 <?php if (isUserCustomer()): ?>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
                 <?php else: ?>
-                    <button type="button" class="btn btn-primary" id="btnAcceptOrder" onclick="changeOrderStatus()">Accetta</button>
-                    <button type="button" class="btn btn-danger" id="btnCancelOrder">Annulla</button>
+                    <button type="button" class="btn btn-primary" id="btnAcceptOrder" onclick="acceptOrder()">Accetta</button>
+                    <button type="button" class="btn btn-danger" id="btnCancelOrder" onclick="cancelOrder()">Annulla</button>
+                    <button type="button" class="btn btn-secondary" id="btnAdvanceStatus" onclick="advanceStatus()">Avanza Stato</button>
                 <?php endif; ?>
             </div>
         </div>

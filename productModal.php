@@ -10,7 +10,7 @@
                         </div>
                         <div class="col-md-6 col-8 d-flex flex-column">
                             <div class="row">
-                                <h3 id="modalProductName">Placeholder</h3>
+                                <h2 class="h3" id="modalProductName">Placeholder</h2>
                                 <p id="modalProductDescription">Placeholder</p>
                                 <?php if (isUserSeller()): ?>
                                     <p class="text-muted">In magazzino: <span id="modalProductStock">-</span></p>
