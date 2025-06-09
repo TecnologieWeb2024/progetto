@@ -61,7 +61,8 @@ INSERT INTO
 VALUES
     (1, 'Caffè in grani'),
     (2, 'Caffè macinato'),
-    (3, 'Caffè Decaffeinato');
+    (3, 'Caffè Decaffeinato'),
+    (4, 'Accessori');
 
 --
 -- Dumping data for table `Product` (depends on User/seller and Category)
@@ -101,7 +102,7 @@ VALUES
         4.99,
         150,
         1,
-        'assets/img/products/CAF001.jpg',
+        'assets/img/products/CAF002.jpg',
         1
     ),
     (
@@ -113,7 +114,7 @@ VALUES
         5.49,
         120,
         2,
-        'assets/img/products/CAF001.jpg',
+        'assets/img/products/CAF003.jpg',
         1
     ),
     (
@@ -125,7 +126,7 @@ VALUES
         6.49,
         80,
         3,
-        'assets/img/products/CAF001.jpg',
+        'assets/img/products/CAF004.jpg',
         1
     ),
     (
@@ -137,7 +138,7 @@ VALUES
         6.99,
         70,
         3,
-        'assets/img/products/CAF001.jpg',
+        'assets/img/products/CAF005.jpg',
         1
     ),
     (
@@ -149,7 +150,7 @@ VALUES
         8.99,
         50,
         1,
-        'assets/img/products/CAF001.jpg',
+        'assets/img/products/CAF006.jpg',
         1
     ),
     (
@@ -161,7 +162,31 @@ VALUES
         12.49,
         30,
         2,
-        'assets/img/products/CAF001.jpg',
+        'assets/img/products/CAF007.jpg',
+        1
+    ),
+    (
+        8,
+        3,
+        'ACC001',
+        'Moka Classica 4 tazze',
+        'Moka italiana classica per 4 tazze',
+        59.99,
+        30,
+        4,
+        'assets/img/products/ACC001.jpg',
+        1
+    ),
+    (
+        9,
+        1,
+        'ACC002',
+        'Kettle americano elettrico',
+        'Kettler americano elettrico per caffè in filtro',
+        79.99,
+        30,
+        4,
+        'assets/img/products/ACC002.jpg',
         1
     );
 
