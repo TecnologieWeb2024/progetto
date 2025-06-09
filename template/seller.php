@@ -10,7 +10,7 @@ foreach ($sellerProducts as $product) {
 }
 // $user = $dbh->getUserInfo($_SESSION['customer']['user_id']);
 ?>
-<h1 class="text-center">Benvenuto, <?php echo $user['first_name'] ?> </h1>
+<h2 class="text-center h1">Benvenuto, <?php echo $user['first_name'] ?> </h2>
 <div class="container col-md-4 mt-4">
     <div class="d-flex justify-content-center gap-2">
         <button type="button" class="btn btn-primary w-50 py-3" onclick="window.location='index.php?page=gestioneProdotti'">Gestione prodotti</button>
@@ -41,7 +41,7 @@ foreach ($sellerProducts as $product) {
         <div class="col-md-6 mt-4">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Totale vendite</h5>
+                    <h3 class="card-title">Totale vendite</h3>
                     <p class="card-text">
                         <?php
                         $totalSales = $dbh->getTotalSales($_SESSION['seller']['user_id'], $_GET['year'] ?? date("Y"));
@@ -54,7 +54,7 @@ foreach ($sellerProducts as $product) {
         <div class="col-md-6 mt-4">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Totale ordini</h5>
+                    <h3 class="card-title">Totale ordini</h3>
                     <p class="card-text">
                         <?php
                         $totalOrders = $dbh->getTotalOrders($_SESSION['seller']['user_id'], $_GET['year'] ?? date("Y"));
@@ -69,7 +69,7 @@ foreach ($sellerProducts as $product) {
         <div class="col-md-6 mt-4">
             <div class="card">
                 <div class="card-body" style="min-height: 12em;">
-                    <h5 class="card-title">Prodotti più venduti</h5>
+                    <h3 class="card-title">Prodotti più venduti</h3>
                     <ol class="mb-0 ps-0" style="list-style-position:inside;">
                         <?php
                         $topProducts = $dbh->getBestSellingProducts($_SESSION['seller']['user_id'], $_GET['year'] ?? date("Y"));
@@ -86,7 +86,7 @@ foreach ($sellerProducts as $product) {
         <div class="col-md-6 mt-4">
             <div class="card">
                 <div class="card-body" style="min-height: 12em;">
-                    <h5 class="card-title">Migliori acquirenti</h5>
+                    <h3 class="card-title">Migliori acquirenti</h3>
                     <ol class="mb-0 ps-0" style="list-style-position:inside;">
                         <?php
                         $topCustomers = $dbh->getBestCustomers($_SESSION['seller']['user_id'], $_GET['year'] ?? date("Y"));
@@ -106,7 +106,7 @@ foreach ($sellerProducts as $product) {
         <div class="col-md-12 h-50">
             <div class="card px-0 mx-0">
                 <div class="card-body px-0 mx-0" style="min-height: 12em;">
-                    <h5 class="card-title">Ricavi, Ricavo medio per ordine e Numero di ordini mensili</h5>
+                    <h3 class="card-title">Ricavi, Ricavo medio per ordine e Numero di ordini mensili</h3>
                     <?php
                     $result = $dbh->getAverageMonthlyRevenue(
                         $_SESSION['seller']['user_id'],
@@ -130,7 +130,7 @@ foreach ($sellerProducts as $product) {
         <div class="col-12">
             <div class="card">
                 <div class="card-body" style="min-height: 12em;">
-                    <h5 class="card-title">Giorni di stock rimanenti per prodotto</h5>
+                    <h3 class="card-title">Giorni di stock rimanenti per prodotto</h3>
                     <table class="table table-sm table-striped caption-top table-responsive">
                         <caption>Prodotti in magazzino</caption>
                         <thead class="">
