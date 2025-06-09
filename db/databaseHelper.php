@@ -730,8 +730,17 @@ class DatabaseHelper
         return array_merge(
             $this->getOrdersByStatus($seller_id, 4),
             $this->getOrdersByStatus($seller_id, 5),
-            $this->getOrdersByStatus($seller_id, 6)
         );
+    }
+
+    /**
+     * Recupera gli ordini completati, ossia "consegnato".
+     * @param int $seller_id L'id del venditore
+     * @return array Un array di ordini completati.
+     */
+    public function getCompletedOrders($seller_id)
+    {
+        return $this->getOrdersByStatus($seller_id, 6);
     }
 
     /**
