@@ -83,6 +83,7 @@ function renderOrderSection($title, $orders, $dbh)
         <?php
         renderOrderSection("Ordini in attesa", $dbh->getWaitingOrders($_SESSION['seller']['user_id']), $dbh);
         renderOrderSection("Ordini accettati", $dbh->getAcceptedOrders($_SESSION['seller']['user_id']), $dbh);
+        renderOrderSection("Ordini completati", $dbh->getCompletedOrders($_SESSION['seller']['user_id']), $dbh);
         renderOrderSection("Ordini cancellati", $dbh->getCanceledOrders($_SESSION['seller']['user_id']), $dbh);
         ?>
     <?php else: ?>
