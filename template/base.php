@@ -44,6 +44,7 @@
                                     } ?>">
                             <em class="fa fa-home d-md-none">&nbsp;</em>Home Page</a></li>
                     <li class="nav-item"><a class="nav-link" href="index.php?page=products"><em class="fa fa-coffee d-md-none">&nbsp;</em><?php echo isUserSeller() ? "Gestione Prodotti" : "I nostri prodotti" ?></a></li>
+                    <?php if (isUserSeller()): ?><li class="nav-item"><a class="nav-link" href="index.php?page=gestioneOrdini"><em class="fa fa-coffee d-md-none">&nbsp;</em>Gestione Ordini</a></li> <?php endif; ?>
                     <li class="nav-item"><a class="nav-link" href="index.php?page=contacts"><em class="fa fa-file-text-o	d-md-none">&nbsp;</em>Contattaci</a></li>
                 </ul>
             </div>
@@ -61,7 +62,7 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                 <li><a href="index.php?page=account" class="dropdown-item"><em class="fa fa-cog"></em>&nbsp;Impostazioni Account</a></li>
-                                <li><a href="index.php?page=<?php echo isUserSeller()? "gestioneOrdini" : "orders"?>" class="dropdown-item"><em class="fa fa-list-alt"></em>&nbsp;I miei ordini</a></li>
+                                <li><a href="index.php?page=<?php echo isUserSeller() ? "gestioneOrdini" : "orders" ?>" class="dropdown-item"><em class="fa fa-list-alt"></em>&nbsp;I miei ordini</a></li>
                                 <li><a href="index.php?page=notifications" class="dropdown-item"><em class="fa fa-bell"></em>&nbsp;Notifiche</a></li>
                                 <li><a href="logout.php" class="dropdown-item link-danger link-underline-opacity-0"><em class="fa fa-sign-out"></em>&nbsp;Logout</a></li>
                             </ul>
@@ -109,6 +110,6 @@
             <p>Copyright © <?php echo date("Y"); ?> CoffeeBo All rights reserved.</p>
         </div>
     </footer>
-    </body>
+</body>
 
 </html>
